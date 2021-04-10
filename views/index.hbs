@@ -1,0 +1,208 @@
+{{> header}}
+
+<div id="index" class="container">
+
+
+<div class="welcome"> 
+  <div class="card text-center">
+    <div class="card-body">
+      <h5 class="card-title">Hola <span></span></h5>
+      <p class="card-text">
+        Te damos la bienvenida al nuevo sistema de notas automatizado para la unidad educativa
+          Jose Enrique Arias 
+      </p>
+  </div>
+</div><br>
+
+<div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Ayuda</h5>
+          <p class="card-text">
+            Para sacarle el mayor provecho al nuevo sistema de notas te recomendamos 
+            darle un vistazo al manual de uso <br><br>
+            </p>
+          <a href="#" class="btn btn-primary">Ver Manual</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Acerca Del Sistema</h5>
+          <p class="card-text">
+            El sistema de notas esta hecho en una de las tecnologias mas usadas a nivel mundial 
+            para el desarrolo de aplicaciones web
+
+            </p>
+          <a href="#" class="btn btn-primary">Leer Mas</a>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <div class="menu">
+      <div class="card text-center">
+    <div class="card-body">
+      <h5 class="card-title"></h5>
+    </div>
+        <div class="alert alert-danger" role="alert"></div>
+        <div class="alert alert-success" role="alert"></div>
+    <ul class="nav nav-pills nav-justified">
+      <li class="nav-item">
+        <button class="btn btn-primary"  data-toggle="modal" data-target="#agregarAlumno">Agregar Alumno</button>
+      </li>
+      <li class="nav-item">
+        <button class="btn btn-danger" data-toggle="modal" data-target="#eliminarTodos" >Eliminar Todos</button>
+      </li>
+    </ul>
+  </div>
+
+
+<table class="table alumnos center">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">C.I</th>
+      <th scope="col">Nombre</th>
+      <th scope="col">Apellido</th>
+      <th scope="col">Primer Lapso</th>
+      <th scope="col">Segundo Lapso</th>
+      <th scope="col">Tercer Lapso</th>
+      <th scope="col">Nota Final</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+
+  </tbody>
+</table>
+</div>
+
+<div class="alumno">
+  <div class="card text-center">
+    <div class="card-body">
+      <h5 class="card-title"></h5>
+    </div>
+      <div class="alert alert-danger" role="alert"></div>
+      <div class="alert alert-success" role="alert"></div>
+  </div>
+<table class="table alumno center">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Materias</th>
+      <th scope="col">Primer Lapso</th>
+      <th scope="col">Segundo Lapso</th>
+      <th scope="col">Tercer Lapso</th>
+      <th scope="col">Nota Final</th>
+      <th scope="col"> </th>
+      <th scope="col"> </th>
+      <th scope="col"> </th>
+      <th scope="col"> </th>
+    </tr>
+  </thead>
+  <tbody id="notasAlumnos">
+
+  </tbody>
+</table>
+<div class="modal fade" id="editarnotas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <p>Modifique unicamente los campos que desea cambiar</p>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="primer_lapso">Primer lapso</label>
+            <input type="number" max="20" value="0" min="0" class="form-control" id="primer_lapso" placeholder="primer_lapso">
+          </div>
+          <div class="form-group">
+            <label for="segundo_lapso">Segundo lapso</label>
+            <input type="number" max="20" value="0" min="0" class="form-control" id="segundo_lapso" placeholder="segundo_lapso">
+          </div>
+          <div class="form-group">
+            <label for="tercer_lapso">Tercer lapso</label>
+            <input type="number" max="20" value="0" min="0" class="form-control" id="tercer_lapso" placeholder="tercer_lapso">
+          </div>
+                <div class="alert alert-danger" role="alert"></div>
+                <div class="alert alert-success" role="alert"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button id="btnAgragar" onclick="enviarNotas()" type="submit" class="btn btn-primary">Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="modal fade" id="agregarAlumno" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Agregar Alumno</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="Nombre">Nombre</label>
+            <input type="text" class="form-control" id="Nombre" placeholder="Nombre">
+          </div>
+          <div class="form-group">
+            <label for="Apellido">Apellido</label>
+            <input type="text" class="form-control" id="Apellido" placeholder="Apellido">
+          </div>
+          <div class="form-group">
+            <label for="Cedula">Cedula</label>
+            <input type="number" class="form-control" id="Cedula" placeholder="Cedula">
+          </div>
+                <div class="alert alert-danger" role="alert"></div>
+                <div class="alert alert-success" role="alert"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button id="modal" onclick="alumno()" type="submit" class="btn btn-primary">Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="eliminarTodos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Eliminar Todos</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <h4>Esta opcion eliminara todos los alumnos de esta seccion </h4>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button data-dismiss="modal" type="button" onclick="eliminarTodos()" class="btn btn-warning">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+{{> footer}}
