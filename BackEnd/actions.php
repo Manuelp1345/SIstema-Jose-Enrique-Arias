@@ -8,12 +8,13 @@ if(isset($_POST["actions"])){
 
     switch ($action) {
         case 'Buscar Alumnos':
+
+                // buscamos todos los alumnos correspondientes al año y seccion
             try {
                 $ano = $_POST["año"];
                 $seccion = $_POST["seccion"];
                 $sql = "SELECT * FROM alumnos  WHERE ano='$ano' AND seccion='$seccion' ORDER BY cedula ASC ";
                 $resultado = $conn->query($sql)->fetch_all();
-
                 
                 echo json_encode($resultado);
 
@@ -21,9 +22,12 @@ if(isset($_POST["actions"])){
             } catch (Exception $e) {
                 echo $e->getMessage();
             }
-            break;
+            break; 
 
         case "Editar":
+
+                //listamos las notas y materias correspondientes 
+
                 try {
                     $año = $_POST["año"];
                     $notasClient = $_POST["notas"];
