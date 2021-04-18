@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>U.E | Jose Enrique Arias | </title>
     	
-    <link rel="icon" href="/img/logo.png" type="image/png" />
-    <link rel="stylesheet" href="../css/bootstrap.css">
-    <link rel="stylesheet" href="../../css/main.css">
-    <link rel="stylesheet" type="text/css" href="../../DataTables/datatables.min.css"/>
+    <link rel="icon" href="img/logo.png" type="image/png" />
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
  
   
 </head>
@@ -19,13 +19,13 @@
     <!-- Sidebar -->
     <nav id="sidebar">
         <div class="sidebar-header">
-            <img class="logo" src="/img/logo.png" alt="">
+            <img class="logo" src="img/logo.png" alt="">
             <h3 class="text-center">| U.E | <br> Jose Enrique Arias</h3>
         </div>
 
         <ul class="list-unstyled components">
             <li >
-                <a onclick="inicio()" >Inicio</a>
+                <a href="http://localhost/sistema/" >Inicio</a>
             </li>
             <li>
                 <a href="#primer-año" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Primer Año</a>

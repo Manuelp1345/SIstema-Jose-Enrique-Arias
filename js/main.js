@@ -140,16 +140,13 @@ if (url === "register") {
   }
 }
 
-let inicio = () => {
-  window.location = "/inicio/" + token;
-};
-
 function cerrar() {
   localStorage.removeItem("token");
 }
 
 let seccionNav = (año, seccion) => {
   let agregar = document.querySelector("tbody");
+  let tableExport = document.querySelector("#tableExport");
 
   localStorage.setItem("año", año);
   localStorage.setItem("seccion", seccion);
@@ -185,46 +182,39 @@ let seccionNav = (año, seccion) => {
       break;
   }
 
-  let form = {
-    año: añoDB,
-    seccion,
-  };
-  fetch("/alumnos/" + token, {
+  let form = new FormData();
+
+  form.append("año", añoDB);
+  form.append("seccion", seccion);
+  form.append("actions", "Buscar Alumnos");
+
+  fetch("BackEnd/actions.php", {
     method: "post",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(form),
+    body: form,
   })
-    .then((e) => e.json())
+    .then((e) => e.text())
     .then((data) => {
+      data = JSON.parse(data);
+
       agregar.innerHTML = "";
-      let alumnosDB = JSON.stringify(data);
-      let alumnosObject = JSON.parse(alumnosDB);
-      alumnosObject = alumnosObject.alumnos;
+      let alumnos = data;
 
-      for (let i = 0; i < alumnosObject.length; i++) {
-        let form2 = {
-          año: añoDB,
-          notas: alumnosObject[i].notas,
-        };
+      for (let i = 0; i < alumnos.length; i++) {
+        let form2 = new FormData();
 
-        fetch("/editar/" + token, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(form2),
+        form2.append("año", añoDB);
+        form2.append("notas", alumnos[i][14]);
+        form2.append("actions", "Editar");
+
+        fetch("BackEnd/actions.php", {
+          method: "post",
+          body: form2,
         })
-          .then((e) => e.json())
+          .then((e) => e.text())
           .then((data) => {
-            let notasDB = data;
+            data = JSON.parse(data);
 
-            let notasObject = notasDB.notas;
-
-            let materiasDB = JSON.stringify(data);
-            let materiasObject = JSON.parse(materiasDB);
-            materiasObject = materiasObject.materias;
+            let notas = data;
 
             let primer_lapso = 0;
 
@@ -234,28 +224,26 @@ let seccionNav = (año, seccion) => {
 
             let notaFinal = 0;
 
-            notasObject = Object.values(notasObject);
+            notas = Object.values(notas);
 
-            for (let i = 1; i < materiasObject.length; i++) {
-              primer_lapso += parseInt(JSON.parse(notasObject[i]).primer_lapso);
-              segundo_lapso += parseInt(
-                JSON.parse(notasObject[i]).segundo_lapso
-              );
-              tercer_lapso += parseInt(JSON.parse(notasObject[i]).tercer_lapso);
+            for (let i = 1; i < notas.length; i++) {
+              primer_lapso += parseInt(JSON.parse(notas[i]).primer_lapso);
+              segundo_lapso += parseInt(JSON.parse(notas[i]).segundo_lapso);
+              tercer_lapso += parseInt(JSON.parse(notas[i]).tercer_lapso);
             }
 
-            primer_lapso = primer_lapso / parseInt(materiasObject.length - 1);
-            segundo_lapso = segundo_lapso / parseInt(materiasObject.length - 1);
-            tercer_lapso = tercer_lapso / parseInt(materiasObject.length - 1);
+            primer_lapso = primer_lapso / parseInt(notas.length - 1);
+            segundo_lapso = segundo_lapso / parseInt(notas.length - 1);
+            tercer_lapso = tercer_lapso / parseInt(notas.length - 1);
 
             notaFinal = (primer_lapso + segundo_lapso + tercer_lapso) / 3;
 
             agregar.innerHTML += `
                             <tr>
                             <th scope="row">${i + 1}</th>
-                            <td>${format(alumnosObject[i].cedula)}</td>
-                            <td>${alumnosObject[i].nombre.toUpperCase()} </td>
-                            <td>${alumnosObject[i].apellido.toUpperCase()}</td>
+                            <td>${format(alumnos[i][1])}</td>
+                            <td>${alumnos[i][3].toUpperCase()} </td>
+                            <td>${alumnos[i][4].toUpperCase()}</td>
                             <td>${parseInt(primer_lapso)}</td>
                             <td>${parseInt(segundo_lapso)}</td>
                             <td>${parseInt(tercer_lapso)}</td>
@@ -267,12 +255,12 @@ let seccionNav = (año, seccion) => {
                             </button>
                             <div class="dropdown-menu">
                             <a class="dropdown-item" onclick="editar(${
-                              alumnosObject[i].cedula
-                            },'${alumnosObject[i].nombre} ${
-              alumnosObject[i].apellido
-            }',${alumnosObject[i].notas},'${seccion}')" href="#">Editar</a>
+                              alumnos[i][1]
+                            },'${alumnos[i][3]} ${alumnos[i][4]}',${
+              alumnos[i][14]
+            },'${seccion}')" href="#">Editar</a>
                             <a class="dropdown-item" onclick="eliminarAlumno(${
-                              alumnosObject[i].cedula
+                              alumnos[i][1]
                             })"  href="#">Eliminar</a>
                             </div>
                             </div>
@@ -286,7 +274,7 @@ let seccionNav = (año, seccion) => {
 function alumno() {
   let año = localStorage.getItem("año");
   let seccion = localStorage.getItem("seccion");
-  $("#modal").removeAttr("data-dismiss");
+  $("#modal").removeAttr("data-bs-dismiss");
 
   let añoDB = "";
 
@@ -296,50 +284,62 @@ function alumno() {
   if (año == 4) añoDB = "cuarto_año";
   if (año == 5) añoDB = "quinto_año";
 
-  let form = {
-    nombre: $("#Nombre").val(),
-    apellido: $("#Apellido").val(),
-    cedula: $("#Cedula").val(),
-    año: añoDB,
-    seccion,
-  };
+  let form = new FormData();
+  form.append("nombre", $("#Nombre").val());
+  form.append("apellido", $("#Apellido").val());
+  form.append("cedula", $("#Cedula").val());
+  form.append("cedulaE", $("#cedulaEscolar").prop("checked"));
+  form.append("sexo", $("#Sexo").val());
+  form.append("Fnacimiento", $("#fechaNacimiento").val());
+  form.append("edad", $("#Edad").val());
+  form.append("LugarNacimiento", $("#LugarNacimiento").val());
+  form.append("Telfono", $("#Telfono").val());
+  form.append("Direccion", $("#Direccion").val());
+  form.append("Correo", $("#Correo").val());
+  form.append("nombreR", $("#NombreR").val());
+  form.append("apellidoR", $("#ApellidoR").val());
+  form.append("cedulaR", $("#CedulaR").val());
+  form.append("sexoR", $("#SexoR").val());
+  form.append("Filiacion", $("#Filiacion").val());
+  form.append("TelfonoR", $("#TelfonoR").val());
+  form.append("DireccionR", $("#DireccionR").val());
+  form.append("CorreoR", $("#CorreoR").val());
+  form.append("año", añoDB);
+  form.append("seccion", seccion);
+  form.append("actions", "Alumno");
 
-  if (form.nombre === "") {
+  if ($("#Nombre").val() === "") {
     succes.css("display", "none");
 
     error.css({ display: "block" });
     return error.text("Por Favor Ingrese un nombre");
   }
-  if (form.apellido === "") {
+  if ($("#Apellido").val() === "") {
     succes.css("display", "none");
 
     error.css({ display: "block" });
     return error.text("Por Favor Ingrese un apellido");
   }
-  if (form.cedula === "") {
+  if ($("#Cedula").val() === "") {
     succes.css("display", "none");
     error.css({ display: "block" });
     return error.text("Por Favor Ingrese un cedula");
   }
   $("#modal").attr("data-dismiss", "modal");
-  fetch("/alumno/" + token, {
+  fetch("BackEnd/actions.php", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(form),
+    body: form,
   })
-    .then((e) => e.json())
+    .then((e) => e.text())
     .then((data) => {
-      console.log(data);
       if (!data.ok) {
         succes.css("display", "none");
         error.css("display", "block");
-        return error.html(data.mensaje);
+        return error.html(data);
       }
       error.css("display", "none");
       succes.css("display", "block");
-      succes.html(data.mensaje);
+      succes.html(data);
       setTimeout(() => {
         succes.css("display", "none");
       }, 5000);
@@ -379,11 +379,12 @@ function editar(cedula, nombre, notas, sec) {
   if (año == 4) añoDB = "cuarto_año";
   if (año == 5) añoDB = "quinto_año";
 
-  let form = {
-    cedula,
-    año: añoDB,
-    notas,
-  };
+  let form = new FormData();
+
+  form.append("cedula", cedula);
+  form.append("año", añoDB);
+  form.append("notas", notas);
+  form.append("actions", "Editar");
 
   $("#Alumnoexport").DataTable({
     paging: false,
@@ -392,7 +393,7 @@ function editar(cedula, nombre, notas, sec) {
     retrieve: true,
     dom: "Bfrtip",
     language: {
-      url: "http://localhost:3000/js/Spanish.json",
+      url: "http://localhost/sistema/js/Spanish.json",
     },
     buttons: [
       {
@@ -408,31 +409,28 @@ function editar(cedula, nombre, notas, sec) {
 
   agregar.innerHTML = ``;
 
-  fetch("/editar/" + token, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(form),
+  fetch("BackEnd/actions.php", {
+    method: "POST",
+    body: form,
   })
-    .then((e) => e.json())
+    .then((e) => e.text())
     .then((data) => {
-      let notasDB = data;
-      let notasObject = notasDB.notas;
-      let materiasDB = JSON.stringify(data);
-      let materiasObject = JSON.parse(materiasDB);
+      data = JSON.parse(data);
+
+      let notasObject = data;
+
+      let materiasObject = data;
 
       localStorage.setItem("DBnotas", JSON.stringify(notasObject));
 
-      materiasObject = materiasObject.materias;
       notasObject = Object.values(notasObject);
 
-      console.log(materiasObject[1].name.replaceAll("_", "."));
+      materiasObject = Object.entries(materiasObject);
 
       for (let i = 1; i < materiasObject.length; i++) {
         agregar.innerHTML += `
                 <tr>
-                <th scope="row">${materiasObject[i].name.replaceAll(
+                <th scope="row">${materiasObject[i][0].replaceAll(
                   "_",
                   " "
                 )}</th>
@@ -456,7 +454,7 @@ function editar(cedula, nombre, notas, sec) {
                 <td></td>
                 <td> 
                 <button type="button" class="btn btn-primary" onclick="editarN('${
-                  materiasObject[i].name
+                  materiasObject[i][0]
                 }',${JSON.parse(
           notasObject[0]
         )}, ${notas}, '${nombre}', ${cedula},${parseInt(
@@ -475,7 +473,7 @@ function editar(cedula, nombre, notas, sec) {
         retrieve: true,
         dom: "Bfrtip",
         language: {
-          url: "http://localhost:3000/js/Spanish.json",
+          url: "http://localhost/sistema/DataTables/Spanish.json",
         },
         buttons: [
           {
@@ -501,85 +499,10 @@ function editar(cedula, nombre, notas, sec) {
     });
 }
 
-function eliminarTodos() {
-  let año = localStorage.getItem("año");
-  let seccion = localStorage.getItem("seccion");
-
-  let añoDB = "";
-
-  if (año == 1) añoDB = "primer_año";
-  if (año == 2) añoDB = "segundo_año";
-  if (año == 3) añoDB = "tercer_año";
-  if (año == 4) añoDB = "cuarto_año";
-  if (año == 5) añoDB = "quinto_año";
-
-  let form = {
-    año: añoDB,
-    seccion,
-  };
-  fetch("/eliminarTodos/" + token, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(form),
-  })
-    .then((e) => e.json())
-    .then((data) => {
-      console.log(data);
-      if (!data.ok) {
-        succes.css("display", "none");
-        error.css("display", "block");
-        return error.html(data.mensaje);
-      }
-      error.css("display", "none");
-      succes.css("display", "block");
-      succes.html(data.mensaje);
-      setTimeout(() => {
-        succes.css("display", "none");
-      }, 5000);
-      seccionNav(año, seccion);
-    });
-}
-
-function eliminarAlumno(cedula) {
-  let año = localStorage.getItem("año");
-  let seccion = localStorage.getItem("seccion");
-
-  let form = {
-    cedula,
-  };
-  fetch("/eliminar/" + token, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(form),
-  })
-    .then((e) => e.json())
-    .then((data) => {
-      console.log(data);
-      if (!data.ok) {
-        succes.css("display", "none");
-        error.css("display", "block");
-        return error.html(data.mensaje);
-      }
-      error.css("display", "none");
-      succes.css("display", "block");
-      succes.html(data.mensaje);
-      setTimeout(() => {
-        succes.css("display", "none");
-      }, 5000);
-      seccionNav(año, seccion);
-    });
-}
-
 function editarN(materia, id, nota, nombre, cedula, p, s, t) {
   document.querySelector("#primer_lapso").value = p;
   document.querySelector("#segundo_lapso").value = s;
   document.querySelector("#tercer_lapso").value = t;
-
-  console.log(p, s, t);
 
   localStorage.setItem("materia", materia);
   localStorage.setItem("idMaterias", id);
@@ -595,11 +518,8 @@ function enviarNotas() {
   let nombre = localStorage.getItem("nombre");
   let cedula = localStorage.getItem("cedula");
   let id = localStorage.getItem("idMaterias");
-  let DBnotas = JSON.parse(localStorage.getItem("DBnotas"));
 
   let añoDB = "";
-
-  console.log(DBnotas.Castellano);
 
   if (año == 1) añoDB = "primer_año";
   if (año == 2) añoDB = "segundo_año";
@@ -617,12 +537,13 @@ function enviarNotas() {
   lapsos.segundo_lapso = $("#segundo_lapso").val();
   lapsos.tercer_lapso = $("#tercer_lapso").val();
 
-  let form = {
-    materia,
-    nota: id,
-    año: añoDB,
-    datos: JSON.stringify(lapsos),
-  };
+  let form = new FormData();
+
+  form.append("materia", materia);
+  form.append("nota", id);
+  form.append("año", añoDB);
+  form.append("datos", JSON.stringify(lapsos));
+  form.append("actions", "mofificar Notas");
 
   if (
     lapsos.primer_lapso == "" ||
@@ -654,16 +575,13 @@ function enviarNotas() {
 
   $("#btnAgragar").attr("data-dismiss", "modal");
   error.css("display", "none");
-  fetch("/notas/" + token, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(form),
+  fetch("BackEnd/actions.php", {
+    method: "POST",
+    body: form,
   })
-    .then((e) => e.json())
+    .then((e) => e.text())
     .then((data) => {
-      console.log(data);
+      data = JSON.parse(data);
       error.css("display", "none");
       succes.css("display", "block");
       succes.html("Las notas han sido actualizadas");
