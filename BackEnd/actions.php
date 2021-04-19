@@ -150,6 +150,78 @@ if(isset($_POST["actions"])){
                     echo $e->getMessage();
                 }
                 break;
+            case "Pasar Seccion":
+                try {
+                    //actulizamos las notas de una materia en espesifico
+
+                    $año = $_POST["año"];
+                    $seccion = $_POST["seccion"];
+                    $consulta = false;
+
+                    $SiguienteAño = "";
+
+                    if($año == "primer_año" ) $SiguienteAño = "segundo_año";
+                    if($año == "segundo_año" ) $SiguienteAño = "tercer_año";
+                    if($año == "tercer_año" ) $SiguienteAño = "cuarto_año";
+                    if($año == "cuarto_año" ) $SiguienteAño = "quinto_año";
+                    if($año == "quinto_año" ) $SiguienteAño = "Graduado";
+
+
+
+
+                    $sql = "SELECT * FROM alumnos WHERE ano = '$año' AND seccion='$seccion'";
+                    $resultado = $conn->query($sql)->fetch_all();
+    
+                    
+                    $i = count($resultado);
+
+                    
+                    foreach ($resultado as $key => $value) {
+                        $rp = 0;
+                        $cedula = $value[1];
+                        $notas = $value[14];
+
+                            $sql = "SELECT $año FROM notas WHERE id = '$value[14]' ";
+                            $resultado = $conn->query($sql)->fetch_object();
+                            $id = $resultado->primer_año;
+
+                            $sql = "SELECT * FROM $año WHERE id = '$id' ";
+                            $resultado = $conn->query($sql)->fetch_all();
+
+                            foreach ($resultado as $key => $value) {
+                                    for ($i=1; $i < count($value); $i++) { 
+                                        $value[$i] = json_decode($value[$i]);
+                                        if ($value[$i]->ap === 0) {
+                                            $rp++;
+                                        }
+                                    }
+                            }
+
+                            if($rp<3){
+
+                                $sql = "INSERT INTO $SiguienteAño (`id`) VALUES (NULL)";
+                                $resultado = $conn->query($sql);
+                                $id = mysqli_insert_id($conn);
+
+                                $sql = "UPDATE notas SET $SiguienteAño = '$id' WHERE id = '$notas'";
+                                $resultado = $conn->query($sql);
+
+                                $sql = "UPDATE alumnos SET ano = '$SiguienteAño' WHERE cedula = '$cedula'";
+                                $resultado = $conn->query($sql);
+
+                                $consulta = true;
+
+                            }
+
+                    }
+
+                    if($consulta) echo "Se a pasado la session de año";
+    
+                } catch (Exception $e) {
+                    echo $e->getMessage();
+                }
+
+                break;
         default:
             echo "por favor incie sesion o recargue la pagina";
             break;

@@ -256,9 +256,11 @@ let seccionNav = (año, seccion) => {
                             <div class="dropdown-menu">
                             <a class="dropdown-item" onclick="editar(${
                               alumnos[i][1]
-                            },'${alumnos[i][3]} ${alumnos[i][4]}',${
-              alumnos[i][14]
-            },'${seccion}')" href="#">Editar</a>
+                            },'${alumnos[i][3].trim()} ${alumnos[
+              i
+            ][4].trim()}',${alumnos[i][14]},'${seccion}',${
+              alumnos[i][16]
+            })" href="#">Editar</a>
                             <a class="dropdown-item" onclick="eliminarAlumno(${
                               alumnos[i][1]
                             })"  href="#">Eliminar</a>
@@ -285,8 +287,8 @@ function alumno() {
   if (año == 5) añoDB = "quinto_año";
 
   let form = new FormData();
-  form.append("nombre", $("#Nombre").val());
-  form.append("apellido", $("#Apellido").val());
+  form.append("nombre", $("#Nombre").val().trim());
+  form.append("apellido", $("#Apellido").val().trim());
   form.append("cedula", $("#Cedula").val());
   form.append("cedulaE", $("#cedulaEscolar").prop("checked"));
   form.append("sexo", $("#Sexo").val());
@@ -325,14 +327,15 @@ function alumno() {
     error.css({ display: "block" });
     return error.text("Por Favor Ingrese un cedula");
   }
-  $("#modal").attr("data-dismiss", "modal");
+  $("#modal").attr("data-bs-dismiss", "modal");
   fetch("BackEnd/actions.php", {
     method: "POST",
     body: form,
   })
     .then((e) => e.text())
     .then((data) => {
-      if (!data.ok) {
+      console.log(data);
+      if (data !== "Alumno agregado con exito") {
         succes.css("display", "none");
         error.css("display", "block");
         return error.html(data);
@@ -361,8 +364,10 @@ function format(input) {
   }
 }
 
-function editar(cedula, nombre, notas, sec) {
+function editar(cedula, nombre, notas, sec, representante) {
   $("#notasexport").DataTable().destroy();
+
+  console.log(representante);
 
   let agregar = document.getElementById("notasAlumnos");
 
@@ -393,7 +398,7 @@ function editar(cedula, nombre, notas, sec) {
     retrieve: true,
     dom: "Bfrtip",
     language: {
-      url: "http://localhost/sistema/js/Spanish.json",
+      url: "http://localhost/sistema/DataTables/Spanish.json",
     },
     buttons: [
       {
@@ -531,11 +536,20 @@ function enviarNotas() {
     primer_lapso: 0,
     segundo_lapso: 0,
     tercer_lapso: 0,
+    ap: 0,
   };
 
   lapsos.primer_lapso = $("#primer_lapso").val();
   lapsos.segundo_lapso = $("#segundo_lapso").val();
   lapsos.tercer_lapso = $("#tercer_lapso").val();
+
+  let aux =
+    (parseFloat(lapsos.primer_lapso) +
+      parseFloat(lapsos.segundo_lapso) +
+      parseFloat(lapsos.tercer_lapso)) /
+    3;
+
+  aux >= 10 ? (lapsos.ap = 1) : (lapsos.ap = 0);
 
   let form = new FormData();
 
@@ -589,5 +603,36 @@ function enviarNotas() {
       setTimeout(() => {
         succes.css("display", "none");
       }, 5000);
+    });
+}
+
+//pasar alumnos de seccion
+
+function PasarSeccion() {
+  console.log("object");
+  let año = localStorage.getItem("año");
+  let seccion = localStorage.getItem("seccion");
+
+  let añoDB = "";
+
+  if (año == 1) añoDB = "primer_año";
+  if (año == 2) añoDB = "segundo_año";
+  if (año == 3) añoDB = "tercer_año";
+  if (año == 4) añoDB = "cuarto_año";
+  if (año == 5) añoDB = "quinto_año";
+
+  let data = new FormData();
+
+  data.append("año", añoDB);
+  data.append("seccion", seccion);
+  data.append("actions", "Pasar Seccion");
+
+  fetch("BackEnd/actions.php", {
+    method: "POST",
+    body: data,
+  })
+    .then((r) => r.text())
+    .then((data) => {
+      console.log(data);
     });
 }

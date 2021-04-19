@@ -305,17 +305,17 @@ require "BackEnd/actions.php"
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Eliminar Todos</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Pasar Seccion de año</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-          <h4>Esta opcion eliminara todos los alumnos de esta seccion </h4>
+          <h4>Esta opcion Pasara a todos los alumnos al siguiente año </h4>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button data-dismiss="modal" type="button" onclick="eliminarTodos()" class="btn btn-warning">Confirmar</button>
+        <button data-dismiss="modal" type="button" onclick="PasarSeccion()" class="btn btn-warning">Confirmar</button>
       </div>
     </div>
   </div>
