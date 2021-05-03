@@ -146,7 +146,7 @@ function cerrar() {
 
 let seccionNav = (año, seccion) => {
   let agregar = document.querySelector("tbody");
-  let tableExport = document.querySelector("#tableExport");
+  let NotasAlumnos = document.querySelector("#NotasAlumnos");
 
   localStorage.setItem("año", año);
   localStorage.setItem("seccion", seccion);
@@ -188,6 +188,8 @@ let seccionNav = (año, seccion) => {
   form.append("seccion", seccion);
   form.append("actions", "Buscar Alumnos");
 
+  $("#exportAlumnosAreas").DataTable().destroy();
+
   fetch("BackEnd/actions.php", {
     method: "post",
     body: form,
@@ -195,8 +197,8 @@ let seccionNav = (año, seccion) => {
     .then((e) => e.text())
     .then((data) => {
       data = JSON.parse(data);
-
       agregar.innerHTML = "";
+      NotasAlumnos.innerHTML = "";
       let alumnos = data;
 
       for (let i = 0; i < alumnos.length; i++) {
@@ -224,9 +226,42 @@ let seccionNav = (año, seccion) => {
 
             let notaFinal = 0;
 
+            materias = Object.entries(notas);
             notas = Object.values(notas);
 
+            NotasAlumnos.innerHTML += `
+            <tr>
+            <td>${format(alumnos[i][1])}</td>
+            <td>${alumnos[i][3].toUpperCase()} ${alumnos[
+              i
+            ][4].toUpperCase()} </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+
+            </tr>`;
+
             for (let i = 1; i < notas.length; i++) {
+              NotasAlumnos.innerHTML += `
+              <tr>
+              <td></td>
+              <td></td>
+              <td>${materias[i][0].replaceAll("_", " ")}</td>
+              <td>${parseInt(JSON.parse(notas[i]).primer_lapso)}</td>
+              <td>${parseInt(JSON.parse(notas[i]).segundo_lapso)}</td>
+              <td>${parseInt(JSON.parse(notas[i]).tercer_lapso)}</td>
+              <td>${(
+                (parseInt(JSON.parse(notas[i]).primer_lapso) +
+                  parseInt(JSON.parse(notas[i]).segundo_lapso) +
+                  parseInt(JSON.parse(notas[i]).tercer_lapso)) /
+                3
+              ).toFixed(1)}</td>
+
+              </tr>`;
+
               primer_lapso += parseInt(JSON.parse(notas[i]).primer_lapso);
               segundo_lapso += parseInt(JSON.parse(notas[i]).segundo_lapso);
               tercer_lapso += parseInt(JSON.parse(notas[i]).tercer_lapso);
@@ -270,6 +305,25 @@ let seccionNav = (año, seccion) => {
                             </tr>`;
           });
       }
+    })
+    .then((e) => {
+      $("#exportAlumnosAreas").DataTable({
+        paging: false,
+        searching: false,
+        ordering: false,
+        dom: "Bfrtip",
+        language: {
+          url: "http://localhost/sistema/DataTables/Spanish.json",
+        },
+        buttons: [
+          {
+            extend: "excelHtml5",
+            ttileAttr: "Exportar a excel",
+            text: "Exportar a Excel",
+            title: `año  ${añoDB}   seccion: ${seccion}`,
+          },
+        ],
+      });
     });
 };
 
@@ -483,6 +537,7 @@ function editar(cedula, nombre, notas, sec, representante) {
         buttons: [
           {
             extend: "excelHtml5",
+            className: "export",
             ttileAttr: "Exportar a excel",
             text: "Exportar a Excel",
             title: `Alumno  ${nombre}   C.I: ${
@@ -636,3 +691,5 @@ function PasarSeccion() {
       console.log(data);
     });
 }
+
+function exportarAlumnosConMaterias() {}

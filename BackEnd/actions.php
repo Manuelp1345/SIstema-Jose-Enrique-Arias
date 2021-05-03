@@ -152,7 +152,7 @@ if(isset($_POST["actions"])){
                 break;
             case "Pasar Seccion":
                 try {
-                    //actulizamos las notas de una materia en espesifico
+                    //Pasar alumnos al siguiente año 
 
                     $año = $_POST["año"];
                     $seccion = $_POST["seccion"];

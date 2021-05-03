@@ -63,11 +63,14 @@ require "BackEnd/actions.php"
       <li class="nav-item">
         <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#eliminarTodos" >Pasar Año</button>
       </li>
+      <li class="nav-item">
+        <button class="btn btn-warning" data-bs-target="#eliminarTodos" >Pasar Año</button>
+      </li>
     </ul>
 
   <div class=" d-flex justify-content-center align-items-center flex-row">
     
-    <table class="table alumnos center">
+    <table  class="table alumnos center">
   <thead class="table-dark">
     <tr>
       <th scope="col">#</th>
@@ -87,25 +90,26 @@ require "BackEnd/actions.php"
 </table>
   </div>
 
-  <div class=" d-flex justify-content-center align-items-center flex-row">
+<div class=" d-flex justify-content-center align-items-center flex-row">
     
-    <table class="table alumnos center">
+<table id="exportAlumnosAreas" class="table alumnos center">
   <thead class="table-dark">
     <tr>
       <th scope="col">C.I</th>
       <th scope="col">Nombre</th>
-      <th scope="col">Apellido</th>
+      <th scope="col">Area</th>
       <th scope="col">Primer Momento</th>
       <th scope="col">Segundo Momento</th>
       <th scope="col">Tercer Momento</th>
       <th scope="col">Nota Final</th>
-      <th scope="col"></th>
-      <th scope="col"></th>
+
     </tr>
   </thead>
-  <tbody id="tablaExoport">
+  
+  <tbody id="NotasAlumnos">
 
   </tbody>
+
 </table>
   </div>
 
