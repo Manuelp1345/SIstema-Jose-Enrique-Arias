@@ -144,6 +144,8 @@ function cerrar() {
   localStorage.removeItem("token");
 }
 
+//muetras una año y seccion
+
 let seccionNav = (año, seccion) => {
   let agregar = document.querySelector("tbody");
 
@@ -274,6 +276,8 @@ let seccionNav = (año, seccion) => {
     });
 };
 
+//agregarmos un alumno
+
 function alumno() {
   let año = localStorage.getItem("año");
   let seccion = localStorage.getItem("seccion");
@@ -365,10 +369,10 @@ function format(input) {
   }
 }
 
+//motramos las notas de un alumno
+
 function editar(cedula, nombre, notas, sec, representante) {
   $("#notasexport").DataTable().destroy();
-
-  console.log(representante);
 
   let agregar = document.getElementById("notasAlumnos");
 
@@ -506,6 +510,8 @@ function editar(cedula, nombre, notas, sec, representante) {
     });
 }
 
+//editar las notas del alumno
+
 function editarN(materia, id, nota, nombre, cedula, p, s, t) {
   document.querySelector("#primer_lapso").value = p;
   document.querySelector("#segundo_lapso").value = s;
@@ -639,7 +645,7 @@ function PasarSeccion() {
     });
 }
 
-function exportarAlumnosConMaterias() {}
+//generar reporte de notas de los alumnos de una seccion
 
 function reporte() {
   let año = localStorage.getItem("año");
@@ -764,25 +770,4 @@ function test() {
           });
       }
     });
-}
-
-function startTable() {
-  $("#AreasAlumnos").DataTable({
-    paging: false,
-    ordering: false,
-    retrieve: true,
-    dom: "Bfrtip",
-    language: {
-      url: "http://localhost/sistema/DataTables/Spanish.json",
-    },
-    buttons: [
-      {
-        extend: "excelHtml5",
-        className: "export",
-        ttileAttr: "Exportar a excel",
-        text: "Exportar a Excel",
-        title: `Reporte`,
-      },
-    ],
-  });
 }
