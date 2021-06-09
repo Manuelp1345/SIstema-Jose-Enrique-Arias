@@ -88,30 +88,11 @@ require "BackEnd/actions.php"
 
   </tbody>
 </table>
+
+
   </div>
+  <button class="btn btn-success" onclick="reporte()" >Reporte</button>
 
-<div class=" d-flex justify-content-center align-items-center flex-row">
-    
-<table id="exportAlumnosAreas" class="table alumnos center">
-  <thead class="table-dark">
-    <tr>
-      <th scope="col">C.I</th>
-      <th scope="col">Nombre</th>
-      <th scope="col">Area</th>
-      <th scope="col">Primer Momento</th>
-      <th scope="col">Segundo Momento</th>
-      <th scope="col">Tercer Momento</th>
-      <th scope="col">Nota Final</th>
-
-    </tr>
-  </thead>
-  
-  <tbody id="NotasAlumnos">
-
-  </tbody>
-
-</table>
-  </div>
 
   </div>
 

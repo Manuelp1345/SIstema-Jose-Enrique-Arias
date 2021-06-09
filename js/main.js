@@ -146,7 +146,6 @@ function cerrar() {
 
 let seccionNav = (año, seccion) => {
   let agregar = document.querySelector("tbody");
-  let NotasAlumnos = document.querySelector("#NotasAlumnos");
 
   localStorage.setItem("año", año);
   localStorage.setItem("seccion", seccion);
@@ -198,7 +197,6 @@ let seccionNav = (año, seccion) => {
     .then((data) => {
       data = JSON.parse(data);
       agregar.innerHTML = "";
-      NotasAlumnos.innerHTML = "";
       let alumnos = data;
 
       for (let i = 0; i < alumnos.length; i++) {
@@ -229,39 +227,7 @@ let seccionNav = (año, seccion) => {
             materias = Object.entries(notas);
             notas = Object.values(notas);
 
-            NotasAlumnos.innerHTML += `
-            <tr>
-            <td>${format(alumnos[i][1])}</td>
-            <td>${alumnos[i][3].toUpperCase()} ${alumnos[
-              i
-            ][4].toUpperCase()} </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-
-
-            </tr>`;
-
             for (let i = 1; i < notas.length; i++) {
-              NotasAlumnos.innerHTML += `
-              <tr>
-              <td></td>
-              <td></td>
-              <td>${materias[i][0].replaceAll("_", " ")}</td>
-              <td>${parseInt(JSON.parse(notas[i]).primer_lapso)}</td>
-              <td>${parseInt(JSON.parse(notas[i]).segundo_lapso)}</td>
-              <td>${parseInt(JSON.parse(notas[i]).tercer_lapso)}</td>
-              <td>${(
-                (parseInt(JSON.parse(notas[i]).primer_lapso) +
-                  parseInt(JSON.parse(notas[i]).segundo_lapso) +
-                  parseInt(JSON.parse(notas[i]).tercer_lapso)) /
-                3
-              ).toFixed(1)}</td>
-
-              </tr>`;
-
               primer_lapso += parseInt(JSON.parse(notas[i]).primer_lapso);
               segundo_lapso += parseInt(JSON.parse(notas[i]).segundo_lapso);
               tercer_lapso += parseInt(JSON.parse(notas[i]).tercer_lapso);
@@ -305,25 +271,6 @@ let seccionNav = (año, seccion) => {
                             </tr>`;
           });
       }
-    })
-    .then((e) => {
-      $("#exportAlumnosAreas").DataTable({
-        paging: false,
-        searching: false,
-        ordering: false,
-        dom: "Bfrtip",
-        language: {
-          url: "http://localhost/sistema/DataTables/Spanish.json",
-        },
-        buttons: [
-          {
-            extend: "excelHtml5",
-            ttileAttr: "Exportar a excel",
-            text: "Exportar a Excel",
-            title: `año  ${añoDB}   seccion: ${seccion}`,
-          },
-        ],
-      });
     });
 };
 
@@ -693,3 +640,149 @@ function PasarSeccion() {
 }
 
 function exportarAlumnosConMaterias() {}
+
+function reporte() {
+  let año = localStorage.getItem("año");
+  let seccion = localStorage.getItem("seccion");
+  window.open(
+    `/sistema/reporte.php?anio=${año}&seccion=${seccion}`,
+    "",
+    "width=1024,height=720,toolbar=yes"
+  );
+}
+function test() {
+  let data = window.location.search.split("&", 3);
+  let año = data[0];
+  let seccion = data[1];
+  año = parseInt(año.split("=")[1]);
+  seccion = seccion.split("=")[1];
+
+  let agregar = document.querySelector("#NotasAlumnos");
+
+  let añoDB = 0;
+
+  if (año == 1) añoDB = "primer_año";
+  if (año == 2) añoDB = "segundo_año";
+  if (año == 3) añoDB = "tercer_año";
+  if (año == 4) añoDB = "cuarto_año";
+  if (año == 5) añoDB = "quinto_año";
+
+  let form = new FormData();
+
+  $("#AreasAlumnos").DataTable().destroy();
+
+  form.append("año", añoDB);
+  form.append("seccion", seccion);
+  form.append("actions", "Buscar Alumnos");
+
+  fetch("BackEnd/actions.php", {
+    method: "post",
+    body: form,
+  })
+    .then((e) => e.text())
+    .then((data) => {
+      data = JSON.parse(data);
+      agregar.innerHTML = "";
+      let alumnos = data;
+
+      for (let i = 0; i < alumnos.length; i++) {
+        let form2 = new FormData();
+
+        form2.append("año", añoDB);
+        form2.append("notas", alumnos[i][14]);
+        form2.append("actions", "Editar");
+
+        fetch("BackEnd/actions.php", {
+          method: "post",
+          body: form2,
+        })
+          .then((e) => e.text())
+          .then((data) => {
+            data = JSON.parse(data);
+
+            let notas = data;
+
+            materias = Object.entries(notas);
+            notas = Object.values(notas);
+
+            agregar.innerHTML += `
+                            <tr>
+                            <td>${format(alumnos[i][1])}</td>
+                            <td>${alumnos[i][3].toUpperCase()} ${alumnos[
+              i
+            ][4].toUpperCase()} </td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            </tr>`;
+
+            for (let i = 1; i < notas.length; i++) {
+              agregar.innerHTML += `
+                            <tr>
+                            <td></td>
+                            <td></td>
+                            <td>${materias[i][0].replaceAll("_", " ")}</td>
+                            <td class="text-center">${parseInt(
+                              JSON.parse(notas[i]).primer_lapso
+                            )}</td>
+                            <td class="text-center">${parseInt(
+                              JSON.parse(notas[i]).segundo_lapso
+                            )}</td>
+                            <td class="text-center">${parseInt(
+                              JSON.parse(notas[i]).tercer_lapso
+                            )}</td>
+                            <td class="text-center">${(
+                              (parseInt(JSON.parse(notas[i]).primer_lapso) +
+                                parseInt(JSON.parse(notas[i]).segundo_lapso) +
+                                parseInt(JSON.parse(notas[i]).tercer_lapso)) /
+                              3
+                            ).toFixed(1)}</td>
+                            </tr>`;
+            }
+            if (i + 1 == alumnos.length) {
+              $("#AreasAlumnos").DataTable({
+                paging: false,
+                ordering: false,
+                retrieve: true,
+                dom: "Bfrtip",
+                language: {
+                  url: "http://localhost/sistema/DataTables/Spanish.json",
+                },
+                buttons: [
+                  {
+                    extend: "excelHtml5",
+                    className: "export",
+                    ttileAttr: "Exportar a excel",
+                    text: "Exportar a Excel",
+                    title: `Reporte`,
+                  },
+                ],
+              });
+            }
+          });
+      }
+    });
+}
+
+function startTable() {
+  $("#AreasAlumnos").DataTable({
+    paging: false,
+    ordering: false,
+    retrieve: true,
+    dom: "Bfrtip",
+    language: {
+      url: "http://localhost/sistema/DataTables/Spanish.json",
+    },
+    buttons: [
+      {
+        extend: "excelHtml5",
+        className: "export",
+        ttileAttr: "Exportar a excel",
+        text: "Exportar a Excel",
+        title: `Reporte`,
+      },
+    ],
+  });
+}
