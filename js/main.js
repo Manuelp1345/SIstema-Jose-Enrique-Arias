@@ -146,6 +146,12 @@ function cerrar() {
 
 //muetras una año y seccion
 
+document.querySelector("#back").addEventListener("click", () => {
+  const año = localStorage.getItem("año"),
+    seccion = localStorage.getItem("seccion");
+  seccionNav(año, seccion);
+});
+
 let seccionNav = (año, seccion) => {
   let agregar = document.querySelector("tbody");
 
@@ -264,9 +270,6 @@ let seccionNav = (año, seccion) => {
             ][4].trim()}',${alumnos[i][14]},'${seccion}',${
               alumnos[i][16]
             })" href="#">Editar</a>
-                            <a class="dropdown-item" onclick="eliminarAlumno(${
-                              alumnos[i][1]
-                            })"  href="#">Eliminar</a>
                             </div>
                             </div>
                             </td>
@@ -374,12 +377,22 @@ function format(input) {
 function editar(cedula, nombre, notas, sec, representante) {
   $("#notasexport").DataTable().destroy();
 
+  let año = localStorage.getItem("año");
+
   let agregar = document.getElementById("notasAlumnos");
 
   contenido.css("display", "none");
   tablaAlumno.css("display", "block");
 
-  let año = localStorage.getItem("año");
+  const Infoalumno = document.querySelector("#InfoAlumno"),
+    InfoCI = document.querySelector("#InfoCI"),
+    InfoAnio = document.querySelector("#InfoAnio"),
+    InfoSec = document.querySelector("#InfoSec");
+
+  Infoalumno.innerHTML = `Alumno: ${nombre.toUpperCase()}`;
+  InfoCI.innerHTML = `C.i: ${format(cedula)}`;
+  InfoAnio.innerHTML = `Año: ${año}`;
+  InfoSec.innerHTML = `Seccion: ${sec}`;
 
   let añoDB = "";
 
@@ -498,7 +511,10 @@ function editar(cedula, nombre, notas, sec, representante) {
               columns: ":visible",
             },
           },
-          "colvis",
+          {
+            extend: "colvis",
+            text: "Visor de columnas",
+          },
         ],
         columnDefs: [
           {
@@ -647,21 +663,28 @@ function PasarSeccion() {
 
 //generar reporte de notas de los alumnos de una seccion
 
-function reporte() {
-  let año = localStorage.getItem("año");
-  let seccion = localStorage.getItem("seccion");
-  window.open(
-    `/sistema/reporte.php?anio=${año}&seccion=${seccion}`,
-    "",
-    "width=1024,height=720,toolbar=yes"
-  );
+function reporte(type) {
+  switch (type) {
+    case "notas":
+      window.open(
+        `/sistema/reporte.php?query=${type}`,
+        "",
+        "width=1024,height=720,toolbar=yes"
+      );
+      break;
+
+    case "datos":
+      window.open(
+        `/sistema/reporte.php?query=${type}`,
+        "",
+        "width=1024,height=720,toolbar=yes"
+      );
+      break;
+  }
 }
 function test() {
-  let data = window.location.search.split("&", 3);
-  let año = data[0];
-  let seccion = data[1];
-  año = parseInt(año.split("=")[1]);
-  seccion = seccion.split("=")[1];
+  let año = localStorage.getItem("año");
+  let seccion = localStorage.getItem("seccion");
 
   let agregar = document.querySelector("#NotasAlumnos");
 
@@ -751,6 +774,7 @@ function test() {
               $("#AreasAlumnos").DataTable({
                 paging: false,
                 ordering: false,
+                searching: false,
                 retrieve: true,
                 dom: "Bfrtip",
                 language: {
@@ -762,7 +786,7 @@ function test() {
                     className: "export",
                     ttileAttr: "Exportar a excel",
                     text: "Exportar a Excel",
-                    title: `Reporte`,
+                    title: `Reporte de notas- año:${añoDB} seccion:${seccion} `,
                   },
                 ],
               });

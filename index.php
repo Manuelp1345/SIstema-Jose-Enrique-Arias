@@ -61,10 +61,13 @@ require "BackEnd/actions.php"
         <button class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#agregarAlumno">Agregar Alumno</button>
       </li>
       <li class="nav-item">
-        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#eliminarTodos" >Pasar Año</button>
+      <button class="btn btn-success" onclick="reporte('notas')" >Reporte Grupal (Notas)</button>
       </li>
       <li class="nav-item">
-        <button class="btn btn-warning" data-bs-target="#eliminarTodos" >Pasar Año</button>
+      <button class="btn btn-success" onclick="reporte('datos')" >Reporte Grupal (Datos)</button>
+      </li>
+      <li class="nav-item">
+        <button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#eliminarTodos" >Pasar Año</button>
       </li>
     </ul>
 
@@ -91,8 +94,6 @@ require "BackEnd/actions.php"
 
 
   </div>
-  <button class="btn btn-success" onclick="reporte()" >Reporte</button>
-
 
   </div>
 
@@ -100,40 +101,21 @@ require "BackEnd/actions.php"
 </div>
 
 <div class="alumno">
-  <div class="card">
+  <div class="card p-2">
       <div class="alert alert-danger" role="alert"></div>
       <div class="alert alert-success" role="alert"></div>
-
-<div class=" table-responsive">
-  <table id="Alumnoexport" class="display py-3 my-3 col-auto table alumno center">
-  <thead class="table-dark">
-    <tr>
-      <th scope="col">Cedula</th>
-      <th scope="col">Nombre y Apellido</th>
-      <th scope="col">Sexo</th>
-      <th scope="col">Fecha de Nacimiento</th>
-      <th scope="col">Edad</th>
-      <th scope="col">Lugar de Nacimiento</th>
-      <th scope="col">Telefono</th>
-      <th scope="col">Direccion</th>
-      <th scope="col">Correo</th>
-    </tr>
-  </thead>
-  <tbody id="DatosAlumnos">
-    <tr>
-      <td>27.919.047</td>
-      <td>Manuel Alejandro Puente Puente</td>
-      <td>Masculino</td>
-      <td>30/12/2000</td>
-      <td>20</td>
-      <td>Merida,merida Hula centro</td>
-      <td>04247747455</td>
-      <td>Merida,Ejido alfredo lara calle 1 casa #19</td>
-      <td>manuelp1345@gmail.com</td>
-    </tr>
-  </tbody>
-</table>
+      
+<div class=" d-flex flex-row justify-content-between">
+<button id="back" class="btn btn-primary mt-4  col-3" >Volver</button>
+      <button class="btn btn-primary mt-4 col-3" >Datos del alumno</button>
 </div>
+      
+      <div class="mt-4 d-flex flex-row ">
+          <h4 id="InfoAlumno" class="col-4" ></h4>
+          <h4 id="InfoCI" class="col-4" ></h4>
+          <h4 id="InfoAnio" class="col-2" ></h4>
+          <h4 id="InfoSec" class="col-2" ></h4>
+      </div>
 
 <br><br>
 

@@ -34,12 +34,14 @@ h2 {
 
 .wrapper {
   display: flex;
-  align-items: stretch;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 #sidebar {
   min-width: 170px;
-  max-width: 170px;
+  max-width: 750px;
 }
 
 #sidebar.active {
@@ -75,12 +77,12 @@ a:focus {
 
 #sidebar .sidebar-header {
   padding: 20px;
-  background: #007bff;
+  background: #0d6efd;
 }
 
 #sidebar ul.components {
   padding: 5px 0;
-  border-bottom: 1px solid #007bff;
+  border-bottom: 1px solid #0d6efd;
 }
 
 #sidebar ul p {
@@ -96,7 +98,7 @@ a:focus {
 }
 
 #sidebar ul li a:hover {
-  color: #007bff;
+  color: #0d6efd;
   background: #fff;
 }
 
@@ -121,7 +123,7 @@ ul ul a {
 
 .sesion:hover {
   background: white;
-  color: #007bff;
+  color: #0d6efd;
 }
 
 .form-btn {
@@ -191,7 +193,7 @@ ul ul a {
 
 .logo {
   /*     width: 150px; */
-  height: 120px;
+  height: 150px;
   text-align: center;
   margin-bottom: 1rem;
   margin-left: 0.6rem;
