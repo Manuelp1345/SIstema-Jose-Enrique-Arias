@@ -222,6 +222,34 @@ if(isset($_POST["actions"])){
                 }
 
                 break;
+            case 'datosAlumno':
+
+                // buscamos todos los alumnos correspondientes al año y seccion
+            try {
+
+                $data = new stdClass();
+
+                $ano = $_POST["año"];
+                $seccion = $_POST["cedula"];
+                $sql = "SELECT * FROM alumnos WHERE ano='$ano' AND cedula='$seccion'";
+                $resultado = $conn->query($sql)->fetch_object();
+                
+                $data->alumno=$resultado;
+
+                $representante = $resultado->Representate;
+
+                $sql2 = "SELECT * FROM representante WHERE id='$representante'";
+                $resultado2 = $conn->query($sql2)->fetch_object();
+
+                $data->representante=$resultado2;
+
+                echo json_encode($data);
+
+
+            } catch (Exception $e) {
+                echo $e->getMessage();
+            }
+            break; 
         default:
             echo "por favor incie sesion o recargue la pagina";
             break;

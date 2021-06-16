@@ -102,8 +102,7 @@ a:focus {
   background: #fff;
 }
 
-#sidebar ul li.active > a,
-a[aria-expanded="true"] {
+#sidebar ul li.active > a {
   color: #fff;
   background: #409cff;
 }
@@ -197,4 +196,9 @@ ul ul a {
   text-align: center;
   margin-bottom: 1rem;
   margin-left: 0.6rem;
+}
+
+.Menu {
+  top: -5px !important;
+  left: -5px !important;
 }

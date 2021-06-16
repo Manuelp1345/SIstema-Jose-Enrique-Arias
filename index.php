@@ -34,7 +34,7 @@ require "BackEnd/actions.php"
     <div class="col-sm-6">
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">Acerca Del Sistema</h5>
+          <h5 class="card-title ">Acerca Del Sistema</h5>
           <p class="card-text">
             El sistema de notas esta hecho en una de las tecnologias mas usadas a nivel mundial 
             para el desarrolo de aplicaciones web
@@ -49,7 +49,7 @@ require "BackEnd/actions.php"
 </div>
 
 
-  <div class="menu">
+  <div class="menu animate__animated animate__fadeInLeft animate__faster">
       <div class="card text-center">
       <div class="card-body">
         <h5 class="card-title"></h5>
@@ -100,14 +100,14 @@ require "BackEnd/actions.php"
 
 </div>
 
-<div class="alumno">
+<div class="alumno animate__animated animate__fadeInLeft animate__faster">
   <div class="card p-2">
       <div class="alert alert-danger" role="alert"></div>
       <div class="alert alert-success" role="alert"></div>
       
 <div class=" d-flex flex-row justify-content-between">
 <button id="back" class="btn btn-primary mt-4  col-3" >Volver</button>
-      <button class="btn btn-primary mt-4 col-3" >Datos del alumno</button>
+      <button class="btn btn-primary mt-4 col-3" onclick="reporte('datosAlumno')" >Datos del alumno</button>
 </div>
       
       <div class="mt-4 d-flex flex-row ">
@@ -149,9 +149,7 @@ require "BackEnd/actions.php"
     <div class="modal-content">
       <div class="modal-header">
         <p>Modifique unicamente los campos que desea cambiar</p>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form>
@@ -172,7 +170,7 @@ require "BackEnd/actions.php"
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-secondary"  data-bs-dismiss="modal">Cerrar</button>
         <button id="btnAgragar" onclick="enviarNotas()" type="submit" class="btn btn-primary">Agregar</button>
       </div>
     </div>
@@ -185,9 +183,7 @@ require "BackEnd/actions.php"
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Agregar Alumno</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form>
@@ -273,16 +269,14 @@ require "BackEnd/actions.php"
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Pasar Seccion de año</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
           <h4>Esta opcion Pasara a todos los alumnos al siguiente año </h4>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-        <button data-dismiss="modal" type="button" onclick="PasarSeccion()" class="btn btn-warning">Confirmar</button>
+        <button type="button" class="btn btn-secondary"  data-bs-dismiss="modal">Cerrar</button>
+        <button  data-bs-dismiss="modal" type="button" onclick="PasarSeccion()" class="btn btn-warning">Confirmar</button>
       </div>
     </div>
   </div>

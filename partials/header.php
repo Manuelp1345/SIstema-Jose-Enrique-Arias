@@ -8,15 +8,17 @@
     	
     <link rel="icon" href="img/logo.png" type="image/png" />
     <link rel="stylesheet" href="css/bootstrap.css">
-    <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
+    <link rel="stylesheet" href="css/animate.min.css">
+
+    <link rel="stylesheet" href="css/main.css">
 
 </head>
 
 <body class=" col-12">
 
 
-<button class="btn btn-primary position-absolute" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+<button class="Menu btn btn-primary position-absolute" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
 <span class=" fs-4 "> ≡ </span>Menu
 </button>
 
@@ -41,22 +43,22 @@
                     <a href="#primer-año" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Primer Año</a>
                     <ul class="collapse list-unstyled" id="primer-año">
                         <li>
-                            <a onclick="seccionNav(1,'A')" >Seccion "A"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(1,'A')" >Seccion "A"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(1,'B')" >Seccion "B"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(1,'B')" >Seccion "B"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(1,'C')" >Seccion "C"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(1,'C')" >Seccion "C"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(1,'D')" >Seccion "D"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(1,'D')" >Seccion "D"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(1,'E')" >Seccion "E"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(1,'E')" >Seccion "E"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(1,'F')" >Seccion "F"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(1,'F')" >Seccion "F"</a>
                         </li>
                     </ul>
                 </li>
@@ -64,22 +66,22 @@
                     <a href="#segundo-año" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Segundo Año</a>
                     <ul class="collapse list-unstyled" id="segundo-año">
                         <li>
-                            <a onclick="seccionNav(2,'A')" >Seccion "A"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(2,'A')" >Seccion "A"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(2,'B')" >Seccion "B"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(2,'B')" >Seccion "B"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(2,'C')" >Seccion "C"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(2,'C')" >Seccion "C"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(2,'D')" >Seccion "D"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(2,'D')" >Seccion "D"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(2,'E')" >Seccion "E"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(2,'E')" >Seccion "E"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(2,'F')" >Seccion "F"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(2,'F')" >Seccion "F"</a>
                         </li>
                     </ul>
                 </li>
@@ -87,22 +89,22 @@
                     <a href="#tercer-año" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Tercer Año</a>
                     <ul class="collapse list-unstyled" id="tercer-año">
                         <li>
-                            <a onclick="seccionNav(3,'A')" >Seccion "A"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(3,'A')" >Seccion "A"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(3,'B')" >Seccion "B"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(3,'B')" >Seccion "B"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(3,'C')" >Seccion "C"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(3,'C')" >Seccion "C"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(3,'D')" >Seccion "D"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(3,'D')" >Seccion "D"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(3,'E')" >Seccion "E"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(3,'E')" >Seccion "E"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(3,'F')" >Seccion "F"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(3,'F')" >Seccion "F"</a>
                         </li>
                     </ul>
                 </li>
@@ -110,22 +112,22 @@
                     <a href="#Cuarto-año" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Cuarto Año</a>
                     <ul class="collapse list-unstyled" id="Cuarto-año">
                         <li>
-                            <a onclick="seccionNav(4,'A')" >Seccion "A"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(4,'A')" >Seccion "A"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(4,'B')" >Seccion "B"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(4,'B')" >Seccion "B"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(4,'C')" >Seccion "C"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(4,'C')" >Seccion "C"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(4,'D')" >Seccion "D"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(4,'D')" >Seccion "D"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(4,'E')" >Seccion "E"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(4,'E')" >Seccion "E"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(4,'F')" >Seccion "F"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(4,'F')" >Seccion "F"</a>
                         </li>
                     </ul>
                 </li>
@@ -133,22 +135,22 @@
                     <a href="#Quinto-año" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Quinto Año</a>
                     <ul class="collapse list-unstyled" id="Quinto-año">
                         <li>
-                            <a onclick="seccionNav(5,'A')" >Seccion "A"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(5,'A')" >Seccion "A"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(5,'B')" >Seccion "B"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(5,'B')" >Seccion "B"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(5,'C')" >Seccion "C"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(5,'C')" >Seccion "C"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(5,'D')" >Seccion "D"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(5,'D')" >Seccion "D"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(5,'E')" >Seccion "E"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(5,'E')" >Seccion "E"</a>
                         </li>
                         <li>
-                            <a onclick="seccionNav(5,'F')" >Seccion "F"</a>
+                            <a  data-bs-dismiss="offcanvas" aria-label="Close" onclick="seccionNav(5,'F')" >Seccion "F"</a>
                         </li>
                     </ul>
                 </li>

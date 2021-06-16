@@ -55,7 +55,7 @@
 
 
 <div class=" table-responsive">
-  <table id="Alumnoexport" class="display py-3 my-3 col-auto table alumno center">
+  <table id="Alumnoexport" class="d-none display py-3 my-3 col-auto table">
   <thead class="table-dark">
     <tr>
       <th scope="col">Cedula</th>
@@ -70,17 +70,27 @@
     </tr>
   </thead>
   <tbody id="DatosAlumnos">
+
+  </tbody>
+</table>
+</div>
+
+<div class=" table-responsive">
+  <table id="Representatexport" class="d-none display py-3 my-3 col-auto table ">
+    <h3 id="rep" class="mt-4 d-none " >Representante</h3>
+  <thead class="table-dark">
     <tr>
-      <td>27.919.047</td>
-      <td>Manuel Alejandro Puente Puente</td>
-      <td>Masculino</td>
-      <td>30/12/2000</td>
-      <td>20</td>
-      <td>Merida,merida Hula centro</td>
-      <td>04247747455</td>
-      <td>Merida,Ejido alfredo lara calle 1 casa #19</td>
-      <td>manuelp1345@gmail.com</td>
+      <th scope="col">Cedula</th>
+      <th scope="col">Nombre y Apellido</th>
+      <th scope="col">Direccion</th>
+      <th scope="col">Correo</th>
+      <th scope="col">Filiacion</th>
+      <th scope="col">Telefono</th>
+      <th scope="col">Sexo</th>
     </tr>
+  </thead>
+  <tbody id="DatosRepresentante">
+
   </tbody>
 </table>
 </div>
@@ -102,6 +112,10 @@
   const añoInfo = document.querySelector("#añoinfo")
   const seccionInfo =document.querySelector("#seccioninfo")
   const alumnos = document.querySelector("#Alumnoexport")
+  const representante = document.querySelector("#Representatexport")
+  const rep = document.querySelector("#rep")
+
+
   
   añoInfo.innerHTML += localStorage.getItem("año")
   seccionInfo.innerHTML += localStorage.getItem("seccion")
@@ -115,9 +129,18 @@
         tabla.classList.toggle("d-block")
         test()
       }
+      else if(query === "datosAlumno"){
+        alumnos.classList.toggle("d-none")
+        representante.classList.toggle("d-none")
+        rep.classList.toggle("d-none")
+
+
+        datosAlumno()
+
+      }
       else{
         alumnos.classList.toggle("d-block")
-        console.log("datos")
+
       }
         
     }

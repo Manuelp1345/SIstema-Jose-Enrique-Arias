@@ -162,6 +162,14 @@ let seccionNav = (año, seccion) => {
   tablaAlumno.css("display", "none");
   contenido.css("display", "block");
 
+  if (año == 1) Menu = document.querySelector("#primer-año");
+  if (año == 2) Menu = document.querySelector("#segundo-año");
+  if (año == 3) Menu = document.querySelector("#tercer-año");
+  if (año == 4) Menu = document.querySelector("#Cuarto-año");
+  if (año == 5) Menu = document.querySelector("#Quinto-año");
+
+  Menu.classList.toggle("show");
+
   let titulo = $(".menu h5");
   let añoDB = 0;
 
@@ -379,6 +387,8 @@ function editar(cedula, nombre, notas, sec, representante) {
 
   let año = localStorage.getItem("año");
 
+  localStorage.setItem("cedula", cedula);
+
   let agregar = document.getElementById("notasAlumnos");
 
   contenido.css("display", "none");
@@ -408,27 +418,6 @@ function editar(cedula, nombre, notas, sec, representante) {
   form.append("año", añoDB);
   form.append("notas", notas);
   form.append("actions", "Editar");
-
-  $("#Alumnoexport").DataTable({
-    paging: false,
-    searching: false,
-    ordering: false,
-    retrieve: true,
-    dom: "Bfrtip",
-    language: {
-      url: "http://localhost/sistema/DataTables/Spanish.json",
-    },
-    buttons: [
-      {
-        extend: "excelHtml5",
-        ttileAttr: "Exportar a excel",
-        text: "Exportar a Excel",
-        title: `Alumno  ${nombre}   C.I: ${
-          format(cedula) + " "
-        }  Año: ${año}  Seccion:  ${sec}`,
-      },
-    ],
-  });
 
   agregar.innerHTML = ``;
 
@@ -680,6 +669,13 @@ function reporte(type) {
         "width=1024,height=720,toolbar=yes"
       );
       break;
+    case "datosAlumno":
+      window.open(
+        `/sistema/reporte.php?query=${type}`,
+        "",
+        "width=1024,height=720,toolbar=yes"
+      );
+      break;
   }
 }
 function test() {
@@ -793,5 +789,107 @@ function test() {
             }
           });
       }
+    });
+}
+
+function datosAlumno() {
+  const año = localStorage.getItem("año"),
+    cedula = localStorage.getItem("cedula");
+
+  let añoDB = "";
+
+  if (año == 1) añoDB = "primer_año";
+  if (año == 2) añoDB = "segundo_año";
+  if (año == 3) añoDB = "tercer_año";
+  if (año == 4) añoDB = "cuarto_año";
+  if (año == 5) añoDB = "quinto_año";
+
+  let form = new FormData();
+
+  form.append("cedula", cedula);
+  form.append("año", añoDB);
+  form.append("actions", "datosAlumno");
+
+  const tabla = document.querySelector("#DatosAlumnos"),
+    TRepresentante = document.querySelector("#DatosRepresentante");
+
+  fetch("BackEnd/actions.php", {
+    method: "post",
+    body: form,
+  })
+    .then((e) => e.text())
+    .then((data) => {
+      data = JSON.parse(data);
+      const alumno = data.alumno,
+        representante = data.representante;
+
+      tabla.innerHTML = `
+        <tr>
+          <td>${format(alumno.cedula)}</td>
+          <td>${alumno.nombre.toUpperCase()} ${alumno.apellido.toUpperCase()}</td>
+          <td>${alumno.sexo}</td>
+          <td>${alumno.fecha_de_nacimiento}</td>
+          <td>${alumno.edad}</td>
+          <td>${alumno.lugar_de_nacimiento}</td>
+          <td>${alumno.telefono}</td>
+          <td>${alumno.direccion}</td>
+          <td>${alumno.correo}</td>
+
+        </tr>`;
+
+      TRepresentante.innerHTML = `
+        <tr>
+        <td> ${format(representante.cedula)} </td>
+        <td> ${
+          representante.nombre.toUpperCase() +
+          representante.apellido.toUpperCase()
+        } </td>
+        <td> ${representante.direccion} </td>
+        <td> ${representante.correo} </td>
+        <td> ${representante.filiacion} </td>
+        <td> ${representante.telefono} </td>
+        <td> ${representante.sexo} </td>
+        </tr>
+        `;
+
+      $("#Alumnoexport").DataTable({
+        paging: false,
+        ordering: false,
+        searching: false,
+        retrieve: true,
+        dom: "Bfrtip",
+        language: {
+          url: "http://localhost/sistema/DataTables/Spanish.json",
+        },
+        buttons: [
+          {
+            extend: "excelHtml5",
+            className: "export",
+            ttileAttr: "Exportar a excel",
+            text: "Exportar a Excel",
+            title: `Reporte de notas} `,
+          },
+        ],
+      });
+      $("#Representatexport").DataTable({
+        paging: false,
+        ordering: false,
+        searching: false,
+        retrieve: true,
+        dom: "Bfrtip",
+        language: {
+          url: "http://localhost/sistema/DataTables/Spanish.json",
+        },
+        buttons: [
+          {
+            extend: "excelHtml5",
+            className: "export",
+            ttileAttr: "Exportar a excel",
+            text: "Exportar a Excel",
+            title: `Reporte de notas} `,
+          },
+        ],
+      });
+      console.log(representante);
     });
 }
