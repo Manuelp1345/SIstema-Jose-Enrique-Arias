@@ -142,6 +142,7 @@ require "BackEnd/actions.php"
 </div>
 
 
+</div>
 
 
 <div class="modal fade" id="editarnotas" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -171,12 +172,12 @@ require "BackEnd/actions.php"
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary"  data-bs-dismiss="modal">Cerrar</button>
-        <button id="btnAgragar" onclick="enviarNotas()" type="submit" class="btn btn-primary">Agregar</button>
+        <button id="btnAgragar" onclick="enviarNotas()" data-bs-dismiss="modal" type="submit" class="btn btn-primary">Agregar</button>
       </div>
     </div>
   </div>
 </div>
-</div>
+
 
 <div class="modal fade" id="agregarAlumno" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
