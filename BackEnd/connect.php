@@ -1,7 +1,12 @@
 <?php 
 error_reporting(E_ERROR);
 
-$conn = new mysqli("localhost","root","","notas");
+$Host = "localhost";
+$Usuario= "root" ;
+$Contraseña = "";
+$base_de_datos = "notas";
+
+$conn = new mysqli($Host,$Usuario,$Contraseña,$base_de_datos);
 
 /* Comprueba la conexión */
 if ($conn->connect_errno) {
