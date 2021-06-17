@@ -29,7 +29,7 @@ Estas instrucciones le proporcionarán una copia del proyecto en funcionamiento 
 
 Debes descargar e instalar Xampp, es un paquete de software libre, que consiste principalmente en el sistema de gestión de bases de datos MySQL, el servidor web Apache y los intérpretes para lenguajes de script PHP y Perl.
 
-Xampp no ayudara a montar un servidor local en nuestro equipo para poder utilizar el sismte
+Xampp nos ayudara a montar un servidor local en nuestro equipo para poder utilizar el sistema
 
 ```
 https://www.apachefriends.org/es/download.html#
