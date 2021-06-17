@@ -3,25 +3,21 @@
  <img width=200px height=200px src="img/logo.png" alt="Project logo"></a>
 </p>
 
-<h3 align="center">Sistema de notas automatizado Jose Enrique Arias</h3>
-
-<div align="center">
-
-</div>
+<h3 align="center">Sistema de notas automatizado para la U.E José Enrique Arias</h3>
 
 ---
 
-<p align="center"> Descripcion
+<p align="center"> Descripción
     <br> 
-    Sistema de notas automatizado para la unidad educativa jose enrique arias, control de notas
+Sistema de notas automatizado para la unidad educativa José enrique arias, control de notas
 </p>
 
 ## 🧐 Acerca del sistema
 
-El sistema esta desarrolado con PHP, MYSQL, HTML, BootsTrap 5 y JavaScript. El sistema esta diseñado <br>
-para llevar un control de las notas de los alumnos ayudando al area adminitrativa con su trabjo del dia a dia
+El sistema esta desarrollado con PHP, MYSQL, HTML, BootsTrap 5 y JavaScript. El sistema estándar diseñado
+para llevar un control de las notas de los alumnos ayudando al área administrativa con su trabajo del día a día
 
-## 🏁 Para Empezar <a name = "getting_started"></a>
+## 🏁 Para Empezar
 
 Estas instrucciones le proporcionarán una copia del proyecto en funcionamiento en su máquina local con fines de desarrollo y prueba.
 
@@ -35,7 +31,7 @@ Xampp nos ayudara a montar un servidor local en nuestro equipo para poder utiliz
 https://www.apachefriends.org/es/download.html#
 ```
 
-### Instalacion
+### Instalación
 
 Una vez instalado Xampp debemos descargar el proyecto de git
 
@@ -43,37 +39,37 @@ Una vez instalado Xampp debemos descargar el proyecto de git
 https://github.com/Manuelp1345/SIstema-Jose-Enrique-Arias.git
 ```
 
-Dicho proyecto lo colocaremos en la siguiente direccion. (Esta es creada por Xampp al instalarse)
+Dicho proyecto lo colocaremos en la siguiente dirección. (Esta es creada por Xampp al instalarse)
 
 ```
 C:\xampp\htdocs
 ```
 
-Luego ejecutamos Xampp y iniciamos los servicios de APACHE y MYSQL y nos dirigimos al siguente url
+Luego ejecutamos Xampp e iniciamos los servicios de APACHE y MySQL y nos dirigimos al siguiente url
 
 ```
 http://localhost/phpmyadmin/
 ```
 
-Una vez en la url crearemos una nueva base de datos e importamos el archivo sql que encuentra en la carpeta "Base de datos" en el proyecto que descargamos.
+Una vez en la url crearemos una nueva base de datos e importamos el archivo SQL que encuentra en la carpeta "Base de datos" en el proyecto que descargamos.
 
-Ahora debemos conectar la base de datos, para ellos vamos al archivos connect.php que se encuentra en la carpeta BackEnd del proyecto.
+Ahora debemos conectar la base de datos, para ellos vamos al archivo connect.php que se encuentra en la carpeta BackEnd del proyecto.
 
 ```
 C:\xampp\htdocs\sistema\BackEnd
 ```
 
-dentro del archivos debemos colocar las credenciales de la base de datos. Si tienes la instalacion en limpio de Xampp dichas credenciales son<br><br>
+dentro del archivo debemos colocar las credenciales de la base de datos. Si tienes la instalación en limpio de Xampp dichas credenciales son:<br><br>
 Host: localhost<br><br>
 Usuario: root<br><br>
-Contraseña: Dejar vacio <br><br>
-Base de datos: Nombre de la base de datos creada
+Contraseña: "Dejar vacío"<br><br>
+Base de datos: "Nombre de la base de datos creada"
 
-Una vez hecho esto el sismtea esta listo para utilizarse
+Una vez hecho esto el sistema está listo para utilizarse
 
 ## 🎈 cómo usar el sistema.
 
-Para comenzar a utilizar el sistema debemos ejecutar Xampp e iniciar los servicios de apache y mysql
+Para comenzar a utilizar el sistema debemos ejecutar Xampp e iniciar los servicios de apache y MySQL
 
 Ahora debemos Dirigirnos al siguiente url
 
@@ -85,22 +81,22 @@ http://localhost/sistema/
 
 El sistema fue desarrollado por estudiantes de la Universidad Politécnica Territorial de Mérida (UPTM)
 
-Daniel Hernadez `Desarrollador`<br>
-Michell Contreras ` Diseñador`<br>
+Daniel Hernández `Tester`<br>
+Michelle Contreras ` Arquitecto`<br>
 Sergio Castro `Tester `<br>
 Santiago Faysal `Jefe de proyecto`<br>
-Manuel Puente `Desarrollador`
+Manuel Puente `Programador`
 
 ## ⛏️ Desarrollado
 
 - [Xampp](https://www.apachefriends.org/es/download.html#) - Paquete de Servicios para Host local
-- [Mysql](https://www.mysql.com) - Base de datos
+- [MySQL](https://www.mysql.com) - Base de datos
 - [PHP](https://www.php.net/) - Lenguaje de servidor
 
 ## ✍️ Autores
 
-Daniel Hernadez `Desarrollador`<br>
-Michell Contreras ` Diseñador`<br>
+Daniel Hernández `Tester`<br>
+Michelle Contreras ` Arquitecto`<br>
 Sergio Castro `Tester `<br>
 Santiago Faysal `Jefe de proyecto`<br>
-Manuel Puente `Desarrollador`
+Manuel Puente `Programador`
