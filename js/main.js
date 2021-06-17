@@ -1,159 +1,34 @@
-let url = window.location.pathname.split("/", 2)[1];
-let error = $(".alert-danger");
-let succes = $(".alert-success");
-let contenido = $(".table, .menu");
-let tablaAlumno = $(".alumno");
-let welcome = $(".welcome");
-let token = localStorage.getItem("token");
-let usuario = JSON.parse(localStorage.getItem("usuario"));
+const error = $(".alert-danger"),
+  succes = $(".alert-success"),
+  contenido = $(".table, .menu"),
+  tablaAlumno = $(".alumno"),
+  welcome = $(".welcome");
+
+//Utilidades
 const primeraLetraMayuscula = (cadena) =>
   cadena.charAt(0).toUpperCase().concat(cadena.substring(1, cadena.length));
-
-if (url === "login" || url === "register") {
-  if (token) window.location = "inicio/" + token;
-
-  let body = $("body");
-
-  let titulos = $("h1,h2");
-
-  titulos.css("color", "black");
-
-  body.css({
-    background: `url("/img/1.jpg")`,
-    "background-repeat": "no-repeat",
-    "background-size": "cover",
-    "background-position": "center",
-  });
-
-  let form = document.querySelector("form");
-
-  form.onsubmit = (e) => {
-    e.preventDefault();
-  };
-}
-
-if (url === "inicio") {
-  let bienvenida = $(".welcome h5 span");
-  let nombre = primeraLetraMayuscula(usuario.nombre);
-  bienvenida.text(nombre);
-}
-
-if (url === "login") {
-  function login() {
-    let formData = new FormData();
-
-    let form = {
-      email: $("#email").val(),
-      password: $("#password").val(),
-    };
-
-    if (form.email === "") {
-      error.css("display", "block");
-      return error.html("Por Favor Ingrese un correo<br>");
-    }
-    if (form.password === "") {
-      error.css("display", "block");
-      return error.html("Por Favor Ingrese una contraseña<br>");
-    }
-
-    formData = form;
-
-    fetch("login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((e) => e.json())
-      .then((e) => {
-        if (!e.ok) {
-          error.css("display", "block");
-          return error.html(e.mensaje);
-        }
-
-        let usuario = e.usuario;
-        let usuarioFinal = JSON.stringify(usuario);
-
-        localStorage.setItem("usuario", usuarioFinal);
-        localStorage.setItem("token", e.token);
-
-        window.location = "inicio/" + e.token;
-      });
-  }
-}
-
-if (url === "register") {
-  function register() {
-    let formData = new FormData();
-
-    let form = {
-      nombre: $("#nombre").val(),
-      apellido: $("#apelldio").val(),
-      email: $("#email").val(),
-      password: $("#password").val(),
-    };
-    if (form.email === "") {
-      succes.css("display", "none");
-      error.css("display", "block");
-      return error.html("Por Favor Ingrese un correo<br>");
-    }
-    if (form.password === "") {
-      succes.css("display", "none");
-      error.css("display", "block");
-      return error.html("Por Favor Ingrese una contraseña<br>");
-    }
-    if (form.nombre === "") {
-      succes.css("display", "none");
-      error.css("display", "block");
-      return error.html("Por Favor Ingrese un nombre<br>");
-    }
-    if (form.apellido === "") {
-      succes.css("display", "none");
-      error.css("display", "block");
-      return error.html("Por Favor Ingrese un apellido<br>");
-    }
-
-    formData = form;
-
-    fetch("register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((e) => e.json())
-      .then((e) => {
-        if (!e.ok) {
-          error.css("display", "block");
-          return error.html(e.mensaje);
-        }
-        error.css("display", "none");
-        succes.css("display", "block");
-        succes.html(e.mensaje);
-
-        setTimeout(() => {
-          window.location = "/login";
-        }, 1500);
-      });
-  }
-}
-
-function cerrar() {
-  localStorage.removeItem("token");
-}
-
-//muetras una año y seccion
-
-document.querySelector("#back").addEventListener("click", () => {
+const back = document.querySelector("#back").addEventListener("click", () => {
   const año = localStorage.getItem("año"),
     seccion = localStorage.getItem("seccion");
   seccionNav(año, seccion);
 });
+function format(input) {
+  let num = input;
+  if (!isNaN(num)) {
+    num = num
+      .toString()
+      .split("")
+      .reverse()
+      .join("")
+      .replace(/(?=\d*\.?)(\d{3})/g, "$1.");
+    num = num.split("").reverse().join("").replace(/^[\.]/, "");
+    return num;
+  }
+}
 
-let seccionNav = (año, seccion) => {
-  let agregar = document.querySelector("tbody");
+//muetras una año y seccion
+const seccionNav = (año, seccion) => {
+  const agregar = document.querySelector("tbody");
 
   localStorage.setItem("año", año);
   localStorage.setItem("seccion", seccion);
@@ -162,22 +37,22 @@ let seccionNav = (año, seccion) => {
   tablaAlumno.css("display", "none");
   contenido.css("display", "block");
 
+  let titulo = $(".menu h5"),
+    añoDB = 0;
+
   if (año == 1) Menu = document.querySelector("#primer-año");
   if (año == 2) Menu = document.querySelector("#segundo-año");
   if (año == 3) Menu = document.querySelector("#tercer-año");
   if (año == 4) Menu = document.querySelector("#Cuarto-año");
   if (año == 5) Menu = document.querySelector("#Quinto-año");
 
-  Menu.classList.toggle("show");
-
-  let titulo = $(".menu h5");
-  let añoDB = 0;
-
   if (año == 1) añoDB = "primer_año";
   if (año == 2) añoDB = "segundo_año";
   if (año == 3) añoDB = "tercer_año";
   if (año == 4) añoDB = "cuarto_año";
   if (año == 5) añoDB = "quinto_año";
+
+  Menu.classList.toggle("show");
 
   año = parseInt(localStorage.getItem("año"));
 
@@ -234,13 +109,10 @@ let seccionNav = (año, seccion) => {
 
             let notas = data[0];
 
-            let primer_lapso = 0;
-
-            let segundo_lapso = 0;
-
-            let tercer_lapso = 0;
-
-            let notaFinal = 0;
+            let primer_lapso = 0,
+              segundo_lapso = 0,
+              tercer_lapso = 0,
+              notaFinal = 0;
 
             materias = Object.entries(notas);
             notas = Object.values(notas);
@@ -290,10 +162,9 @@ let seccionNav = (año, seccion) => {
 };
 
 //agregarmos un alumno
-
 function alumno() {
-  let año = localStorage.getItem("año");
-  let seccion = localStorage.getItem("seccion");
+  const año = localStorage.getItem("año"),
+    seccion = localStorage.getItem("seccion");
   $("#modal").removeAttr("data-bs-dismiss");
 
   let añoDB = "";
@@ -305,6 +176,7 @@ function alumno() {
   if (año == 5) añoDB = "quinto_año";
 
   let form = new FormData();
+
   form.append("nombre", $("#Nombre").val().trim());
   form.append("apellido", $("#Apellido").val().trim());
   form.append("cedula", $("#Cedula").val());
@@ -367,22 +239,7 @@ function alumno() {
     });
 }
 
-function format(input) {
-  var num = input;
-  if (!isNaN(num)) {
-    num = num
-      .toString()
-      .split("")
-      .reverse()
-      .join("")
-      .replace(/(?=\d*\.?)(\d{3})/g, "$1.");
-    num = num.split("").reverse().join("").replace(/^[\.]/, "");
-    return num;
-  }
-}
-
 //motramos las notas de un alumno
-
 function editar(cedula, nombre, notas, sec, año) {
   $("#notasexport").DataTable().destroy();
 
@@ -390,10 +247,11 @@ function editar(cedula, nombre, notas, sec, año) {
   localStorage.setItem("nota", notas);
   localStorage.setItem("nombre", nombre);
 
-  let agregar = document.getElementById("notasAlumnos");
+  const agregar = document.getElementById("notasAlumnos");
 
   contenido.css("display", "none");
   tablaAlumno.css("display", "block");
+
   let añoDB = "";
 
   if (año == 1) añoDB = "primer_año";
@@ -519,7 +377,6 @@ function editar(cedula, nombre, notas, sec, año) {
 }
 
 //editar las notas del alumno
-
 function editarN(materia, id, nota, nombre, cedula, p, s, t) {
   document.querySelector("#primer_lapso").value = p;
   document.querySelector("#segundo_lapso").value = s;
@@ -533,13 +390,13 @@ function editarN(materia, id, nota, nombre, cedula, p, s, t) {
 }
 
 function enviarNotas() {
-  let año = localStorage.getItem("año");
-  let materia = localStorage.getItem("materia");
-  let nota = localStorage.getItem("nota");
-  let nombre = localStorage.getItem("nombre");
-  let cedula = localStorage.getItem("cedula");
-  let id = localStorage.getItem("idMaterias");
-  let seccion = localStorage.getItem("seccion");
+  const año = localStorage.getItem("año"),
+    materia = localStorage.getItem("materia"),
+    nota = localStorage.getItem("nota"),
+    nombre = localStorage.getItem("nombre"),
+    cedula = localStorage.getItem("cedula"),
+    id = localStorage.getItem("idMaterias"),
+    seccion = localStorage.getItem("seccion");
 
   let añoDB = "";
 
@@ -624,10 +481,9 @@ function enviarNotas() {
 }
 
 //pasar alumnos de seccion
-
 function PasarSeccion() {
-  let año = localStorage.getItem("año");
-  let seccion = localStorage.getItem("seccion");
+  const año = localStorage.getItem("año"),
+    seccion = localStorage.getItem("seccion");
 
   let añoDB = "";
 
@@ -654,7 +510,6 @@ function PasarSeccion() {
 }
 
 //generar reporte de notas de los alumnos de una seccion
-
 function reporte(type) {
   switch (type) {
     case "notas":
@@ -696,10 +551,9 @@ function reporte(type) {
   }
 }
 function test() {
-  let año = localStorage.getItem("año");
-  let seccion = localStorage.getItem("seccion");
-
-  let agregar = document.querySelector("#NotasAlumnos");
+  const año = localStorage.getItem("año"),
+    seccion = localStorage.getItem("seccion"),
+    agregar = document.querySelector("#NotasAlumnos");
 
   let añoDB = 0;
 
@@ -852,7 +706,8 @@ function datosAlumno() {
       document.querySelector("#Nombre").value = alumno.nombre.toUpperCase();
       document.querySelector("#Apellido").value = alumno.apellido.toUpperCase();
       document.querySelector("#Cedula").value = alumno.cedula;
-      document.querySelector("#cedulaEscolar").value = alumno.cedula_escolar;
+      document.querySelector("#cedulaEscolar").checked =
+        alumno.cedula_escolar == "true" ? true : false;
       document.querySelector("#Sexo").value = alumno.sexo;
       document.querySelector("#fechaNacimiento").value =
         alumno.fecha_de_nacimiento;
@@ -951,9 +806,8 @@ function datosAlumno() {
 
 function ReporteAlumnos() {
   const año = localStorage.getItem("año"),
-    seccion = localStorage.getItem("seccion");
-
-  const tabla = document.querySelector("#DatosAlumnos");
+    seccion = localStorage.getItem("seccion"),
+    tabla = document.querySelector("#DatosAlumnos");
 
   let añoDB = "";
 
@@ -1073,8 +927,8 @@ function ReporteAlumnos() {
     });
 }
 function ModificarDatosalumno() {
-  let año = localStorage.getItem("año");
-  let seccion = localStorage.getItem("seccion");
+  const año = localStorage.getItem("año"),
+    seccion = localStorage.getItem("seccion");
   let ids = localStorage.getItem("ids");
   ids = JSON.parse(ids);
   $("#modal").removeAttr("data-bs-dismiss");

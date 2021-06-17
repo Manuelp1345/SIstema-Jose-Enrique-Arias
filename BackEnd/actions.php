@@ -1,7 +1,6 @@
 <?php 
 require_once "connect.php";
 
-
 if(isset($_POST["actions"])){
 
     $action = $_POST["actions"];
@@ -54,7 +53,6 @@ if(isset($_POST["actions"])){
                 }
             break;
 
-        
         case "Alumno":
             try {
 
@@ -80,7 +78,6 @@ if(isset($_POST["actions"])){
                     $id = mysqli_insert_id($conn);
 
                     //ingresamos los datos del representante
-
                     $cedulaR = $_POST["cedulaR"];
                     $nombreR = $_POST["nombreR"];
                     $apellidoR = $_POST["apellidoR"];
@@ -96,7 +93,6 @@ if(isset($_POST["actions"])){
 
                     //insertamos el alumno con los datos correspondiente  (datos ingresador por el usuario y
                     // referencia a las tablas de notas y representante)
-
                     $cedula = $_POST["cedula"];
                     $cedulaE = $_POST["cedulaE"];
                     $nombre = $_POST["nombre"];
@@ -110,9 +106,8 @@ if(isset($_POST["actions"])){
                     $Correo = $_POST["Correo"];
                     $seccion = $_POST["seccion"];
 
-
-                    $sql = "INSERT INTO alumnos (cedula,cedula_escolar,nombre,apellido,sexo,fecha_de_nacimiento,edad,lugar_de_nacimiento,telefono,direccion,correo,ano,seccion,notas,Representate) VALUES
-                    ($cedula,'$cedulaE','$nombre','$apellido','$sexo','$Fnacimiento',$edad,'$LugarNacimiento',$Telfono,'$Direccion','$Correo','$año','$seccion',$id,$idr)";
+                    $sql = "INSERT INTO alumnos (cedula,cedula_escolar,nombre,apellido,sexo,fecha_de_nacimiento,edad,lugar_de_nacimiento,telefono,direccion,correo,ano,seccion,notas,estado,Representate) VALUES
+                    ($cedula,'$cedulaE','$nombre','$apellido','$sexo','$Fnacimiento',$edad,'$LugarNacimiento',$Telfono,'$Direccion','$Correo','$año','$seccion',$id,'cursando',$idr)";
                     $resultado = $conn->query($sql);
 
                     if($resultado) echo "Alumno agregado con exito";
@@ -122,7 +117,6 @@ if(isset($_POST["actions"])){
                 else{
                     echo "El Numero de cedula ya esta en el sistema";
                 }
-
 
             } catch (Exception $e) {
                 echo $e->getMessage();
@@ -138,11 +132,9 @@ if(isset($_POST["actions"])){
                     $datos = $_POST["datos"];
                     $nota = $_POST["nota"];
 
-
                     $sql = "UPDATE $año SET $materia = '$datos' WHERE id = '$nota'";
                     $resultado = $conn->query($sql);
     
-                    
                     echo json_encode($resultado);
     
     
@@ -165,9 +157,6 @@ if(isset($_POST["actions"])){
                     if($año == "tercer_año" ) $SiguienteAño = "cuarto_año";
                     if($año == "cuarto_año" ) $SiguienteAño = "quinto_año";
                     if($año == "quinto_año" ) $SiguienteAño = "Graduado";
-
-
-
 
                     $sql = "SELECT * FROM alumnos WHERE ano = '$año' AND seccion='$seccion'";
                     $resultado = $conn->query($sql)->fetch_all();
@@ -245,7 +234,6 @@ if(isset($_POST["actions"])){
 
                 echo json_encode($data);
 
-
             } catch (Exception $e) {
                 echo $e->getMessage();
             }
@@ -271,7 +259,6 @@ if(isset($_POST["actions"])){
 
             echo json_encode($resultado);
 
-
         } catch (Exception $e) {
             echo $e->getMessage();
         }
@@ -296,7 +283,6 @@ if(isset($_POST["actions"])){
 
                     //insertamos el alumno con los datos correspondiente  (datos ingresador por el usuario y
                     // referencia a las tablas de notas y representante)
-
                     $id = $_POST["idAlumno"];
                     $cedula = $_POST["cedula"];
                     $cedulaE = $_POST["cedulaE"];
@@ -362,5 +348,4 @@ if(isset($_POST["actions"])){
     }
     
 }
-
 ?>
