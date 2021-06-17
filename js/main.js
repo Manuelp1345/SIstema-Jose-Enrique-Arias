@@ -232,7 +232,7 @@ let seccionNav = (año, seccion) => {
           .then((data) => {
             data = JSON.parse(data);
 
-            let notas = data;
+            let notas = data[0];
 
             let primer_lapso = 0;
 
@@ -352,7 +352,6 @@ function alumno() {
   })
     .then((e) => e.text())
     .then((data) => {
-      console.log(data);
       if (data !== "Alumno agregado con exito") {
         succes.css("display", "none");
         error.css("display", "block");
@@ -433,9 +432,9 @@ function editar(cedula, nombre, notas, sec, año) {
     .then((data) => {
       data = JSON.parse(data);
 
-      let notasObject = data;
+      let notasObject = data[0];
 
-      let materiasObject = data;
+      let materiasObject = data[0];
 
       localStorage.setItem("DBnotas", JSON.stringify(notasObject));
 
@@ -489,7 +488,7 @@ function editar(cedula, nombre, notas, sec, año) {
         retrieve: true,
         dom: "Bfrtip",
         language: {
-          url: "http://localhost/sistema/DataTables/Spanish.json",
+          url: "/sistema/DataTables/Spanish.json",
         },
         buttons: [
           {
@@ -540,6 +539,7 @@ function enviarNotas() {
   let nombre = localStorage.getItem("nombre");
   let cedula = localStorage.getItem("cedula");
   let id = localStorage.getItem("idMaterias");
+  let seccion = localStorage.getItem("seccion");
 
   let añoDB = "";
 
@@ -616,7 +616,7 @@ function enviarNotas() {
       error.css("display", "none");
       succes.css("display", "block");
       succes.html("Las notas han sido actualizadas");
-      editar(cedula, nombre, nota);
+      editar(cedula, nombre, nota, seccion, año);
       setTimeout(() => {
         succes.css("display", "none");
       }, 5000);
@@ -626,7 +626,6 @@ function enviarNotas() {
 //pasar alumnos de seccion
 
 function PasarSeccion() {
-  console.log("object");
   let año = localStorage.getItem("año");
   let seccion = localStorage.getItem("seccion");
 
@@ -649,9 +648,7 @@ function PasarSeccion() {
     body: data,
   })
     .then((r) => r.text())
-    .then((data) => {
-      console.log(data);
-    });
+    .then((data) => {});
 }
 
 //generar reporte de notas de los alumnos de una seccion
@@ -792,7 +789,7 @@ function test() {
                 retrieve: true,
                 dom: "Bfrtip",
                 language: {
-                  url: "http://localhost/sistema/DataTables/Spanish.json",
+                  url: "/sistema/DataTables/Spanish.json",
                 },
                 buttons: [
                   {
@@ -849,8 +846,6 @@ function datosAlumno() {
       ids = JSON.stringify(ids);
 
       localStorage.setItem("ids", ids);
-
-      console.log(data);
 
       document.querySelector("#Nombre").value = alumno.nombre.toUpperCase();
       document.querySelector("#Apellido").value = alumno.apellido.toUpperCase();
@@ -934,7 +929,7 @@ function datosAlumno() {
         retrieve: true,
         dom: "Bfrtip",
         language: {
-          url: "http://localhost/sistema/DataTables/Spanish.json",
+          url: "/sistema/DataTables/Spanish.json",
         },
         buttons: [
           {
@@ -949,7 +944,6 @@ function datosAlumno() {
           },
         ],
       });
-      console.log(representante);
     });
 }
 
@@ -1059,7 +1053,7 @@ function ReporteAlumnos() {
         retrieve: true,
         dom: "Bfrtip",
         language: {
-          url: "http://localhost/sistema/DataTables/Spanish.json",
+          url: "/sistema/DataTables/Spanish.json",
         },
         buttons: [
           {
@@ -1090,8 +1084,6 @@ function ModificarDatosalumno() {
   if (año == 3) añoDB = "tercer_año";
   if (año == 4) añoDB = "cuarto_año";
   if (año == 5) añoDB = "quinto_año";
-
-  console.log(ids.representante);
 
   let form = new FormData();
   form.append("idAlumno", ids.alumno);

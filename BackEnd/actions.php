@@ -45,7 +45,7 @@ if(isset($_POST["actions"])){
                     if ($fields[5]->name == $año) $notas = $idNotas["quinto_año"];
 
                     $sql = "SELECT * FROM $año WHERE id = '$notas' ";
-                    $resultado = $conn->query($sql)->fetch_assoc();
+                    $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
 
                     echo json_encode($resultado);
 
