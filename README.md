@@ -43,7 +43,7 @@ Una vez instalado Xampp debemos descargar el proyecto de git
 https://github.com/Manuelp1345/SIstema-Jose-Enrique-Arias.git
 ```
 
-Dicho proyecto lo colocaremos en la siguiente direccion. (Esta direccion la crea Xampp al instalarse)
+Dicho proyecto lo colocaremos en la siguiente direccion. (Esta es creada por Xampp al instalarse)
 
 ```
 C:\xampp\htdocs
