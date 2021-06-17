@@ -18,7 +18,7 @@
 
 ## 🧐 Acerca del sistema
 
-El sistema esta desarrolado con PHP,MYSQL,HTML,BootsTrap 5 y JavaScript, el sistema esta diseñado <br>
+El sistema esta desarrolado con PHP, MYSQL, HTML, BootsTrap 5 y JavaScript. El sistema esta diseñado <br>
 para llevar un control de las notas de los alumnos ayudando al area adminitrativa con su trabjo del dia a dia
 
 ## 🏁 Para Empezar <a name = "getting_started"></a>
@@ -31,7 +31,9 @@ Debes descargar e instalar Xampp, es un paquete de software libre, que consiste 
 
 Xampp no ayudara a montar un servidor local en nuestro equipo para poder utilizar el sismte
 
-<a>`https://www.apachefriends.org/es/download.html#`</a>
+```
+https://www.apachefriends.org/es/download.html#
+```
 
 ### Instalacion
 
