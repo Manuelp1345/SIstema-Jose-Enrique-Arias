@@ -106,8 +106,9 @@ require "BackEnd/actions.php"
       <div class="alert alert-success" role="alert"></div>
       
 <div class=" d-flex flex-row justify-content-between">
-<button id="back" class="btn btn-primary mt-4  col-3" >Volver</button>
-      <button class="btn btn-primary mt-4 col-3" onclick="reporte('datosAlumno')" >Datos del alumno</button>
+    <button id="back" class="btn btn-primary mt-4  col-3" >Volver</button>
+    <button class="btn btn-dark mt-4  col-3" data-bs-toggle="modal" data-bs-target="#CambiarAñoSeccion" >Cambiar (Seccion / año) </button>
+    <button class="btn btn-primary mt-4 col-3" onclick="reporte('datosAlumno')" >Datos del alumno</button>
 </div>
       
       <div class="mt-4 d-flex flex-row ">
@@ -178,6 +179,49 @@ require "BackEnd/actions.php"
   </div>
 </div>
 
+  <!-- Modal cambiar seccion o año -->
+  <div class="modal fade" id="CambiarAñoSeccion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modificar Seccion o Año</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      <form>
+          <div class="form-group">
+          <select class="form-select my-3" name="AñoChange" id="AñoChange">
+                  <option selected > Año </option>
+                  <option value="1">Primer Año</option>
+                  <option value="2">Segundo Año</option>
+                  <option value="3">Tercer Año</option>
+                  <option value="4">Cuarto Año</option>
+                  <option value="5">Quinto Año</option>
+              </select>
+          </div>
+          <div class="form-group">
+          <select class="form-select my-3" name="seccionChange" id="seccionChange">
+                  <option selected > Seccion </option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="F">F</option>
+              </select>
+          </div>
+                <div class="alert alert-danger" role="alert"></div>
+                <div class="alert alert-success" role="alert"></div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" onclick="ModificarSeccionAño()" class="btn btn-primary">Guadar cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <div class="modal fade" id="agregarAlumno" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -236,8 +280,8 @@ require "BackEnd/actions.php"
               <input type="number" class="form-control" name="CedulaR" id="CedulaR" placeholder="Cedula">
               <select class="form-select my-3" name="SexoR" id="SexoR">
                   <option selected > Sexo </option>
-                  <option value="1">Masculino</option>
-                  <option value="2">Femenino</option>
+                  <option value="Masculino">Masculino</option>
+                  <option value="Femenino">Femenino</option>
               </select>
 
               <label for="Filiacion">Filiacion</label>
@@ -282,6 +326,7 @@ require "BackEnd/actions.php"
     </div>
   </div>
 
+  <script src="js/sweetalert2.all.min.js"></script>
 
 
 

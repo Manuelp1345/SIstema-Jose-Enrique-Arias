@@ -74,7 +74,7 @@ if(isset($_POST["actions"])){
                     
                     $sql = "INSERT INTO `notas` (`id`, `$año`) VALUES (NULL, $id)";
                     
-                    //insetamos el id guia de las notas correspondientes al año
+                    //incertamos el id guia de las notas correspondientes al año
 
                     $resultado= $conn->query($sql);
                     $id = mysqli_insert_id($conn);
@@ -250,6 +250,112 @@ if(isset($_POST["actions"])){
                 echo $e->getMessage();
             }
             break; 
+        case 'ReporteAlumno':
+        try {
+
+            $ano = $_POST["año"];
+            $seccion = $_POST["seccion"];
+            $sql = "SELECT * FROM alumnos  WHERE ano='$ano' AND seccion='$seccion' ORDER BY cedula ASC ";
+            $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
+            
+            for ($i=0; $i < count($resultado); $i++) { 
+
+                $rep = $resultado[$i]["Representate"];
+
+                $sql2 = "SELECT * FROM representante WHERE id='$rep'";
+                $resultado2 = $conn->query($sql2)->fetch_object();
+
+                $resultado[$i]["Representate"]= $resultado2;
+                
+            }
+
+            echo json_encode($resultado);
+
+
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+        break; 
+
+        case 'ModoficarDatos':
+            try {
+                    
+                   //ingresamos los datos del representante
+                    $idR = $_POST["idRepresentante"];
+                    $cedulaR = $_POST["cedulaR"];
+                    $nombreR = $_POST["nombreR"];
+                    $apellidoR = $_POST["apellidoR"];
+                    $sexoR = $_POST["sexoR"];
+                    $Filiacion = $_POST["Filiacion"];
+                    $DireccionR = $_POST["DireccionR"];
+                    $TelfonoR = $_POST["TelfonoR"];
+                    $CorreoR = $_POST["CorreoR"];
+
+                    $sql = "UPDATE representante SET cedula=$cedulaR,nombre='$nombreR',apellido='$apellidoR',sexo='$sexoR',filiacion='$Filiacion',direccion='$DireccionR',telefono=$TelfonoR,correo='$CorreoR' WHERE id = $idR";
+                    $resultado = $conn->query($sql);
+
+                    //insertamos el alumno con los datos correspondiente  (datos ingresador por el usuario y
+                    // referencia a las tablas de notas y representante)
+
+                    $id = $_POST["idAlumno"];
+                    $cedula = $_POST["cedula"];
+                    $cedulaE = $_POST["cedulaE"];
+                    $nombre = $_POST["nombre"];
+                    $apellido = $_POST["apellido"];
+                    $sexo = $_POST["sexo"];
+                    $Fnacimiento = $_POST["Fnacimiento"];
+                    $edad = $_POST["edad"];
+                    $LugarNacimiento = $_POST["LugarNacimiento"];
+                    $Direccion = $_POST["Direccion"];
+                    $Telfono = $_POST["Telfono"];
+                    $Correo = $_POST["Correo"];
+
+                    $sql = "UPDATE alumnos SET cedula=$cedula,cedula_escolar='$cedulaE',nombre='$nombre',apellido='$apellido',sexo='$sexo',fecha_de_nacimiento='$Fnacimiento',edad=$edad,lugar_de_nacimiento='$LugarNacimiento',telefono=$Telfono,direccion='$Direccion',correo='$Correo' WHERE id = $id";
+                    $resultado = $conn->query($sql);
+
+                    if($resultado) echo "True";
+                    if(!$resultado) echo "False";
+    
+            } catch (Exception $e) {
+                echo $e->getMessage();
+            }
+            break; 
+
+            case 'CambiarSeccionAño':
+                try {
+        
+                    $ano = $_POST["año"];
+                    $seccion = $_POST["seccion"];
+                    $cedula = $_POST["cedula"];
+
+                    $sql = "SELECT notas FROM `alumnos` WHERE cedula='$cedula'";
+                    $notas = $conn->query($sql)->fetch_object();
+ 
+                    $sql = "SELECT $ano FROM notas WHERE id = '$notas->notas'";
+                    $resultado = $conn->query($sql)->fetch_object();
+
+                    if($resultado->$ano == null){
+                        $sql = "INSERT INTO $ano (`id`) VALUES (NULL)";
+                        $resultado = $conn->query($sql);
+                        $id = mysqli_insert_id($conn);
+                        
+                        $sql = "UPDATE notas SET $ano = '$id' WHERE id = '$notas->notas'";
+                        $resultado = $conn->query($sql);
+                    }
+
+                    $sql = "UPDATE alumnos SET seccion='$seccion',ano='$ano' WHERE cedula='$cedula'";
+                    $resultado = $conn->query($sql);
+                    
+
+                    if($resultado) echo json_encode("True") ;
+                    if(!$resultado) echo json_encode("False");
+        
+        
+                } catch (Exception $e) {
+                    echo $e->getMessage();
+                }
+                break; 
+        
         default:
             echo "por favor incie sesion o recargue la pagina";
             break;

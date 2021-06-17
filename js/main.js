@@ -179,6 +179,8 @@ let seccionNav = (año, seccion) => {
   if (año == 4) añoDB = "cuarto_año";
   if (año == 5) añoDB = "quinto_año";
 
+  año = parseInt(localStorage.getItem("año"));
+
   switch (año) {
     case 1:
       titulo.text(`Primer Año Seccion "${seccion}"`);
@@ -275,9 +277,9 @@ let seccionNav = (año, seccion) => {
                               alumnos[i][1]
                             },'${alumnos[i][3].trim()} ${alumnos[
               i
-            ][4].trim()}',${alumnos[i][14]},'${seccion}',${
-              alumnos[i][16]
-            })" href="#">Editar</a>
+            ][4].trim()}',${
+              alumnos[i][14]
+            },'${seccion}',${año})" href="#">Editar</a>
                             </div>
                             </div>
                             </td>
@@ -382,28 +384,17 @@ function format(input) {
 
 //motramos las notas de un alumno
 
-function editar(cedula, nombre, notas, sec, representante) {
+function editar(cedula, nombre, notas, sec, año) {
   $("#notasexport").DataTable().destroy();
 
-  let año = localStorage.getItem("año");
-
   localStorage.setItem("cedula", cedula);
+  localStorage.setItem("nota", notas);
+  localStorage.setItem("nombre", nombre);
 
   let agregar = document.getElementById("notasAlumnos");
 
   contenido.css("display", "none");
   tablaAlumno.css("display", "block");
-
-  const Infoalumno = document.querySelector("#InfoAlumno"),
-    InfoCI = document.querySelector("#InfoCI"),
-    InfoAnio = document.querySelector("#InfoAnio"),
-    InfoSec = document.querySelector("#InfoSec");
-
-  Infoalumno.innerHTML = `Alumno: ${nombre.toUpperCase()}`;
-  InfoCI.innerHTML = `C.i: ${format(cedula)}`;
-  InfoAnio.innerHTML = `Año: ${año}`;
-  InfoSec.innerHTML = `Seccion: ${sec}`;
-
   let añoDB = "";
 
   if (año == 1) añoDB = "primer_año";
@@ -411,6 +402,19 @@ function editar(cedula, nombre, notas, sec, representante) {
   if (año == 3) añoDB = "tercer_año";
   if (año == 4) añoDB = "cuarto_año";
   if (año == 5) añoDB = "quinto_año";
+
+  const Infoalumno = document.querySelector("#InfoAlumno"),
+    InfoCI = document.querySelector("#InfoCI"),
+    InfoAnio = document.querySelector("#InfoAnio"),
+    InfoSec = document.querySelector("#InfoSec");
+
+  Infoalumno.innerHTML = `Alumno: ${nombre.toUpperCase()}.`;
+  InfoCI.innerHTML = `C.i: ${format(cedula)}.`;
+  InfoAnio.innerHTML = `Año: ${añoDB.replace("_", " ")}.`;
+  InfoSec.innerHTML = `| Seccion: ${sec} |`;
+
+  document.querySelector("#seccionChange").value = sec;
+  document.querySelector("#AñoChange").value = año;
 
   let form = new FormData();
 
@@ -660,6 +664,7 @@ function reporte(type) {
         "",
         "width=1024,height=720,toolbar=yes"
       );
+
       break;
 
     case "datos":
@@ -670,11 +675,24 @@ function reporte(type) {
       );
       break;
     case "datosAlumno":
-      window.open(
+      let ventana = window.open(
         `/sistema/reporte.php?query=${type}`,
         "",
         "width=1024,height=720,toolbar=yes"
       );
+
+      let intervalo = setInterval(() => {
+        if (ventana.closed !== false) {
+          window.clearInterval(intervalo);
+          editar(
+            localStorage.getItem("cedula"),
+            `${localStorage.getItem("nombre")}`,
+            localStorage.getItem("nota"),
+            localStorage.getItem("seccion"),
+            localStorage.getItem("año")
+          );
+        }
+      }, 1000);
       break;
   }
 }
@@ -782,7 +800,10 @@ function test() {
                     className: "export",
                     ttileAttr: "Exportar a excel",
                     text: "Exportar a Excel",
-                    title: `Reporte de notas- año:${añoDB} seccion:${seccion} `,
+                    title: `Reporte Grupal de Notas | Año: ${añoDB.replace(
+                      "_",
+                      " "
+                    )} Seccion: ${seccion} `,
                   },
                 ],
               });
@@ -794,6 +815,7 @@ function test() {
 
 function datosAlumno() {
   const año = localStorage.getItem("año"),
+    seccion = localStorage.getItem("seccion"),
     cedula = localStorage.getItem("cedula");
 
   let añoDB = "";
@@ -810,8 +832,7 @@ function datosAlumno() {
   form.append("año", añoDB);
   form.append("actions", "datosAlumno");
 
-  const tabla = document.querySelector("#DatosAlumnos"),
-    TRepresentante = document.querySelector("#DatosRepresentante");
+  const tabla = document.querySelector("#DatosAlumnos");
 
   fetch("BackEnd/actions.php", {
     method: "post",
@@ -822,6 +843,38 @@ function datosAlumno() {
       data = JSON.parse(data);
       const alumno = data.alumno,
         representante = data.representante;
+
+      let ids = { alumno: alumno.id, representante: representante.id };
+
+      ids = JSON.stringify(ids);
+
+      localStorage.setItem("ids", ids);
+
+      console.log(data);
+
+      document.querySelector("#Nombre").value = alumno.nombre.toUpperCase();
+      document.querySelector("#Apellido").value = alumno.apellido.toUpperCase();
+      document.querySelector("#Cedula").value = alumno.cedula;
+      document.querySelector("#cedulaEscolar").value = alumno.cedula_escolar;
+      document.querySelector("#Sexo").value = alumno.sexo;
+      document.querySelector("#fechaNacimiento").value =
+        alumno.fecha_de_nacimiento;
+      document.querySelector("#Edad").value = alumno.edad;
+      document.querySelector("#LugarNacimiento").value =
+        alumno.lugar_de_nacimiento;
+      document.querySelector("#Telfono").value = alumno.telefono;
+      document.querySelector("#Direccion").value = alumno.direccion;
+      document.querySelector("#Correo").value = alumno.correo;
+      document.querySelector("#NombreR").value =
+        representante.nombre.toUpperCase();
+      document.querySelector("#ApellidoR").value =
+        representante.apellido.toUpperCase();
+      document.querySelector("#CedulaR").value = representante.cedula;
+      document.querySelector("#TelfonoR").value = representante.telefono;
+      document.querySelector("#SexoR").value = representante.sexo;
+      document.querySelector("#Filiacion").value = representante.filiacion;
+      document.querySelector("#DireccionR").value = representante.direccion;
+      document.querySelector("#CorreoR").value = representante.correo;
 
       tabla.innerHTML = `
         <tr>
@@ -834,22 +887,44 @@ function datosAlumno() {
           <td>${alumno.telefono}</td>
           <td>${alumno.direccion}</td>
           <td>${alumno.correo}</td>
+        </tr>
 
-        </tr>`;
+        <tr>
+        <th class="table-dark" ></th>
+        <th class="table-dark" scope="col" >Representante</th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        </tr>
 
-      TRepresentante.innerHTML = `
+        <tr>
+        <th class="table-dark" scope="col">Cedula</th>
+        <th class="table-dark" scope="col">Nombre y Apellido</th>
+        <th class="table-dark" scope="col">Direccion</th>
+        <th class="table-dark" scope="col">Correo</th>
+        <th class="table-dark" scope="col">Filiacion</th>
+        <th class="table-dark" scope="col">Telefono</th>
+        <th class="table-dark" scope="col">Sexo</th>
+        <th class="table-dark" scope="col"></th>
+        <th class="table-dark" scope="col"></th>
+        </tr>
+
         <tr>
         <td> ${format(representante.cedula)} </td>
-        <td> ${
-          representante.nombre.toUpperCase() +
-          representante.apellido.toUpperCase()
-        } </td>
+        <td> ${representante.nombre.toUpperCase()} ${representante.apellido.toUpperCase()} </td>
         <td> ${representante.direccion} </td>
         <td> ${representante.correo} </td>
         <td> ${representante.filiacion} </td>
         <td> ${representante.telefono} </td>
         <td> ${representante.sexo} </td>
+        <td></td>
+        <td></td>
         </tr>
+        
         `;
 
       $("#Alumnoexport").DataTable({
@@ -867,11 +942,117 @@ function datosAlumno() {
             className: "export",
             ttileAttr: "Exportar a excel",
             text: "Exportar a Excel",
-            title: `Reporte de notas} `,
+            title: `Reporte de datos | Alumno: ${alumno.nombre.toUpperCase()} ${alumno.apellido.toUpperCase()} Año: ${añoDB.replace(
+              "_",
+              " "
+            )} Seccion: ${seccion} `,
           },
         ],
       });
-      $("#Representatexport").DataTable({
+      console.log(representante);
+    });
+}
+
+function ReporteAlumnos() {
+  const año = localStorage.getItem("año"),
+    seccion = localStorage.getItem("seccion");
+
+  const tabla = document.querySelector("#DatosAlumnos");
+
+  let añoDB = "";
+
+  if (año == 1) añoDB = "primer_año";
+  if (año == 2) añoDB = "segundo_año";
+  if (año == 3) añoDB = "tercer_año";
+  if (año == 4) añoDB = "cuarto_año";
+  if (año == 5) añoDB = "quinto_año";
+
+  let form = new FormData();
+
+  form.append("seccion", seccion);
+  form.append("año", añoDB);
+  form.append("actions", "ReporteAlumno");
+
+  fetch("BackEnd/actions.php", {
+    method: "post",
+    body: form,
+  })
+    .then((e) => e.text())
+    .then((data) => {
+      const alumno = JSON.parse(data);
+
+      for (let i = 0; i < alumno.length; i++) {
+        const representante = alumno[i].Representate;
+
+        tabla.innerHTML += `
+        <tr>
+        <th class="table-dark" ></th>
+        <th class="table-dark" scope="col" >Alumno</th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        </tr>
+
+        <tr>
+          <td>${format(alumno[i].cedula)}</td>
+          <td>${alumno[i].nombre.toUpperCase()} ${alumno[
+          i
+        ].apellido.toUpperCase()}</td>
+          <td>${alumno[i].sexo}</td>
+          <td>${alumno[i].fecha_de_nacimiento}</td>
+          <td>${alumno[i].edad}</td>
+          <td>${alumno[i].lugar_de_nacimiento}</td>
+          <td>${alumno[i].telefono}</td>
+          <td>${alumno[i].direccion}</td>
+          <td>${alumno[i].correo}</td>
+        </tr>
+
+        <tr>
+        <th class="table-dark" ></th>
+        <th class="table-dark" scope="col" >Representante</th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        </tr>
+
+        <tr>
+        <th class="table-dark" scope="col">Cedula</th>
+        <th class="table-dark" scope="col">Nombre y Apellido</th>
+        <th class="table-dark" scope="col">Direccion</th>
+        <th class="table-dark" scope="col">Correo</th>
+        <th class="table-dark" scope="col">Filiacion</th>
+        <th class="table-dark" scope="col">Telefono</th>
+        <th class="table-dark" scope="col">Sexo</th>
+        <th class="table-dark" scope="col"></th>
+        <th class="table-dark" scope="col"></th>
+        </tr>
+
+        <tr>
+        <td> ${format(representante.cedula)} </td>
+        <td> ${
+          representante.nombre.toUpperCase() +
+          representante.apellido.toUpperCase()
+        } </td>
+        <td> ${representante.direccion} </td>
+        <td> ${representante.correo} </td>
+        <td> ${representante.filiacion} </td>
+        <td> ${representante.telefono} </td>
+        <td> ${representante.sexo} </td>
+        <td></td>
+        <td></td>
+        </tr>
+        
+        `;
+      }
+      $("#Alumnoexport").DataTable({
         paging: false,
         ordering: false,
         searching: false,
@@ -886,10 +1067,121 @@ function datosAlumno() {
             className: "export",
             ttileAttr: "Exportar a excel",
             text: "Exportar a Excel",
-            title: `Reporte de notas} `,
+            title: `Reporte grupal de datos | Año: ${añoDB.replace(
+              "_",
+              " "
+            )} Seccion: ${seccion} `,
           },
         ],
       });
-      console.log(representante);
+    });
+}
+function ModificarDatosalumno() {
+  let año = localStorage.getItem("año");
+  let seccion = localStorage.getItem("seccion");
+  let ids = localStorage.getItem("ids");
+  ids = JSON.parse(ids);
+  $("#modal").removeAttr("data-bs-dismiss");
+
+  let añoDB = "";
+
+  if (año == 1) añoDB = "primer_año";
+  if (año == 2) añoDB = "segundo_año";
+  if (año == 3) añoDB = "tercer_año";
+  if (año == 4) añoDB = "cuarto_año";
+  if (año == 5) añoDB = "quinto_año";
+
+  console.log(ids.representante);
+
+  let form = new FormData();
+  form.append("idAlumno", ids.alumno);
+  form.append("idRepresentante", ids.representante);
+  form.append("nombre", $("#Nombre").val().trim());
+  form.append("apellido", $("#Apellido").val().trim());
+  form.append("cedula", $("#Cedula").val());
+  form.append("cedulaE", $("#cedulaEscolar").prop("checked"));
+  form.append("sexo", $("#Sexo").val());
+  form.append("Fnacimiento", $("#fechaNacimiento").val());
+  form.append("edad", $("#Edad").val());
+  form.append("LugarNacimiento", $("#LugarNacimiento").val());
+  form.append("Telfono", $("#Telfono").val());
+  form.append("Direccion", $("#Direccion").val());
+  form.append("Correo", $("#Correo").val());
+  form.append("nombreR", $("#NombreR").val());
+  form.append("apellidoR", $("#ApellidoR").val());
+  form.append("cedulaR", $("#CedulaR").val());
+  form.append("sexoR", $("#SexoR").val());
+  form.append("Filiacion", $("#Filiacion").val());
+  form.append("TelfonoR", $("#TelfonoR").val());
+  form.append("DireccionR", $("#DireccionR").val());
+  form.append("CorreoR", $("#CorreoR").val());
+  form.append("año", añoDB);
+  form.append("seccion", seccion);
+  form.append("actions", "ModoficarDatos");
+
+  fetch("BackEnd/actions.php", {
+    method: "post",
+    body: form,
+  })
+    .then((e) => e.text())
+    .then((data) => {
+      if (data == "True")
+        Swal.fire({
+          title: "Modificado!",
+          text: "Cambios Realizados con exito",
+          icon: "success",
+          confirmButtonText: "Entendido",
+        }).then((e) => {
+          localStorage.setItem("cedula", $("#Cedula").val());
+
+          if (e.isConfirmed == true) location.reload();
+        });
+    });
+}
+
+function ModificarSeccionAño() {
+  const año = document.querySelector("#AñoChange").value,
+    seccion = document.querySelector("#seccionChange").value,
+    cedula = localStorage.getItem("cedula");
+
+  let añoDB = "";
+
+  if (año == 1) añoDB = "primer_año";
+  if (año == 2) añoDB = "segundo_año";
+  if (año == 3) añoDB = "tercer_año";
+  if (año == 4) añoDB = "cuarto_año";
+  if (año == 5) añoDB = "quinto_año";
+
+  let form = new FormData();
+  form.append("año", añoDB);
+  form.append("cedula", cedula);
+  form.append("seccion", seccion);
+  form.append("actions", "CambiarSeccionAño");
+
+  fetch("BackEnd/actions.php", {
+    method: "post",
+    body: form,
+  })
+    .then((e) => e.text())
+    .then((data) => {
+      if (JSON.parse(data) == "True")
+        Swal.fire({
+          title: "Modificado!",
+          text: "Cambios Realizados con exito",
+          icon: "success",
+          confirmButtonText: "Entendido",
+        }).then((e) => {
+          localStorage.setItem("año", año);
+          localStorage.setItem("seccion", seccion);
+
+          if (e.isConfirmed == true)
+            editar(
+              localStorage.getItem("cedula"),
+              `${localStorage.getItem("nombre")}`,
+              localStorage.getItem("nota"),
+              seccion,
+              año
+            );
+        });
     });
 }
