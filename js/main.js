@@ -648,7 +648,9 @@ function PasarSeccion() {
     body: data,
   })
     .then((r) => r.text())
-    .then((data) => {});
+    .then((data) => {
+      seccionNav(año, seccion);
+    });
 }
 
 //generar reporte de notas de los alumnos de una seccion
@@ -740,7 +742,7 @@ function test() {
           .then((data) => {
             data = JSON.parse(data);
 
-            let notas = data;
+            let notas = data[0];
 
             materias = Object.entries(notas);
             notas = Object.values(notas);
