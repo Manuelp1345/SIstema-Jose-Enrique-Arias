@@ -333,10 +333,8 @@ function editar(cedula, nombre, notas, sec, año) {
                       parseInt(JSON.parse(notasObject[i]).tercer_lapso)) /
                     3
                   ).toFixed(1)}</td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td> 
+ 
+                  <td class='ms-3'> 
                   <button type="button" class="btn btn-primary" onclick="editarN('${
                     materiasObject[i][0]
                   }',${JSON.parse(
@@ -455,10 +453,7 @@ function editar(cedula, nombre, notas, sec, año) {
                     parseInt(JSON.parse(notasObject[i]).tercer_lapso)) /
                   3
                 ).toFixed(1)}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td> 
+                <td class='ms-3'> 
                 <button type="button" class="btn btn-primary" onclick="editarN('${
                   materiasObject[i][0]
                 }',${JSON.parse(

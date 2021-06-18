@@ -37,10 +37,7 @@
   <th scope="col">Segundo Momento</th>
   <th scope="col">Tercer Momento</th>
   <th scope="col">Nota Final</th>
-  <th scope="col"> </th>
-  <th scope="col"> </th>
-  <th scope="col"> </th>
-  <th scope="col">Editar </th>
+  <th class='ms-3' scope="col">Editar </th>
   </tr>
   </thead>
   <tbody id="notasAlumnos">
