@@ -12,6 +12,16 @@ const añoDB = [
   "quinto_año",
 ];
 
+const fetchF = async (body) => {
+  const e = await fetch("BackEnd/actions.php", {
+    method: "POST",
+    body,
+  });
+  const data = await e.text();
+
+  return data;
+};
+
 //Utilidades
 const primeraLetraMayuscula = (cadena) =>
   cadena.charAt(0).toUpperCase().concat(cadena.substring(1, cadena.length));
@@ -85,54 +95,44 @@ const seccionNav = (año, seccion) => {
 
   $("#exportAlumnosAreas").DataTable().destroy();
 
-  fetch("BackEnd/actions.php", {
-    method: "post",
-    body: form,
-  })
-    .then((e) => e.text())
-    .then((data) => {
-      data = JSON.parse(data);
-      agregar.innerHTML = "";
-      let alumnos = data;
+  fetchF(form).then((data) => {
+    data = JSON.parse(data);
+    agregar.innerHTML = "";
+    let alumnos = data;
 
-      for (let i = 0; i < alumnos.length; i++) {
-        let form2 = new FormData();
+    for (let i = 0; i < alumnos.length; i++) {
+      let form2 = new FormData();
 
-        form2.append("año", añoDB[año - 1]);
-        form2.append("notas", alumnos[i][14]);
-        form2.append("actions", "Editar");
+      form2.append("año", añoDB[año - 1]);
+      form2.append("notas", alumnos[i][14]);
+      form2.append("actions", "Editar");
 
-        fetch("BackEnd/actions.php", {
-          method: "post",
-          body: form2,
-        })
-          .then((e) => e.text())
-          .then((data) => {
-            data = JSON.parse(data);
+      fetchF(form2).then((data) => {
+        data = JSON.parse(data);
 
-            let notas = data[0];
+        let notas = data[0];
 
-            let primer_lapso = 0,
-              segundo_lapso = 0,
-              tercer_lapso = 0,
-              notaFinal = 0;
+        let primer_lapso = 0,
+          segundo_lapso = 0,
+          tercer_lapso = 0,
+          notaFinal = 0;
 
-            materias = Object.entries(notas);
-            notas = Object.values(notas);
+        materias = Object.entries(notas);
+        notas = Object.values(notas);
 
-            for (let i = 1; i < notas.length; i++) {
-              primer_lapso += parseInt(JSON.parse(notas[i]).primer_lapso);
-              segundo_lapso += parseInt(JSON.parse(notas[i]).segundo_lapso);
-              tercer_lapso += parseInt(JSON.parse(notas[i]).tercer_lapso);
-            }
+        for (let i = 1; i < notas.length; i++) {
+          primer_lapso += parseInt(JSON.parse(notas[i]).primer_lapso);
+          segundo_lapso += parseInt(JSON.parse(notas[i]).segundo_lapso);
+          tercer_lapso += parseInt(JSON.parse(notas[i]).tercer_lapso);
+        }
 
-            primer_lapso = primer_lapso / parseInt(notas.length - 1);
-            segundo_lapso = segundo_lapso / parseInt(notas.length - 1);
-            tercer_lapso = tercer_lapso / parseInt(notas.length - 1);
+        primer_lapso = primer_lapso / parseInt(notas.length - 1);
+        segundo_lapso = segundo_lapso / parseInt(notas.length - 1);
+        tercer_lapso = tercer_lapso / parseInt(notas.length - 1);
 
-            notaFinal = (primer_lapso + segundo_lapso + tercer_lapso) / 3;
+        notaFinal = (primer_lapso + segundo_lapso + tercer_lapso) / 3;
 
-            agregar.innerHTML += `
+        agregar.innerHTML += `
                             <tr>
                             <th scope="row">${i + 1}</th>
                             <td>${format(alumnos[i][1])}</td>
@@ -151,17 +151,17 @@ const seccionNav = (año, seccion) => {
                             <a class="dropdown-item" onclick="editar(${
                               alumnos[i][1]
                             },'${alumnos[i][3].trim()} ${alumnos[
-              i
-            ][4].trim()}',${
-              alumnos[i][14]
-            },'${seccion}',${año})" href="#">Editar</a>
+          i
+        ][4].trim()}',${
+          alumnos[i][14]
+        },'${seccion}',${año})" href="#">Editar</a>
                             </div>
                             </div>
                             </td>
                             </tr>`;
-          });
-      }
-    });
+      });
+    }
+  });
 };
 
 //agregarmos un alumno
@@ -213,25 +213,20 @@ function alumno() {
     return error.text("Por Favor Ingrese un cedula");
   }
   $("#modal").attr("data-bs-dismiss", "modal");
-  fetch("BackEnd/actions.php", {
-    method: "POST",
-    body: form,
-  })
-    .then((e) => e.text())
-    .then((data) => {
-      if (data !== "Alumno agregado con exito") {
-        succes.css("display", "none");
-        error.css("display", "block");
-        return error.html(data);
-      }
-      error.css("display", "none");
-      succes.css("display", "block");
-      succes.html(data);
-      setTimeout(() => {
-        succes.css("display", "none");
-      }, 5000);
-      seccionNav(año, seccion);
-    });
+  fetchF(form).then((data) => {
+    if (data !== "Alumno agregado con exito") {
+      succes.css("display", "none");
+      error.css("display", "block");
+      return error.html(data);
+    }
+    error.css("display", "none");
+    succes.css("display", "block");
+    succes.html(data);
+    setTimeout(() => {
+      succes.css("display", "none");
+    }, 5000);
+    seccionNav(año, seccion);
+  });
 }
 
 //motramos las notas de un alumno
@@ -284,28 +279,23 @@ function editar(cedula, nombre, notas, sec, año) {
     form.append("notas", notas);
     form.append("actions", "Editar");
 
-    fetch("BackEnd/actions.php", {
-      method: "POST",
-      body: form,
-    })
-      .then((e) => e.text())
-      .then((data) => {
-        data = JSON.parse(data);
+    fetchF(form).then((data) => {
+      data = JSON.parse(data);
 
-        let notasObject = data[0];
+      let notasObject = data[0];
 
-        let materiasObject = data[0];
+      let materiasObject = data[0];
 
-        localStorage.setItem("DBnotas", JSON.stringify(notasObject));
+      localStorage.setItem("DBnotas", JSON.stringify(notasObject));
 
-        notasObject = Object.values(notasObject);
+      notasObject = Object.values(notasObject);
 
-        materiasObject = Object.entries(materiasObject);
+      materiasObject = Object.entries(materiasObject);
 
-        agregar.innerHTML = ``;
+      agregar.innerHTML = ``;
 
-        for (let i = 1; i < materiasObject.length; i++) {
-          agregar.innerHTML += `
+      for (let i = 1; i < materiasObject.length; i++) {
+        agregar.innerHTML += `
                   <tr>
                   <th scope="row">${materiasObject[i][0].replaceAll(
                     "_",
@@ -333,141 +323,16 @@ function editar(cedula, nombre, notas, sec, año) {
                   <button type="button" class="btn btn-primary" onclick="editarN('${
                     materiasObject[i][0]
                   }',${JSON.parse(
-            notasObject[0]
-          )}, ${notas}, '${nombre}', ${cedula},${parseInt(
-            JSON.parse(notasObject[i]).primer_lapso
-          )},${parseInt(JSON.parse(notasObject[i]).segundo_lapso)},${parseInt(
-            JSON.parse(notasObject[i]).tercer_lapso
-          )})" data-bs-toggle="modal" data-bs-target="#editarnotas">
-                  editar
-                  </button>
-                  </td>
-                  </tr>`;
-        }
-        $("#notasexport").DataTable({
-          paging: false,
-          ordering: false,
-          retrieve: true,
-          dom: "Bfrtip",
-          language: {
-            url: "/sistema/DataTables/Spanish.json",
-          },
-          buttons: [
-            {
-              extend: "excelHtml5",
-              className: "export",
-              ttileAttr: "Exportar a excel",
-              text: "Exportar a Excel",
-              title: `Alumno  ${nombre}   C.I: ${
-                format(cedula) + " "
-              }  Año: ${año}  Sección:  ${sec}`,
-              exportOptions: {
-                columns: ":visible",
-              },
-            },
-            {
-              extend: "colvis",
-              text: "Visor de columnas",
-            },
-          ],
-          columnDefs: [
-            {
-              targets: -2,
-              visible: true,
-            },
-          ],
-        });
-      });
-  });
-
-  $("#notasexport").DataTable().destroy();
-
-  localStorage.setItem("cedula", cedula);
-  localStorage.setItem("nota", notas);
-  localStorage.setItem("nombre", nombre);
-
-  contenido.css("display", "none");
-  tablaAlumno.css("display", "block");
-
-  const Infoalumno = document.querySelector("#InfoAlumno"),
-    InfoCI = document.querySelector("#InfoCI"),
-    InfoAnio = document.querySelector("#InfoAnio"),
-    InfoSec = document.querySelector("#InfoSec");
-
-  Infoalumno.innerHTML = `Alumno: ${nombre.toUpperCase()}.`;
-  InfoCI.innerHTML = `C.i: ${format(cedula)}.`;
-  InfoAnio.innerHTML = `Año: ${añoDB[año - 1].replace("_", " ")}.`;
-  InfoSec.innerHTML = `| Sección: ${sec} |`;
-
-  document.querySelector("#seccionChange").value = sec;
-  document.querySelector("#AñoChange").value = año;
-
-  let form = new FormData();
-
-  form.append("cedula", cedula);
-  form.append("año", añoDB[año - 1]);
-  form.append("notas", notas);
-  form.append("actions", "Editar");
-
-  agregar.innerHTML = ``;
-
-  fetch("BackEnd/actions.php", {
-    method: "POST",
-    body: form,
-  })
-    .then((e) => e.text())
-    .then((data) => {
-      data = JSON.parse(data);
-
-      let notasObject = data[0];
-
-      let materiasObject = data[0];
-
-      localStorage.setItem("DBnotas", JSON.stringify(notasObject));
-
-      notasObject = Object.values(notasObject);
-
-      materiasObject = Object.entries(materiasObject);
-
-      for (let i = 1; i < materiasObject.length; i++) {
-        agregar.innerHTML += `
-                <tr>
-                <th scope="row">${materiasObject[i][0].replaceAll(
-                  "_",
-                  " "
-                )}</th>
-                <td class="text-center">${parseInt(
-                  JSON.parse(notasObject[i]).primer_lapso
-                )}</td>
-                <td class="text-center">${parseInt(
-                  JSON.parse(notasObject[i]).segundo_lapso
-                )}</td>
-                <td class="text-center">${parseInt(
-                  JSON.parse(notasObject[i]).tercer_lapso
-                )}</td>
-                <td class="text-center">${(
-                  (parseInt(JSON.parse(notasObject[i]).primer_lapso) +
-                    parseInt(JSON.parse(notasObject[i]).segundo_lapso) +
-                    parseInt(JSON.parse(notasObject[i]).tercer_lapso)) /
-                  3
-                ).toFixed(1)}</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td> 
-                <button type="button" class="btn btn-primary" onclick="editarN('${
-                  materiasObject[i][0]
-                }',${JSON.parse(
           notasObject[0]
         )}, ${notas}, '${nombre}', ${cedula},${parseInt(
           JSON.parse(notasObject[i]).primer_lapso
         )},${parseInt(JSON.parse(notasObject[i]).segundo_lapso)},${parseInt(
           JSON.parse(notasObject[i]).tercer_lapso
         )})" data-bs-toggle="modal" data-bs-target="#editarnotas">
-                editar
-                </button>
-                </td>
-                </tr>`;
+                  editar
+                  </button>
+                  </td>
+                  </tr>`;
       }
       $("#notasexport").DataTable({
         paging: false,
@@ -503,6 +368,126 @@ function editar(cedula, nombre, notas, sec, año) {
         ],
       });
     });
+  });
+
+  $("#notasexport").DataTable().destroy();
+
+  localStorage.setItem("cedula", cedula);
+  localStorage.setItem("nota", notas);
+  localStorage.setItem("nombre", nombre);
+
+  contenido.css("display", "none");
+  tablaAlumno.css("display", "block");
+
+  const Infoalumno = document.querySelector("#InfoAlumno"),
+    InfoCI = document.querySelector("#InfoCI"),
+    InfoAnio = document.querySelector("#InfoAnio"),
+    InfoSec = document.querySelector("#InfoSec");
+
+  Infoalumno.innerHTML = `Alumno: ${nombre.toUpperCase()}.`;
+  InfoCI.innerHTML = `C.i: ${format(cedula)}.`;
+  InfoAnio.innerHTML = `Año: ${añoDB[año - 1].replace("_", " ")}.`;
+  InfoSec.innerHTML = `| Sección: ${sec} |`;
+
+  document.querySelector("#seccionChange").value = sec;
+  document.querySelector("#AñoChange").value = año;
+
+  let form = new FormData();
+
+  form.append("cedula", cedula);
+  form.append("año", añoDB[año - 1]);
+  form.append("notas", notas);
+  form.append("actions", "Editar");
+
+  agregar.innerHTML = ``;
+
+  fetchF(form).then((data) => {
+    data = JSON.parse(data);
+
+    let notasObject = data[0];
+
+    let materiasObject = data[0];
+
+    localStorage.setItem("DBnotas", JSON.stringify(notasObject));
+
+    notasObject = Object.values(notasObject);
+
+    materiasObject = Object.entries(materiasObject);
+
+    for (let i = 1; i < materiasObject.length; i++) {
+      agregar.innerHTML += `
+                <tr>
+                <th scope="row">${materiasObject[i][0].replaceAll(
+                  "_",
+                  " "
+                )}</th>
+                <td class="text-center">${parseInt(
+                  JSON.parse(notasObject[i]).primer_lapso
+                )}</td>
+                <td class="text-center">${parseInt(
+                  JSON.parse(notasObject[i]).segundo_lapso
+                )}</td>
+                <td class="text-center">${parseInt(
+                  JSON.parse(notasObject[i]).tercer_lapso
+                )}</td>
+                <td class="text-center">${(
+                  (parseInt(JSON.parse(notasObject[i]).primer_lapso) +
+                    parseInt(JSON.parse(notasObject[i]).segundo_lapso) +
+                    parseInt(JSON.parse(notasObject[i]).tercer_lapso)) /
+                  3
+                ).toFixed(1)}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td> 
+                <button type="button" class="btn btn-primary" onclick="editarN('${
+                  materiasObject[i][0]
+                }',${JSON.parse(
+        notasObject[0]
+      )}, ${notas}, '${nombre}', ${cedula},${parseInt(
+        JSON.parse(notasObject[i]).primer_lapso
+      )},${parseInt(JSON.parse(notasObject[i]).segundo_lapso)},${parseInt(
+        JSON.parse(notasObject[i]).tercer_lapso
+      )})" data-bs-toggle="modal" data-bs-target="#editarnotas">
+                editar
+                </button>
+                </td>
+                </tr>`;
+    }
+    $("#notasexport").DataTable({
+      paging: false,
+      ordering: false,
+      retrieve: true,
+      dom: "Bfrtip",
+      language: {
+        url: "/sistema/DataTables/Spanish.json",
+      },
+      buttons: [
+        {
+          extend: "excelHtml5",
+          className: "export",
+          ttileAttr: "Exportar a excel",
+          text: "Exportar a Excel",
+          title: `Alumno  ${nombre}   C.I: ${
+            format(cedula) + " "
+          }  Año: ${año}  Sección:  ${sec}`,
+          exportOptions: {
+            columns: ":visible",
+          },
+        },
+        {
+          extend: "colvis",
+          text: "Visor de columnas",
+        },
+      ],
+      columnDefs: [
+        {
+          targets: -2,
+          visible: true,
+        },
+      ],
+    });
+  });
 }
 
 //editar las notas del alumno
@@ -587,21 +572,16 @@ function enviarNotas() {
 
   $("#btnAgragar").attr("data-dismiss", "modal");
   error.css("display", "none");
-  fetch("BackEnd/actions.php", {
-    method: "POST",
-    body: form,
-  })
-    .then((e) => e.text())
-    .then((data) => {
-      data = JSON.parse(data);
-      error.css("display", "none");
-      succes.css("display", "block");
-      succes.html("Las notas han sido actualizadas");
-      editar(cedula, nombre, nota, seccion, localStorage.getItem("año"));
-      setTimeout(() => {
-        succes.css("display", "none");
-      }, 5000);
-    });
+
+  fetchF(form).then((data) => {
+    error.css("display", "none");
+    succes.css("display", "block");
+    succes.html("Las notas han sido actualizadas");
+    editar(cedula, nombre, nota, seccion, localStorage.getItem("año"));
+    setTimeout(() => {
+      succes.css("display", "none");
+    }, 5000);
+  });
 }
 
 //pasar alumnos de seccion
@@ -615,14 +595,7 @@ function PasarSeccion() {
   data.append("seccion", seccion);
   data.append("actions", "Pasar Seccion");
 
-  fetch("BackEnd/actions.php", {
-    method: "POST",
-    body: data,
-  })
-    .then((r) => r.text())
-    .then((data) => {
-      seccionNav(año, seccion);
-    });
+  fetchF(data).then(() => seccionNav(año, seccion));
 }
 
 //generar reporte de notas de los alumnos de una seccion
@@ -679,42 +652,32 @@ function test() {
   form.append("seccion", seccion);
   form.append("actions", "Buscar Alumnos");
 
-  fetch("BackEnd/actions.php", {
-    method: "post",
-    body: form,
-  })
-    .then((e) => e.text())
-    .then((data) => {
-      data = JSON.parse(data);
-      agregar.innerHTML = "";
-      let alumnos = data;
+  fetchF(form).then((data) => {
+    data = JSON.parse(data);
+    agregar.innerHTML = "";
+    let alumnos = data;
 
-      for (let i = 0; i < alumnos.length; i++) {
-        let form2 = new FormData();
+    for (let i = 0; i < alumnos.length; i++) {
+      let form2 = new FormData();
 
-        form2.append("año", añoDB[año - 1]);
-        form2.append("notas", alumnos[i][14]);
-        form2.append("actions", "Editar");
+      form2.append("año", añoDB[año - 1]);
+      form2.append("notas", alumnos[i][14]);
+      form2.append("actions", "Editar");
 
-        fetch("BackEnd/actions.php", {
-          method: "post",
-          body: form2,
-        })
-          .then((e) => e.text())
-          .then((data) => {
-            data = JSON.parse(data);
+      fetchF(form2).then((data) => {
+        data = JSON.parse(data);
 
-            let notas = data[0];
+        let notas = data[0];
 
-            materias = Object.entries(notas);
-            notas = Object.values(notas);
+        materias = Object.entries(notas);
+        notas = Object.values(notas);
 
-            agregar.innerHTML += `
+        agregar.innerHTML += `
                             <tr>
                             <td>${format(alumnos[i][1])}</td>
                             <td>${alumnos[i][3].toUpperCase()} ${alumnos[
-              i
-            ][4].toUpperCase()} </td>
+          i
+        ][4].toUpperCase()} </td>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -722,8 +685,8 @@ function test() {
                             <td></td>
                             </tr>`;
 
-            for (let i = 1; i < notas.length; i++) {
-              agregar.innerHTML += `
+        for (let i = 1; i < notas.length; i++) {
+          agregar.innerHTML += `
                             <tr>
                             <td></td>
                             <td></td>
@@ -744,33 +707,34 @@ function test() {
                               3
                             ).toFixed(1)}</td>
                             </tr>`;
-            }
-            if (i + 1 == alumnos.length) {
-              $("#AreasAlumnos").DataTable({
-                paging: false,
-                ordering: false,
-                searching: false,
-                retrieve: true,
-                dom: "Bfrtip",
-                language: {
-                  url: "/sistema/DataTables/Spanish.json",
-                },
-                buttons: [
-                  {
-                    extend: "excelHtml5",
-                    className: "export",
-                    ttileAttr: "Exportar a excel",
-                    text: "Exportar a Excel",
-                    title: `Reporte Grupal de Notas | Año: ${añoDB[
-                      año - 1
-                    ].replace("_", " ")} Sección: ${seccion} `,
-                  },
-                ],
-              });
-            }
+        }
+        if (i + 1 == alumnos.length) {
+          $("#AreasAlumnos").DataTable({
+            paging: false,
+            ordering: false,
+            searching: false,
+            retrieve: true,
+            dom: "Bfrtip",
+            language: {
+              url: "/sistema/DataTables/Spanish.json",
+            },
+            buttons: [
+              {
+                extend: "excelHtml5",
+                className: "export",
+                ttileAttr: "Exportar a excel",
+                text: "Exportar a Excel",
+                title: `Reporte Grupal de Notas | Año: ${añoDB[año - 1].replace(
+                  "_",
+                  " "
+                )} Sección: ${seccion} `,
+              },
+            ],
           });
-      }
-    });
+        }
+      });
+    }
+  });
 }
 
 function datosAlumno() {
@@ -786,48 +750,43 @@ function datosAlumno() {
 
   const tabla = document.querySelector("#DatosAlumnos");
 
-  fetch("BackEnd/actions.php", {
-    method: "post",
-    body: form,
-  })
-    .then((e) => e.text())
-    .then((data) => {
-      data = JSON.parse(data);
-      const alumno = data.alumno,
-        representante = data.representante;
+  fetchF(form).then((data) => {
+    data = JSON.parse(data);
+    const alumno = data.alumno,
+      representante = data.representante;
 
-      let ids = { alumno: alumno.id, representante: representante.id };
+    let ids = { alumno: alumno.id, representante: representante.id };
 
-      ids = JSON.stringify(ids);
+    ids = JSON.stringify(ids);
 
-      localStorage.setItem("ids", ids);
+    localStorage.setItem("ids", ids);
 
-      document.querySelector("#Nombre").value = alumno.nombre.toUpperCase();
-      document.querySelector("#Apellido").value = alumno.apellido.toUpperCase();
-      document.querySelector("#Cedula").value = alumno.cedula;
-      document.querySelector("#cedulaEscolar").checked =
-        alumno.cedula_escolar == "true" ? true : false;
-      document.querySelector("#Sexo").value = alumno.sexo;
-      document.querySelector("#fechaNacimiento").value =
-        alumno.fecha_de_nacimiento;
-      document.querySelector("#Edad").value = alumno.edad;
-      document.querySelector("#LugarNacimiento").value =
-        alumno.lugar_de_nacimiento;
-      document.querySelector("#Telfono").value = alumno.telefono;
-      document.querySelector("#Direccion").value = alumno.direccion;
-      document.querySelector("#Correo").value = alumno.correo;
-      document.querySelector("#NombreR").value =
-        representante.nombre.toUpperCase();
-      document.querySelector("#ApellidoR").value =
-        representante.apellido.toUpperCase();
-      document.querySelector("#CedulaR").value = representante.cedula;
-      document.querySelector("#TelfonoR").value = representante.telefono;
-      document.querySelector("#SexoR").value = representante.sexo;
-      document.querySelector("#Filiacion").value = representante.filiacion;
-      document.querySelector("#DireccionR").value = representante.direccion;
-      document.querySelector("#CorreoR").value = representante.correo;
+    document.querySelector("#Nombre").value = alumno.nombre.toUpperCase();
+    document.querySelector("#Apellido").value = alumno.apellido.toUpperCase();
+    document.querySelector("#Cedula").value = alumno.cedula;
+    document.querySelector("#cedulaEscolar").checked =
+      alumno.cedula_escolar == "true" ? true : false;
+    document.querySelector("#Sexo").value = alumno.sexo;
+    document.querySelector("#fechaNacimiento").value =
+      alumno.fecha_de_nacimiento;
+    document.querySelector("#Edad").value = alumno.edad;
+    document.querySelector("#LugarNacimiento").value =
+      alumno.lugar_de_nacimiento;
+    document.querySelector("#Telfono").value = alumno.telefono;
+    document.querySelector("#Direccion").value = alumno.direccion;
+    document.querySelector("#Correo").value = alumno.correo;
+    document.querySelector("#NombreR").value =
+      representante.nombre.toUpperCase();
+    document.querySelector("#ApellidoR").value =
+      representante.apellido.toUpperCase();
+    document.querySelector("#CedulaR").value = representante.cedula;
+    document.querySelector("#TelfonoR").value = representante.telefono;
+    document.querySelector("#SexoR").value = representante.sexo;
+    document.querySelector("#Filiacion").value = representante.filiacion;
+    document.querySelector("#DireccionR").value = representante.direccion;
+    document.querySelector("#CorreoR").value = representante.correo;
 
-      tabla.innerHTML = `
+    tabla.innerHTML = `
         <tr>
           <td>${format(alumno.cedula)}</td>
           <td>${alumno.nombre.toUpperCase()} ${alumno.apellido.toUpperCase()}</td>
@@ -878,28 +837,28 @@ function datosAlumno() {
         
         `;
 
-      $("#Alumnoexport").DataTable({
-        paging: false,
-        ordering: false,
-        searching: false,
-        retrieve: true,
-        dom: "Bfrtip",
-        language: {
-          url: "/sistema/DataTables/Spanish.json",
+    $("#Alumnoexport").DataTable({
+      paging: false,
+      ordering: false,
+      searching: false,
+      retrieve: true,
+      dom: "Bfrtip",
+      language: {
+        url: "/sistema/DataTables/Spanish.json",
+      },
+      buttons: [
+        {
+          extend: "excelHtml5",
+          className: "export",
+          ttileAttr: "Exportar a excel",
+          text: "Exportar a Excel",
+          title: `Reporte de datos | Alumno: ${alumno.nombre.toUpperCase()} ${alumno.apellido.toUpperCase()} Año: ${añoDB[
+            año - 1
+          ].replace("_", " ")} Sección: ${seccion} `,
         },
-        buttons: [
-          {
-            extend: "excelHtml5",
-            className: "export",
-            ttileAttr: "Exportar a excel",
-            text: "Exportar a Excel",
-            title: `Reporte de datos | Alumno: ${alumno.nombre.toUpperCase()} ${alumno.apellido.toUpperCase()} Año: ${añoDB[
-              año - 1
-            ].replace("_", " ")} Sección: ${seccion} `,
-          },
-        ],
-      });
+      ],
     });
+  });
 }
 
 function ReporteAlumnos() {
@@ -913,18 +872,13 @@ function ReporteAlumnos() {
   form.append("año", añoDB[año - 1]);
   form.append("actions", "ReporteAlumno");
 
-  fetch("BackEnd/actions.php", {
-    method: "post",
-    body: form,
-  })
-    .then((e) => e.text())
-    .then((data) => {
-      const alumno = JSON.parse(data);
+  fetchF(form).then((data) => {
+    const alumno = JSON.parse(data);
 
-      for (let i = 0; i < alumno.length; i++) {
-        const representante = alumno[i].Representate;
+    for (let i = 0; i < alumno.length; i++) {
+      const representante = alumno[i].Representate;
 
-        tabla.innerHTML += `
+      tabla.innerHTML += `
         <tr>
         <th class="table-dark" ></th>
         <th class="table-dark" scope="col" >Alumno</th>
@@ -940,8 +894,8 @@ function ReporteAlumnos() {
         <tr>
           <td>${format(alumno[i].cedula)}</td>
           <td>${alumno[i].nombre.toUpperCase()} ${alumno[
-          i
-        ].apellido.toUpperCase()}</td>
+        i
+      ].apellido.toUpperCase()}</td>
           <td>${alumno[i].sexo}</td>
           <td>${alumno[i].fecha_de_nacimiento}</td>
           <td>${alumno[i].edad}</td>
@@ -991,30 +945,30 @@ function ReporteAlumnos() {
         </tr>
         
         `;
-      }
-      $("#Alumnoexport").DataTable({
-        paging: false,
-        ordering: false,
-        searching: false,
-        retrieve: true,
-        dom: "Bfrtip",
-        language: {
-          url: "/sistema/DataTables/Spanish.json",
+    }
+    $("#Alumnoexport").DataTable({
+      paging: false,
+      ordering: false,
+      searching: false,
+      retrieve: true,
+      dom: "Bfrtip",
+      language: {
+        url: "/sistema/DataTables/Spanish.json",
+      },
+      buttons: [
+        {
+          extend: "excelHtml5",
+          className: "export",
+          ttileAttr: "Exportar a excel",
+          text: "Exportar a Excel",
+          title: `Reporte grupal de datos | Año: ${añoDB[año - 1].replace(
+            "_",
+            " "
+          )} Sección: ${seccion} `,
         },
-        buttons: [
-          {
-            extend: "excelHtml5",
-            className: "export",
-            ttileAttr: "Exportar a excel",
-            text: "Exportar a Excel",
-            title: `Reporte grupal de datos | Año: ${añoDB[año - 1].replace(
-              "_",
-              " "
-            )} Sección: ${seccion} `,
-          },
-        ],
-      });
+      ],
     });
+  });
 }
 function ModificarDatosalumno() {
   const año = localStorage.getItem("año"),
@@ -1049,24 +1003,19 @@ function ModificarDatosalumno() {
   form.append("seccion", seccion);
   form.append("actions", "ModoficarDatos");
 
-  fetch("BackEnd/actions.php", {
-    method: "post",
-    body: form,
-  })
-    .then((e) => e.text())
-    .then((data) => {
-      if (data == "True")
-        Swal.fire({
-          title: "Modificado!",
-          text: "Cambios Realizados con Éxito",
-          icon: "success",
-          confirmButtonText: "Entendido",
-        }).then((e) => {
-          localStorage.setItem("cedula", $("#Cedula").val());
+  fetchF(form).then((data) => {
+    if (data == "True")
+      Swal.fire({
+        title: "Modificado!",
+        text: "Cambios Realizados con Éxito",
+        icon: "success",
+        confirmButtonText: "Entendido",
+      }).then((e) => {
+        localStorage.setItem("cedula", $("#Cedula").val());
 
-          if (e.isConfirmed == true) location.reload();
-        });
-    });
+        if (e.isConfirmed == true) location.reload();
+      });
+  });
 }
 
 function ModificarSeccionAño() {
@@ -1080,30 +1029,25 @@ function ModificarSeccionAño() {
   form.append("seccion", seccion);
   form.append("actions", "CambiarSeccionAño");
 
-  fetch("BackEnd/actions.php", {
-    method: "post",
-    body: form,
-  })
-    .then((e) => e.text())
-    .then((data) => {
-      if (JSON.parse(data) == "True")
-        Swal.fire({
-          title: "Modificado!",
-          text: "Cambios Realizados con Éxito",
-          icon: "success",
-          confirmButtonText: "Entendido",
-        }).then((e) => {
-          localStorage.setItem("año", año);
-          localStorage.setItem("seccion", seccion);
+  fetchF(form).then((data) => {
+    if (JSON.parse(data) == "True")
+      Swal.fire({
+        title: "Modificado!",
+        text: "Cambios Realizados con Éxito",
+        icon: "success",
+        confirmButtonText: "Entendido",
+      }).then((e) => {
+        localStorage.setItem("año", año);
+        localStorage.setItem("seccion", seccion);
 
-          if (e.isConfirmed == true)
-            editar(
-              localStorage.getItem("cedula"),
-              `${localStorage.getItem("nombre")}`,
-              localStorage.getItem("nota"),
-              seccion,
-              año
-            );
-        });
-    });
+        if (e.isConfirmed == true)
+          editar(
+            localStorage.getItem("cedula"),
+            `${localStorage.getItem("nombre")}`,
+            localStorage.getItem("nota"),
+            seccion,
+            año
+          );
+      });
+  });
 }
