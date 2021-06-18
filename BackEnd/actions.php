@@ -152,27 +152,53 @@ if(isset($_POST["actions"])){
 
                     $SiguienteAño = "";
 
+                    $AnteriorAño = "";
+
                     if($año == "primer_año" ) $SiguienteAño = "segundo_año";
                     if($año == "segundo_año" ) $SiguienteAño = "tercer_año";
                     if($año == "tercer_año" ) $SiguienteAño = "cuarto_año";
                     if($año == "cuarto_año" ) $SiguienteAño = "quinto_año";
                     if($año == "quinto_año" ) $SiguienteAño = "Graduado";
 
+                    if($año == "segundo_año" ) $AnteriorAño = "primer_año";
+                    if($año == "tercer_año" ) $AnteriorAño = "segundo_año";
+                    if($año == "cuarto_año" ) $AnteriorAño = "tercer_año";
+                    if($año == "quinto_año" ) $AnteriorAño = "cuarto_año";
+
+
                     $sql = "SELECT * FROM alumnos WHERE ano = '$año' AND seccion='$seccion'";
                     $resultado = $conn->query($sql)->fetch_all();
-    
-                    
-                    $i = count($resultado);
 
                     
                     foreach ($resultado as $key => $value) {
                         $rp = 0;
+                        $rpa= 0;
                         $cedula = $value[1];
                         $notas = $value[14];
 
-                            $sql = "SELECT $año FROM notas WHERE id = '$value[14]' ";
+                            if($AnteriorAño != ""){
+
+                                $sql = "SELECT * FROM notas WHERE id = '$notas' ";
+                                $resultado = $conn->query($sql)->fetch_object();
+                                $id = $resultado->$AnteriorAño;
+    
+                                $sql = "SELECT * FROM $AnteriorAño WHERE id = '$id' ";
+                                $resultado = $conn->query($sql)->fetch_all();
+    
+                                foreach ($resultado as $key => $value) {
+                                        for ($i=1; $i < count($value); $i++) { 
+                                            $value[$i] = json_decode($value[$i]);
+                                            if ($value[$i]->ap === 0) {
+                                                $rpa++;
+                                            }
+                                        }
+                                }
+
+                            }
+
+                            $sql = "SELECT * FROM notas WHERE id = '$notas' ";
                             $resultado = $conn->query($sql)->fetch_object();
-                            $id = $resultado->primer_año;
+                            $id = $resultado->$año;
 
                             $sql = "SELECT * FROM $año WHERE id = '$id' ";
                             $resultado = $conn->query($sql)->fetch_all();
@@ -186,7 +212,7 @@ if(isset($_POST["actions"])){
                                     }
                             }
 
-                            if($rp<3){
+                            if($rp<3 && $rpa <1){
 
                                 $sql = "INSERT INTO $SiguienteAño (`id`) VALUES (NULL)";
                                 $resultado = $conn->query($sql);

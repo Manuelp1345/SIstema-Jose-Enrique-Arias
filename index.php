@@ -111,11 +111,21 @@ require "BackEnd/actions.php"
     <button class="btn btn-primary mt-4 col-3" onclick="reporte('datosAlumno')" >Datos del alumno</button>
 </div>
       
-      <div class="mt-4 d-flex flex-row ">
+      <div class="mt-4 d-flex flex-row flex-wrap">
           <h4 id="InfoAlumno" class="col-4" ></h4>
           <h4 id="InfoCI" class="col-4" ></h4>
           <h4 id="InfoAnio" class="col-2" ></h4>
           <h4 id="InfoSec" class="col-2" ></h4>
+          <div class=" d-flex flex-row">
+          <h4 class="col-5 my-3 pt-1">Notas de: </h4>
+          <select class="form-select my-3 col-5" name="SelectAÑo" id="SelectAÑo">
+                  <option  id="Select1" value="1">Primer Año</option>
+                  <option id="Select2" class="d-none" value="2">Segundo Año</option>
+                  <option id="Select3" class="d-none" value="3">Tercer Año</option>
+                  <option id="Select4" class="d-none" value="4">Cuarto Año</option>
+                  <option id="Select5" class="d-none" value="5">Quinto Año</option>
+              </select>
+          </div>
       </div>
 
 <br><br>
@@ -317,7 +327,7 @@ require "BackEnd/actions.php"
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          <h4>Esta opcion Pasara a todos los alumnos al siguiente año </h4>
+      <h4>Esta opcion pasara a todos los alumnos que estén aprobados al siguiente año. <br><br> Los alumnos con dos o más materias reprobadas se quedaran en el año actual. <br><br>Los alumnos que tengan materias pendientes del año anterior no podrán pasar de año </h4>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary"  data-bs-dismiss="modal">Cerrar</button>

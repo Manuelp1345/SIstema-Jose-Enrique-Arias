@@ -4,6 +4,14 @@ const error = $(".alert-danger"),
   tablaAlumno = $(".alumno"),
   welcome = $(".welcome");
 
+const añoDB = [
+  "primer_año",
+  "segundo_año",
+  "tercer_año",
+  "cuarto_año",
+  "quinto_año",
+];
+
 //Utilidades
 const primeraLetraMayuscula = (cadena) =>
   cadena.charAt(0).toUpperCase().concat(cadena.substring(1, cadena.length));
@@ -33,24 +41,19 @@ const seccionNav = (año, seccion) => {
   localStorage.setItem("año", año);
   localStorage.setItem("seccion", seccion);
 
+  localStorage.removeItem("añoaux");
+
   welcome.css("display", "none");
   tablaAlumno.css("display", "none");
   contenido.css("display", "block");
 
-  let titulo = $(".menu h5"),
-    añoDB = 0;
+  let titulo = $(".menu h5");
 
   if (año == 1) Menu = document.querySelector("#primer-año");
   if (año == 2) Menu = document.querySelector("#segundo-año");
   if (año == 3) Menu = document.querySelector("#tercer-año");
   if (año == 4) Menu = document.querySelector("#Cuarto-año");
   if (año == 5) Menu = document.querySelector("#Quinto-año");
-
-  if (año == 1) añoDB = "primer_año";
-  if (año == 2) añoDB = "segundo_año";
-  if (año == 3) añoDB = "tercer_año";
-  if (año == 4) añoDB = "cuarto_año";
-  if (año == 5) añoDB = "quinto_año";
 
   Menu.classList.toggle("show");
 
@@ -76,7 +79,7 @@ const seccionNav = (año, seccion) => {
 
   let form = new FormData();
 
-  form.append("año", añoDB);
+  form.append("año", añoDB[año - 1]);
   form.append("seccion", seccion);
   form.append("actions", "Buscar Alumnos");
 
@@ -95,7 +98,7 @@ const seccionNav = (año, seccion) => {
       for (let i = 0; i < alumnos.length; i++) {
         let form2 = new FormData();
 
-        form2.append("año", añoDB);
+        form2.append("año", añoDB[año - 1]);
         form2.append("notas", alumnos[i][14]);
         form2.append("actions", "Editar");
 
@@ -167,14 +170,6 @@ function alumno() {
     seccion = localStorage.getItem("seccion");
   $("#modal").removeAttr("data-bs-dismiss");
 
-  let añoDB = "";
-
-  if (año == 1) añoDB = "primer_año";
-  if (año == 2) añoDB = "segundo_año";
-  if (año == 3) añoDB = "tercer_año";
-  if (año == 4) añoDB = "cuarto_año";
-  if (año == 5) añoDB = "quinto_año";
-
   let form = new FormData();
 
   form.append("nombre", $("#Nombre").val().trim());
@@ -196,7 +191,7 @@ function alumno() {
   form.append("TelfonoR", $("#TelfonoR").val());
   form.append("DireccionR", $("#DireccionR").val());
   form.append("CorreoR", $("#CorreoR").val());
-  form.append("año", añoDB);
+  form.append("año", añoDB[año - 1]);
   form.append("seccion", seccion);
   form.append("actions", "Alumno");
 
@@ -241,24 +236,158 @@ function alumno() {
 
 //motramos las notas de un alumno
 function editar(cedula, nombre, notas, sec, año) {
+  const agregar = document.getElementById("notasAlumnos");
+  agregar.innerHTML = ``;
+  const selector = document.querySelector("#SelectAÑo"),
+    Select1 = document.querySelector("#Select1"),
+    Select2 = document.querySelector("#Select2"),
+    Select3 = document.querySelector("#Select3"),
+    Select4 = document.querySelector("#Select4"),
+    Select5 = document.querySelector("#Select5");
+
+  Select2.classList.replace("d-block", "d-none");
+  Select3.classList.replace("d-block", "d-none");
+  Select4.classList.replace("d-block", "d-none");
+  Select5.classList.replace("d-block", "d-none");
+  Select1.removeAttribute("selected");
+  Select2.removeAttribute("selected");
+  Select3.removeAttribute("selected");
+  Select4.removeAttribute("selected");
+  Select5.removeAttribute("selected");
+
+  if (año == 1) Select1.setAttribute("selected", "");
+
+  if (año >= 2) {
+    Select2.classList.replace("d-none", "d-block");
+    if (año == 2) Select2.setAttribute("selected", "");
+  }
+  if (año >= 3) {
+    Select3.classList.replace("d-none", "d-block");
+    if (año == 3) Select3.setAttribute("selected", "");
+  }
+  if (año >= 4) {
+    Select4.classList.replace("d-none", "d-block");
+    if (año == 4) Select4.setAttribute("selected", "");
+  }
+  if (año >= 5) {
+    Select5.classList.replace("d-none", "d-block");
+    if (año == 5) Select5.setAttribute("selected", "");
+  }
+
+  selector.addEventListener("change", () => {
+    localStorage.setItem("añoaux", parseInt(selector.value));
+
+    let form = new FormData();
+
+    form.append("cedula", cedula);
+    form.append("año", añoDB[parseInt(selector.value) - 1]);
+    form.append("notas", notas);
+    form.append("actions", "Editar");
+
+    fetch("BackEnd/actions.php", {
+      method: "POST",
+      body: form,
+    })
+      .then((e) => e.text())
+      .then((data) => {
+        data = JSON.parse(data);
+
+        let notasObject = data[0];
+
+        let materiasObject = data[0];
+
+        localStorage.setItem("DBnotas", JSON.stringify(notasObject));
+
+        notasObject = Object.values(notasObject);
+
+        materiasObject = Object.entries(materiasObject);
+
+        agregar.innerHTML = ``;
+
+        for (let i = 1; i < materiasObject.length; i++) {
+          agregar.innerHTML += `
+                  <tr>
+                  <th scope="row">${materiasObject[i][0].replaceAll(
+                    "_",
+                    " "
+                  )}</th>
+                  <td class="text-center">${parseInt(
+                    JSON.parse(notasObject[i]).primer_lapso
+                  )}</td>
+                  <td class="text-center">${parseInt(
+                    JSON.parse(notasObject[i]).segundo_lapso
+                  )}</td>
+                  <td class="text-center">${parseInt(
+                    JSON.parse(notasObject[i]).tercer_lapso
+                  )}</td>
+                  <td class="text-center">${(
+                    (parseInt(JSON.parse(notasObject[i]).primer_lapso) +
+                      parseInt(JSON.parse(notasObject[i]).segundo_lapso) +
+                      parseInt(JSON.parse(notasObject[i]).tercer_lapso)) /
+                    3
+                  ).toFixed(1)}</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td> 
+                  <button type="button" class="btn btn-primary" onclick="editarN('${
+                    materiasObject[i][0]
+                  }',${JSON.parse(
+            notasObject[0]
+          )}, ${notas}, '${nombre}', ${cedula},${parseInt(
+            JSON.parse(notasObject[i]).primer_lapso
+          )},${parseInt(JSON.parse(notasObject[i]).segundo_lapso)},${parseInt(
+            JSON.parse(notasObject[i]).tercer_lapso
+          )})" data-bs-toggle="modal" data-bs-target="#editarnotas">
+                  editar
+                  </button>
+                  </td>
+                  </tr>`;
+        }
+        $("#notasexport").DataTable({
+          paging: false,
+          ordering: false,
+          retrieve: true,
+          dom: "Bfrtip",
+          language: {
+            url: "/sistema/DataTables/Spanish.json",
+          },
+          buttons: [
+            {
+              extend: "excelHtml5",
+              className: "export",
+              ttileAttr: "Exportar a excel",
+              text: "Exportar a Excel",
+              title: `Alumno  ${nombre}   C.I: ${
+                format(cedula) + " "
+              }  Año: ${año}  Seccion:  ${sec}`,
+              exportOptions: {
+                columns: ":visible",
+              },
+            },
+            {
+              extend: "colvis",
+              text: "Visor de columnas",
+            },
+          ],
+          columnDefs: [
+            {
+              targets: -2,
+              visible: true,
+            },
+          ],
+        });
+      });
+  });
+
   $("#notasexport").DataTable().destroy();
 
   localStorage.setItem("cedula", cedula);
   localStorage.setItem("nota", notas);
   localStorage.setItem("nombre", nombre);
 
-  const agregar = document.getElementById("notasAlumnos");
-
   contenido.css("display", "none");
   tablaAlumno.css("display", "block");
-
-  let añoDB = "";
-
-  if (año == 1) añoDB = "primer_año";
-  if (año == 2) añoDB = "segundo_año";
-  if (año == 3) añoDB = "tercer_año";
-  if (año == 4) añoDB = "cuarto_año";
-  if (año == 5) añoDB = "quinto_año";
 
   const Infoalumno = document.querySelector("#InfoAlumno"),
     InfoCI = document.querySelector("#InfoCI"),
@@ -267,7 +396,7 @@ function editar(cedula, nombre, notas, sec, año) {
 
   Infoalumno.innerHTML = `Alumno: ${nombre.toUpperCase()}.`;
   InfoCI.innerHTML = `C.i: ${format(cedula)}.`;
-  InfoAnio.innerHTML = `Año: ${añoDB.replace("_", " ")}.`;
+  InfoAnio.innerHTML = `Año: ${añoDB[año - 1].replace("_", " ")}.`;
   InfoSec.innerHTML = `| Seccion: ${sec} |`;
 
   document.querySelector("#seccionChange").value = sec;
@@ -276,7 +405,7 @@ function editar(cedula, nombre, notas, sec, año) {
   let form = new FormData();
 
   form.append("cedula", cedula);
-  form.append("año", añoDB);
+  form.append("año", añoDB[año - 1]);
   form.append("notas", notas);
   form.append("actions", "Editar");
 
@@ -368,8 +497,8 @@ function editar(cedula, nombre, notas, sec, año) {
         ],
         columnDefs: [
           {
-            targets: -1,
-            visible: false,
+            targets: -2,
+            visible: true,
           },
         ],
       });
@@ -390,21 +519,16 @@ function editarN(materia, id, nota, nombre, cedula, p, s, t) {
 }
 
 function enviarNotas() {
-  const año = localStorage.getItem("año"),
+  const auxAño = localStorage.getItem("añoaux"),
+    año = auxAño != null ? auxAño : localStorage.getItem("año"),
     materia = localStorage.getItem("materia"),
-    nota = localStorage.getItem("nota"),
-    nombre = localStorage.getItem("nombre"),
+    nota = localStorage.getItem(
+      "nota",
+      (nombre = localStorage.getItem("nombre"))
+    ),
     cedula = localStorage.getItem("cedula"),
     id = localStorage.getItem("idMaterias"),
     seccion = localStorage.getItem("seccion");
-
-  let añoDB = "";
-
-  if (año == 1) añoDB = "primer_año";
-  if (año == 2) añoDB = "segundo_año";
-  if (año == 3) añoDB = "tercer_año";
-  if (año == 4) añoDB = "cuarto_año";
-  if (año == 5) añoDB = "quinto_año";
 
   let lapsos = {
     primer_lapso: 0,
@@ -429,7 +553,7 @@ function enviarNotas() {
 
   form.append("materia", materia);
   form.append("nota", id);
-  form.append("año", añoDB);
+  form.append("año", añoDB[año - 1]);
   form.append("datos", JSON.stringify(lapsos));
   form.append("actions", "mofificar Notas");
 
@@ -473,7 +597,7 @@ function enviarNotas() {
       error.css("display", "none");
       succes.css("display", "block");
       succes.html("Las notas han sido actualizadas");
-      editar(cedula, nombre, nota, seccion, año);
+      editar(cedula, nombre, nota, seccion, localStorage.getItem("año"));
       setTimeout(() => {
         succes.css("display", "none");
       }, 5000);
@@ -485,17 +609,9 @@ function PasarSeccion() {
   const año = localStorage.getItem("año"),
     seccion = localStorage.getItem("seccion");
 
-  let añoDB = "";
-
-  if (año == 1) añoDB = "primer_año";
-  if (año == 2) añoDB = "segundo_año";
-  if (año == 3) añoDB = "tercer_año";
-  if (año == 4) añoDB = "cuarto_año";
-  if (año == 5) añoDB = "quinto_año";
-
   let data = new FormData();
 
-  data.append("año", añoDB);
+  data.append("año", añoDB[año - 1]);
   data.append("seccion", seccion);
   data.append("actions", "Pasar Seccion");
 
@@ -555,19 +671,11 @@ function test() {
     seccion = localStorage.getItem("seccion"),
     agregar = document.querySelector("#NotasAlumnos");
 
-  let añoDB = 0;
-
-  if (año == 1) añoDB = "primer_año";
-  if (año == 2) añoDB = "segundo_año";
-  if (año == 3) añoDB = "tercer_año";
-  if (año == 4) añoDB = "cuarto_año";
-  if (año == 5) añoDB = "quinto_año";
-
   let form = new FormData();
 
   $("#AreasAlumnos").DataTable().destroy();
 
-  form.append("año", añoDB);
+  form.append("año", añoDB[año - 1]);
   form.append("seccion", seccion);
   form.append("actions", "Buscar Alumnos");
 
@@ -584,7 +692,7 @@ function test() {
       for (let i = 0; i < alumnos.length; i++) {
         let form2 = new FormData();
 
-        form2.append("año", añoDB);
+        form2.append("año", añoDB[año - 1]);
         form2.append("notas", alumnos[i][14]);
         form2.append("actions", "Editar");
 
@@ -653,10 +761,9 @@ function test() {
                     className: "export",
                     ttileAttr: "Exportar a excel",
                     text: "Exportar a Excel",
-                    title: `Reporte Grupal de Notas | Año: ${añoDB.replace(
-                      "_",
-                      " "
-                    )} Seccion: ${seccion} `,
+                    title: `Reporte Grupal de Notas | Año: ${añoDB[
+                      año - 1
+                    ].replace("_", " ")} Seccion: ${seccion} `,
                   },
                 ],
               });
@@ -671,18 +778,10 @@ function datosAlumno() {
     seccion = localStorage.getItem("seccion"),
     cedula = localStorage.getItem("cedula");
 
-  let añoDB = "";
-
-  if (año == 1) añoDB = "primer_año";
-  if (año == 2) añoDB = "segundo_año";
-  if (año == 3) añoDB = "tercer_año";
-  if (año == 4) añoDB = "cuarto_año";
-  if (año == 5) añoDB = "quinto_año";
-
   let form = new FormData();
 
   form.append("cedula", cedula);
-  form.append("año", añoDB);
+  form.append("año", añoDB[año - 1]);
   form.append("actions", "datosAlumno");
 
   const tabla = document.querySelector("#DatosAlumnos");
@@ -794,10 +893,9 @@ function datosAlumno() {
             className: "export",
             ttileAttr: "Exportar a excel",
             text: "Exportar a Excel",
-            title: `Reporte de datos | Alumno: ${alumno.nombre.toUpperCase()} ${alumno.apellido.toUpperCase()} Año: ${añoDB.replace(
-              "_",
-              " "
-            )} Seccion: ${seccion} `,
+            title: `Reporte de datos | Alumno: ${alumno.nombre.toUpperCase()} ${alumno.apellido.toUpperCase()} Año: ${añoDB[
+              año - 1
+            ].replace("_", " ")} Seccion: ${seccion} `,
           },
         ],
       });
@@ -809,18 +907,10 @@ function ReporteAlumnos() {
     seccion = localStorage.getItem("seccion"),
     tabla = document.querySelector("#DatosAlumnos");
 
-  let añoDB = "";
-
-  if (año == 1) añoDB = "primer_año";
-  if (año == 2) añoDB = "segundo_año";
-  if (año == 3) añoDB = "tercer_año";
-  if (año == 4) añoDB = "cuarto_año";
-  if (año == 5) añoDB = "quinto_año";
-
   let form = new FormData();
 
   form.append("seccion", seccion);
-  form.append("año", añoDB);
+  form.append("año", añoDB[año - 1]);
   form.append("actions", "ReporteAlumno");
 
   fetch("BackEnd/actions.php", {
@@ -917,7 +1007,7 @@ function ReporteAlumnos() {
             className: "export",
             ttileAttr: "Exportar a excel",
             text: "Exportar a Excel",
-            title: `Reporte grupal de datos | Año: ${añoDB.replace(
+            title: `Reporte grupal de datos | Año: ${añoDB[año - 1].replace(
               "_",
               " "
             )} Seccion: ${seccion} `,
@@ -932,14 +1022,6 @@ function ModificarDatosalumno() {
   let ids = localStorage.getItem("ids");
   ids = JSON.parse(ids);
   $("#modal").removeAttr("data-bs-dismiss");
-
-  let añoDB = "";
-
-  if (año == 1) añoDB = "primer_año";
-  if (año == 2) añoDB = "segundo_año";
-  if (año == 3) añoDB = "tercer_año";
-  if (año == 4) añoDB = "cuarto_año";
-  if (año == 5) añoDB = "quinto_año";
 
   let form = new FormData();
   form.append("idAlumno", ids.alumno);
@@ -963,7 +1045,7 @@ function ModificarDatosalumno() {
   form.append("TelfonoR", $("#TelfonoR").val());
   form.append("DireccionR", $("#DireccionR").val());
   form.append("CorreoR", $("#CorreoR").val());
-  form.append("año", añoDB);
+  form.append("año", añoDB[año - 1]);
   form.append("seccion", seccion);
   form.append("actions", "ModoficarDatos");
 
@@ -992,16 +1074,8 @@ function ModificarSeccionAño() {
     seccion = document.querySelector("#seccionChange").value,
     cedula = localStorage.getItem("cedula");
 
-  let añoDB = "";
-
-  if (año == 1) añoDB = "primer_año";
-  if (año == 2) añoDB = "segundo_año";
-  if (año == 3) añoDB = "tercer_año";
-  if (año == 4) añoDB = "cuarto_año";
-  if (año == 5) añoDB = "quinto_año";
-
   let form = new FormData();
-  form.append("año", añoDB);
+  form.append("año", añoDB[año - 1]);
   form.append("cedula", cedula);
   form.append("seccion", seccion);
   form.append("actions", "CambiarSeccionAño");
