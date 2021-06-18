@@ -61,19 +61,19 @@ const seccionNav = (año, seccion) => {
 
   switch (año) {
     case 1:
-      titulo.text(`Primer Año Seccion "${seccion}"`);
+      titulo.text(`Primer Año Sección "${seccion}"`);
       break;
     case 2:
-      titulo.text(`Segundo Año Seccion "${seccion}"`);
+      titulo.text(`Segundo Año Sección "${seccion}"`);
       break;
     case 3:
-      titulo.text(`Tercer Año Seccion "${seccion}"`);
+      titulo.text(`Tercer Año Sección "${seccion}"`);
       break;
     case 4:
-      titulo.text(`Cuarto Año Seccion "${seccion}"`);
+      titulo.text(`Cuarto Año Sección "${seccion}"`);
       break;
     case 5:
-      titulo.text(`Quinto Año Seccion "${seccion}"`);
+      titulo.text(`Quinto Año Sección "${seccion}"`);
       break;
   }
 
@@ -360,7 +360,7 @@ function editar(cedula, nombre, notas, sec, año) {
               text: "Exportar a Excel",
               title: `Alumno  ${nombre}   C.I: ${
                 format(cedula) + " "
-              }  Año: ${año}  Seccion:  ${sec}`,
+              }  Año: ${año}  Sección:  ${sec}`,
               exportOptions: {
                 columns: ":visible",
               },
@@ -397,7 +397,7 @@ function editar(cedula, nombre, notas, sec, año) {
   Infoalumno.innerHTML = `Alumno: ${nombre.toUpperCase()}.`;
   InfoCI.innerHTML = `C.i: ${format(cedula)}.`;
   InfoAnio.innerHTML = `Año: ${añoDB[año - 1].replace("_", " ")}.`;
-  InfoSec.innerHTML = `| Seccion: ${sec} |`;
+  InfoSec.innerHTML = `| Sección: ${sec} |`;
 
   document.querySelector("#seccionChange").value = sec;
   document.querySelector("#AñoChange").value = año;
@@ -485,7 +485,7 @@ function editar(cedula, nombre, notas, sec, año) {
             text: "Exportar a Excel",
             title: `Alumno  ${nombre}   C.I: ${
               format(cedula) + " "
-            }  Año: ${año}  Seccion:  ${sec}`,
+            }  Año: ${año}  Sección:  ${sec}`,
             exportOptions: {
               columns: ":visible",
             },
@@ -763,7 +763,7 @@ function test() {
                     text: "Exportar a Excel",
                     title: `Reporte Grupal de Notas | Año: ${añoDB[
                       año - 1
-                    ].replace("_", " ")} Seccion: ${seccion} `,
+                    ].replace("_", " ")} Sección: ${seccion} `,
                   },
                 ],
               });
@@ -853,12 +853,12 @@ function datosAlumno() {
         </tr>
 
         <tr>
-        <th class="table-dark" scope="col">Cedula</th>
+        <th class="table-dark" scope="col">Cédula</th>
         <th class="table-dark" scope="col">Nombre y Apellido</th>
-        <th class="table-dark" scope="col">Direccion</th>
+        <th class="table-dark" scope="col">Dirección</th>
         <th class="table-dark" scope="col">Correo</th>
-        <th class="table-dark" scope="col">Filiacion</th>
-        <th class="table-dark" scope="col">Telefono</th>
+        <th class="table-dark" scope="col">Filiación</th>
+        <th class="table-dark" scope="col">Teléfono</th>
         <th class="table-dark" scope="col">Sexo</th>
         <th class="table-dark" scope="col"></th>
         <th class="table-dark" scope="col"></th>
@@ -895,7 +895,7 @@ function datosAlumno() {
             text: "Exportar a Excel",
             title: `Reporte de datos | Alumno: ${alumno.nombre.toUpperCase()} ${alumno.apellido.toUpperCase()} Año: ${añoDB[
               año - 1
-            ].replace("_", " ")} Seccion: ${seccion} `,
+            ].replace("_", " ")} Sección: ${seccion} `,
           },
         ],
       });
@@ -964,12 +964,12 @@ function ReporteAlumnos() {
         </tr>
 
         <tr>
-        <th class="table-dark" scope="col">Cedula</th>
+        <th class="table-dark" scope="col">Cédula</th>
         <th class="table-dark" scope="col">Nombre y Apellido</th>
-        <th class="table-dark" scope="col">Direccion</th>
+        <th class="table-dark" scope="col">Dirección</th>
         <th class="table-dark" scope="col">Correo</th>
-        <th class="table-dark" scope="col">Filiacion</th>
-        <th class="table-dark" scope="col">Telefono</th>
+        <th class="table-dark" scope="col">Filiación</th>
+        <th class="table-dark" scope="col">Teléfono</th>
         <th class="table-dark" scope="col">Sexo</th>
         <th class="table-dark" scope="col"></th>
         <th class="table-dark" scope="col"></th>
@@ -1010,7 +1010,7 @@ function ReporteAlumnos() {
             title: `Reporte grupal de datos | Año: ${añoDB[año - 1].replace(
               "_",
               " "
-            )} Seccion: ${seccion} `,
+            )} Sección: ${seccion} `,
           },
         ],
       });
@@ -1058,7 +1058,7 @@ function ModificarDatosalumno() {
       if (data == "True")
         Swal.fire({
           title: "Modificado!",
-          text: "Cambios Realizados con exito",
+          text: "Cambios Realizados con Éxito",
           icon: "success",
           confirmButtonText: "Entendido",
         }).then((e) => {
@@ -1089,7 +1089,7 @@ function ModificarSeccionAño() {
       if (JSON.parse(data) == "True")
         Swal.fire({
           title: "Modificado!",
-          text: "Cambios Realizados con exito",
+          text: "Cambios Realizados con Éxito",
           icon: "success",
           confirmButtonText: "Entendido",
         }).then((e) => {

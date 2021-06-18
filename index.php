@@ -12,8 +12,7 @@ require "BackEnd/actions.php"
     <div class="card-body">
       <h5 class="card-title">Hola <span></span></h5>
       <p class="card-text">
-        Te damos la bienvenida al nuevo sistema de notas automatizado para la unidad educativa
-          Jose Enrique Arias 
+        Te damos la bienvenida al nuevo sistema de notas automatizado para la unidad educativa José Enrique Arias 
       </p>
   </div>
 </div><br>
@@ -36,11 +35,10 @@ require "BackEnd/actions.php"
         <div class="card-body">
           <h5 class="card-title ">Acerca Del Sistema</h5>
           <p class="card-text">
-            El sistema de notas esta hecho en una de las tecnologias mas usadas a nivel mundial 
-            para el desarrolo de aplicaciones web
+          El sistema de notas esta hecho en una de las tecnologías más usadas a nivel mundial para el desarrollo de aplicaciones web
 
             </p>
-          <a href="#" class="btn btn-primary">Leer Mas</a>
+          <a href="#" class="btn btn-primary">Leer más</a>
 
         </div>
       </div>
@@ -107,14 +105,14 @@ require "BackEnd/actions.php"
       
 <div class=" d-flex flex-row justify-content-between">
     <button id="back" class="btn btn-primary mt-4  col-3" >Volver</button>
-    <button class="btn btn-dark mt-4  col-3" data-bs-toggle="modal" data-bs-target="#CambiarAñoSeccion" >Cambiar (Seccion / año) </button>
+    <button class="btn btn-dark mt-4  col-3" data-bs-toggle="modal" data-bs-target="#CambiarAñoSeccion" >Cambiar (Sección / año) </button>
     <button class="btn btn-primary mt-4 col-3" onclick="reporte('datosAlumno')" >Datos del alumno</button>
 </div>
       
       <div class="mt-4 d-flex flex-row flex-wrap">
           <h4 id="InfoAlumno" class="col-4" ></h4>
-          <h4 id="InfoCI" class="col-4" ></h4>
-          <h4 id="InfoAnio" class="col-2" ></h4>
+          <h4 id="InfoCI" class="col-3" ></h4>
+          <h4 id="InfoAnio" class="col-3" ></h4>
           <h4 id="InfoSec" class="col-2" ></h4>
           <div class=" d-flex flex-row">
           <h4 class="col-5 my-3 pt-1">Notas de: </h4>
@@ -134,7 +132,7 @@ require "BackEnd/actions.php"
   <table id="notasexport" class="display py-3 my-3 col-auto table alumno center">
   <thead class="table-dark">
   <tr class="thead-dark">
-  <th scope="col">Areas</th>
+  <th scope="col">Áreas</th>
   <th scope="col">Primer Momento</th>
   <th scope="col">Segundo Momento</th>
   <th scope="col">Tercer Momento</th>
@@ -194,7 +192,7 @@ require "BackEnd/actions.php"
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modificar Seccion o Año</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Modificar Sección o Año</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -211,7 +209,7 @@ require "BackEnd/actions.php"
           </div>
           <div class="form-group">
           <select class="form-select my-3" name="seccionChange" id="seccionChange">
-                  <option selected > Seccion </option>
+                  <option selected > Sección </option>
                   <option value="A">A</option>
                   <option value="B">B</option>
                   <option value="C">C</option>
@@ -249,11 +247,11 @@ require "BackEnd/actions.php"
               <input type="text" class="form-control" id="Nombre" placeholder="Nombre">
               <label for="Apellido">Apellido</label>
               <input type="text" class="form-control" id="Apellido" placeholder="Apellido">
-              <label for="Cedula">Cedula</label>
+              <label for="Cedula">Cédula</label>
               <input type="number" class="form-control" id="Cedula" placeholder="Cedula">
               <div class=" p-3">
                 <input class=" form-check-input" type="checkbox" name="cedulaEscolar" id="cedulaEscolar">
-                <label class=" form-check-label" for="cedulaEscolar">Cedula Escolar </label>
+                <label class=" form-check-label" for="cedulaEscolar">Cédula Escolar </label>
               </div>
               <select class="form-select mb-2" aria-label="Default select example" name="Sexo" id="Sexo">
                   <option selected > Sexo </option>
@@ -270,10 +268,10 @@ require "BackEnd/actions.php"
               <label for="LugarNacimiento">Lugar de Nacimineto</label>
               <input  class="form-control" type="text" placeholder="Lugar de Nacimineto" name="LugarNacimiento" id="LugarNacimiento">
 
-              <label for="Telfono">Telefono</label>
+              <label for="Telfono">Teléfono</label>
               <input  class="form-control" type="tel" placeholder="Telefono" name="Telfono" id="Telfono">
 
-              <label for="Direccion">Direccion</label>
+              <label for="Direccion">Dirección</label>
               <input  class="form-control" type="text" placeholder="Direccion" name="Direccion" id="Direccion">
               
               <label for="Correo">Correo</label>
@@ -286,7 +284,7 @@ require "BackEnd/actions.php"
               <input type="text" class="form-control" name="NombreR" id="NombreR" placeholder="Nombre">
               <label for="ApellidoR">Apellido</label>
               <input type="text" class="form-control" name="ApellidoR" id="ApellidoR" placeholder="Apellido">
-              <label for="CedulaR">Cedula</label>
+              <label for="CedulaR">Cédula</label>
               <input type="number" class="form-control" name="CedulaR" id="CedulaR" placeholder="Cedula">
               <select class="form-select my-3" name="SexoR" id="SexoR">
                   <option selected > Sexo </option>
@@ -294,13 +292,13 @@ require "BackEnd/actions.php"
                   <option value="Femenino">Femenino</option>
               </select>
 
-              <label for="Filiacion">Filiacion</label>
+              <label for="Filiacion">Filiación</label>
               <input  class="form-control" type="text" placeholder="Filiacion" name="Filiacion" id="Filiacion">
 
-              <label for="TelfonoR">Telefono</label>
+              <label for="TelfonoR">Teléfono </label>
               <input  class="form-control" type="tel" placeholder="Telefono" name="TelfonoR" id="TelfonoR">
 
-              <label for="DireccionR">Direccion</label>
+              <label for="DireccionR">Dirección</label>
               <input  class="form-control" type="text" placeholder="Direccion" name="DireccionR" id="DireccionR">
               
               <label for="CorreoR">Correo</label>
@@ -323,7 +321,7 @@ require "BackEnd/actions.php"
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Pasar Seccion de año</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Pasar Sección de año</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">

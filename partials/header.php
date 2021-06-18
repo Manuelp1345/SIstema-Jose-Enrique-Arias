@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>U.E | Jose Enrique Arias | </title>
+    <title>U.E | José Enrique Arias | </title>
     	
     <link rel="icon" href="img/logo.png" type="image/png" />
     <link rel="stylesheet" href="css/bootstrap.css">
@@ -19,12 +19,12 @@
 
 
 <button class="Menu btn btn-primary position-absolute" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
-<span class=" fs-4 "> ≡ </span>Menu
+<span class=" fs-4 "> ≡ </span>Menú
 </button>
 
 <div class="offcanvas offcanvas-start bg-primary " tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title text-white" id="offcanvasExampleLabel"> <span class=" fs-2 "> ≡</span> Menu</h5>
+    <h5 class="offcanvas-title text-white" id="offcanvasExampleLabel"> <span class=" fs-2 "> ≡</span> Menú</h5>
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body d-flex justify-content-center align-items-center flex-column">
@@ -32,12 +32,12 @@
         <nav id="sidebar">
             <div class="sidebar-header d-flex flex-column align-items-center justify-content-center">
                 <img class="logo" src="img/logo.png" alt="">
-                <h3 class="text-center">| U.E | <br> Jose Enrique Arias</h3>
+                <h3 class="text-center">| U.E | <br> José Enrique Arias</h3>
             </div>
 
             <ul class="list-unstyled components">
                 <li >
-                    <a href="http://localhost/sistema/" >Inicio</a>
+                    <a href="/sistema/" >Inicio</a>
                 </li>
                 <li>
                     <a href="#primer-año" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Primer Año</a>
@@ -157,7 +157,7 @@
                 <li>
                     <a href="#">Perfil</a>
                 </li>
-                <li>
+                <li class="d-none" >
                     <a onclick="cerrar()" class="sesion" href="/login">Cerrar Sesion</a>
                 </li>
             </ul>
