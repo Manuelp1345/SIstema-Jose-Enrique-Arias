@@ -94,6 +94,7 @@ Manuel Puente `Programador`
 - [Xampp](https://www.apachefriends.org/es/download.html#) - Paquete de Servicios para Host local
 - [MySQL](https://www.mysql.com) - Base de datos
 - [PHP](https://www.php.net/) - Lenguaje de servidor
+- [Bootstrap 5](https://getbootstrap.com/) - Maquetación
 
 ## ✍️ Autores
 
