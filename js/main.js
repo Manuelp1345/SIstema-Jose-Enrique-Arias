@@ -174,7 +174,7 @@ const seccionNav = (año, seccion) => {
                 url: "/sistema/DataTables/Spanish.json",
               },
             });
-          }, 100);
+          }, 250);
         }
       });
     }
@@ -344,7 +344,7 @@ function editar(cedula, nombre, notas, sec, año) {
         )},${parseInt(JSON.parse(notasObject[i]).segundo_lapso)},${parseInt(
           JSON.parse(notasObject[i]).tercer_lapso
         )})" data-bs-toggle="modal" data-bs-target="#editarnotas">
-                  editar
+                  Editar
                   </button>
                   </td>
                   </tr>`;
@@ -463,7 +463,7 @@ function editar(cedula, nombre, notas, sec, año) {
       )},${parseInt(JSON.parse(notasObject[i]).segundo_lapso)},${parseInt(
         JSON.parse(notasObject[i]).tercer_lapso
       )})" data-bs-toggle="modal" data-bs-target="#editarnotas">
-                editar
+                Editar
                 </button>
                 </td>
                 </tr>`;
