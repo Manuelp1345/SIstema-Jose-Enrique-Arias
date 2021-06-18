@@ -14,15 +14,25 @@
           <h4 id="InfoCI" class="col-3" ></h4>
           <h4 id="InfoAnio" class="col-3" ></h4>
           <h4 id="InfoSec" class="col-2" ></h4>
-          <div class=" d-flex flex-row">
-          <h4 class="col-5 my-3 pt-1">Notas de: </h4>
-          <select class="form-select my-3 col-5" name="SelectAÑo" id="SelectAÑo">
-                  <option  id="Select1" value="1">Primer Año</option>
-                  <option id="Select2" class="d-none" value="2">Segundo Año</option>
-                  <option id="Select3" class="d-none" value="3">Tercer Año</option>
-                  <option id="Select4" class="d-none" value="4">Cuarto Año</option>
-                  <option id="Select5" class="d-none" value="5">Quinto Año</option>
+          <div class=" d-flex flex-row justify-content-between col-12">
+            <div class="col-5 d-flex flex-row">
+              <h4 class="col-3 my-4 mx-0">Notas de:</h4>
+              <select class="form-select py-1 my-4 mx-0  w-50 col-2" name="SelectAÑo" id="SelectAÑo">
+                    <option  id="Select1" value="1">Primer Año</option>
+                    <option id="Select2" class="d-none" value="2">Segundo Año</option>
+                    <option id="Select3" class="d-none" value="3">Tercer Año</option>
+                    <option id="Select4" class="d-none" value="4">Cuarto Año</option>
+                    <option id="Select5" class="d-none" value="5">Quinto Año</option>
               </select>
+            </div>
+            <div class="col-5 d-flex flex-row">
+              <h4 class="col-3 my-4 mx-0">Estado:</h4>
+              <select class="form-select py-1 my-4 mx-0 w-50 col-2" name="State" id="State">
+                      <option id="State1" value="1">Cursando</option>
+                      <option id="State2" value="2">Retirado</option>
+                      <option id="State3" value="3">Graduado</option>
+              </select>
+            </div>
           </div>
       </div>
 

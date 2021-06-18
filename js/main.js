@@ -421,9 +421,16 @@ function editar(cedula, nombre, notas, sec, año) {
   fetchF(form).then((data) => {
     data = JSON.parse(data);
 
+    console.log(
+      (data[0].Total =
+        '{"primer_lapso":"0","segundo_lapso":"0","tercer_lapso":"0"}')
+    );
+
     let notasObject = data[0];
 
     let materiasObject = data[0];
+
+    console.log(notasObject, materiasObject);
 
     localStorage.setItem("DBnotas", JSON.stringify(notasObject));
 
@@ -431,26 +438,44 @@ function editar(cedula, nombre, notas, sec, año) {
 
     materiasObject = Object.entries(materiasObject);
 
+    console.log(notasObject, materiasObject);
+
+    let P1 = 0,
+      P2 = 0,
+      P3 = 0;
+
     for (let i = 1; i < materiasObject.length; i++) {
+      P1 += parseFloat(JSON.parse(notasObject[i]).primer_lapso);
+      P2 += parseFloat(JSON.parse(notasObject[i]).segundo_lapso);
+      P3 += parseFloat(JSON.parse(notasObject[i]).tercer_lapso);
+
+      if (i == materiasObject.length - 1) {
+        notasObject[10] = `{"primer_lapso":"${parseFloat(P1 / (i - 1)).toFixed(
+          1
+        )}","segundo_lapso":"${parseFloat(P2 / (i - 1)).toFixed(
+          1
+        )}","tercer_lapso":"${parseFloat(P3 / (i - 1)).toFixed(1)}"}`;
+      }
+
       agregar.innerHTML += `
                 <tr>
                 <th scope="row">${materiasObject[i][0].replaceAll(
                   "_",
                   " "
                 )}</th>
-                <td class="text-center">${parseInt(
+                <td class="text-center">${parseFloat(
                   JSON.parse(notasObject[i]).primer_lapso
                 )}</td>
-                <td class="text-center">${parseInt(
+                <td class="text-center">${parseFloat(
                   JSON.parse(notasObject[i]).segundo_lapso
                 )}</td>
-                <td class="text-center">${parseInt(
+                <td class="text-center">${parseFloat(
                   JSON.parse(notasObject[i]).tercer_lapso
                 )}</td>
                 <td class="text-center">${(
-                  (parseInt(JSON.parse(notasObject[i]).primer_lapso) +
-                    parseInt(JSON.parse(notasObject[i]).segundo_lapso) +
-                    parseInt(JSON.parse(notasObject[i]).tercer_lapso)) /
+                  (parseFloat(JSON.parse(notasObject[i]).primer_lapso) +
+                    parseFloat(JSON.parse(notasObject[i]).segundo_lapso) +
+                    parseFloat(JSON.parse(notasObject[i]).tercer_lapso)) /
                   3
                 ).toFixed(1)}</td>
                 <td class='ms-3'> 
