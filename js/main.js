@@ -103,7 +103,7 @@ const seccionNav = (año, seccion) => {
 
     x2 = alumnos.length;
 
-    for (let i = 0; i < alumnos.length; i++, x++, x++) {
+    for (let i = 0; i < alumnos.length; i++, x++) {
       $("#TablaMain").DataTable().clear().destroy();
 
       let form2 = new FormData();
@@ -162,8 +162,9 @@ const seccionNav = (año, seccion) => {
                             </div>
                             </td>
                             </tr>`;
-        if (x == x2 + 2) {
+        if (x == x2) {
           setTimeout(() => {
+            console.log("hello");
             $("#TablaMain").DataTable({
               pageLength: 10,
               lengthMenu: [10, 20, 25, 30, 35],
