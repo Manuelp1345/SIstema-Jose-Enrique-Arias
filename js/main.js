@@ -93,14 +93,19 @@ const seccionNav = (año, seccion) => {
   form.append("seccion", seccion);
   form.append("actions", "Buscar Alumnos");
 
-  $("#exportAlumnosAreas").DataTable().destroy();
+  let x = 0,
+    x2 = 0;
 
+  agregar.innerHTML = "";
   fetchF(form).then((data) => {
     data = JSON.parse(data);
-    agregar.innerHTML = "";
     let alumnos = data;
 
-    for (let i = 0; i < alumnos.length; i++) {
+    x2 = alumnos.length;
+
+    for (let i = 0; i < alumnos.length; i++, x++, x++) {
+      $("#TablaMain").DataTable().clear().destroy();
+
       let form2 = new FormData();
 
       form2.append("año", añoDB[año - 1]);
@@ -144,9 +149,7 @@ const seccionNav = (año, seccion) => {
                             <td>${notaFinal.toFixed(1)}</td>
                             <td> 
                             <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Modificar
-                            </button>
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                             <div class="dropdown-menu">
                             <a class="dropdown-item" onclick="editar(${
                               alumnos[i][1]
@@ -159,6 +162,19 @@ const seccionNav = (año, seccion) => {
                             </div>
                             </td>
                             </tr>`;
+        if (x == x2 + 2) {
+          setTimeout(() => {
+            $("#TablaMain").DataTable({
+              pageLength: 10,
+              lengthMenu: [10, 20, 25, 30, 35],
+              retrieve: true,
+              order: [[1, "asc"]],
+              language: {
+                url: "/sistema/DataTables/Spanish.json",
+              },
+            });
+          }, 100);
+        }
       });
     }
   });
@@ -385,8 +401,10 @@ function editar(cedula, nombre, notas, sec, año) {
     InfoSec = document.querySelector("#InfoSec");
 
   Infoalumno.innerHTML = `Alumno: ${nombre.toUpperCase()}.`;
-  InfoCI.innerHTML = `C.i: ${format(cedula)}.`;
-  InfoAnio.innerHTML = `Año: ${añoDB[año - 1].replace("_", " ")}.`;
+  InfoCI.innerHTML = `C.I: ${format(cedula)}.`;
+  InfoAnio.innerHTML = `Año: ${añoDB[año - 1]
+    .replace("_", " ")
+    .toUpperCase()}.`;
   InfoSec.innerHTML = `| Sección: ${sec} |`;
 
   document.querySelector("#seccionChange").value = sec;
