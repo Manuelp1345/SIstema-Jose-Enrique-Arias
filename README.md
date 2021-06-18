@@ -17,6 +17,8 @@ Sistema de notas automatizado para la unidad educativa José enrique arias, cont
 El sistema esta desarrollado con PHP, MYSQL, HTML, BootsTrap 5 y JavaScript. El sistema estándar diseñado
 para llevar un control de las notas de los alumnos ayudando al área administrativa con su trabajo del día a día
 
+- [Demo del sistema](https://jose-enrique-arias-pruebas.000webhostapp.com/sistema/)
+
 ## 🏁 Para Empezar
 
 Estas instrucciones le proporcionarán una copia del proyecto en funcionamiento en su máquina local con fines de desarrollo y prueba.
@@ -51,7 +53,7 @@ Luego ejecutamos Xampp e iniciamos los servicios de APACHE y MySQL y nos dirigim
 http://localhost/phpmyadmin/
 ```
 
-Una vez en la url crearemos una nueva base de datos e importamos el archivo SQL que encuentra en la carpeta "Base de datos" en el proyecto que descargamos.
+Una vez en la url crearemos una nueva base de datos e importamos el archivo SQL que se encuentra en la carpeta "Base de datos" en el proyecto que descargamos.
 
 Ahora debemos conectar la base de datos, para ellos vamos al archivo connect.php que se encuentra en la carpeta BackEnd del proyecto.
 
