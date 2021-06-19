@@ -251,7 +251,7 @@ if(isset($_POST["actions"])){
 
                 $ano = $_POST["año"];
                 $seccion = $_POST["cedula"];
-                $sql = "SELECT * FROM alumnos WHERE ano='$ano' AND cedula='$seccion'";
+                $sql = "SELECT * FROM alumnos WHERE cedula='$seccion'";
                 $resultado = $conn->query($sql)->fetch_object();
                 
                 $data->alumno=$resultado;

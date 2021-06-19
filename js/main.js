@@ -316,6 +316,8 @@ function editar(cedula, nombre, notas, sec, año, state) {
   });
 
   selector.addEventListener("change", () => {
+    $("#notasexport").DataTable().clear().destroy();
+
     localStorage.setItem("añoaux", parseInt(selector.value));
 
     let form = new FormData();
@@ -325,19 +327,28 @@ function editar(cedula, nombre, notas, sec, año, state) {
     form.append("notas", notas);
     form.append("actions", "Editar");
 
+    agregar.innerHTML = "";
     fetchF(form).then((data) => {
-      agregar.innerHTML = "";
       data = JSON.parse(data);
+      console.log(data);
+      console.log(
+        (data[0].Total =
+          '{"primer_lapso":"0","segundo_lapso":"0","tercer_lapso":"0"}')
+      );
 
       let notasObject = data[0];
 
       let materiasObject = data[0];
+
+      console.log(notasObject, materiasObject);
 
       localStorage.setItem("DBnotas", JSON.stringify(notasObject));
 
       notasObject = Object.values(notasObject);
 
       materiasObject = Object.entries(materiasObject);
+
+      console.log(notasObject, materiasObject);
 
       let P1 = 0,
         P2 = 0,
@@ -408,7 +419,9 @@ function editar(cedula, nombre, notas, sec, año, state) {
             text: "Exportar a Excel",
             title: `Alumno  ${nombre}   C.I: ${
               format(cedula) + " "
-            }  Año: ${año}  Sección:  ${sec}`,
+            }  Año: ${primeraLetraMayuscula(
+              añoDB[localStorage.getItem("añoaux")].replace("_", " ")
+            )}  Sección:  ${sec}`,
             exportOptions: {
               columns: ":visible",
             },
@@ -428,7 +441,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
     });
   });
 
-  $("#notasexport").DataTable().destroy();
+  $("#notasexport").DataTable().clear().destroy();
 
   localStorage.setItem("cedula", cedula);
   localStorage.setItem("nota", notas);
@@ -553,7 +566,9 @@ function editar(cedula, nombre, notas, sec, año, state) {
           text: "Exportar a Excel",
           title: `Alumno  ${nombre}   C.I: ${
             format(cedula) + " "
-          }  Año: ${año}  Sección:  ${sec}`,
+          }  Año: ${primeraLetraMayuscula(
+            añoDB[localStorage.getItem("añoaux")].replace("_", " ")
+          )}  Sección:  ${sec}`,
           exportOptions: {
             columns: ":visible",
           },
