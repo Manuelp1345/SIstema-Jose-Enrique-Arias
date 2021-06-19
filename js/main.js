@@ -256,6 +256,8 @@ function editar(cedula, nombre, notas, sec, año, state) {
   const agregar = document.getElementById("notasAlumnos");
   agregar.innerHTML = ``;
 
+  $("#notasexport").DataTable().clear().destroy();
+
   localStorage.setItem("estado", state);
 
   const estado = document.querySelector("#State");
@@ -420,7 +422,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
             title: `Alumno  ${nombre}   C.I: ${
               format(cedula) + " "
             }  Año: ${primeraLetraMayuscula(
-              añoDB[localStorage.getItem("añoaux")].replace("_", " ")
+              añoDB[localStorage.getItem("añoaux") - 1].replace("_", " ")
             )}  Sección:  ${sec}`,
             exportOptions: {
               columns: ":visible",
@@ -567,7 +569,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
           title: `Alumno  ${nombre}   C.I: ${
             format(cedula) + " "
           }  Año: ${primeraLetraMayuscula(
-            añoDB[localStorage.getItem("añoaux")].replace("_", " ")
+            añoDB[localStorage.getItem("añoaux") - 1].replace("_", " ")
           )}  Sección:  ${sec}`,
           exportOptions: {
             columns: ":visible",
