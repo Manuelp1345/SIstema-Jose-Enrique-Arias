@@ -23,14 +23,14 @@
 </button>
 
 <div class="offcanvas offcanvas-start bg-primary " tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-  <div class="offcanvas-header">
+  <div class="offcanvas-header py-0">
     <h5 class="offcanvas-title text-white" id="offcanvasExampleLabel"> <span class=" fs-2 "> ≡</span> Menú</h5>
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
-  <div class="offcanvas-body d-flex justify-content-center align-items-center flex-column">
+  <div class="offcanvas-body py-0 d-flex align-items-center flex-column">
     <div class="wrapper bg-primary">
         <nav id="sidebar">
-            <div class="sidebar-header d-flex flex-column align-items-center justify-content-center">
+            <div class="sidebar-header d-flex flex-column my-0 align-items-center justify-content-center">
                 <img class="logo" src="img/logo.png" alt="">
                 <h3 class="text-center">| U.E | <br> José Enrique Arias</h3>
             </div>
@@ -155,7 +155,10 @@
                     </ul>
                 </li>
                 <li>
-                    <a href="#">Perfil</a>
+                    <a onclick="RenderGraduados()">Graduados</a>
+                </li>
+                <li>
+                    <a href="#">Alumnos</a>
                 </li>
                 <li class="d-none" >
                     <a onclick="cerrar()" class="sesion" href="/login">Cerrar Sesion</a>

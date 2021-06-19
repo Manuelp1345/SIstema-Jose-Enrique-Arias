@@ -12,7 +12,7 @@ if(isset($_POST["actions"])){
             try {
                 $ano = $_POST["año"];
                 $seccion = $_POST["seccion"];
-                $sql = "SELECT * FROM alumnos  WHERE ano='$ano' AND seccion='$seccion' ORDER BY cedula ASC ";
+                $sql = "SELECT * FROM alumnos  WHERE ano='$ano' AND seccion='$seccion' AND estado='cursando' ORDER BY cedula ASC ";
                 $resultado = $conn->query($sql)->fetch_all();
                 
                 echo json_encode($resultado);
@@ -214,15 +214,20 @@ if(isset($_POST["actions"])){
 
                             if($rp<3 && $rpa <1){
 
-                                $sql = "INSERT INTO $SiguienteAño (`id`) VALUES (NULL)";
-                                $resultado = $conn->query($sql);
-                                $id = mysqli_insert_id($conn);
+                                if($SiguienteAño == "Graduado"){
+                                    $sql = "UPDATE alumnos SET estado = '$SiguienteAño' WHERE cedula = '$cedula'";
+                                    $resultado = $conn->query($sql);
+                                }else{
+                                    $sql = "INSERT INTO $SiguienteAño (`id`) VALUES (NULL)";
+                                    $resultado = $conn->query($sql);
+                                    $id = mysqli_insert_id($conn);
 
-                                $sql = "UPDATE notas SET $SiguienteAño = '$id' WHERE id = '$notas'";
-                                $resultado = $conn->query($sql);
-
-                                $sql = "UPDATE alumnos SET ano = '$SiguienteAño' WHERE cedula = '$cedula'";
-                                $resultado = $conn->query($sql);
+                                    $sql = "UPDATE notas SET $SiguienteAño = '$id' WHERE id = '$notas'";
+                                    $resultado = $conn->query($sql);
+                                    
+                                    $sql = "UPDATE alumnos SET ano = '$SiguienteAño' WHERE cedula = '$cedula'";
+                                    $resultado = $conn->query($sql);
+                                 }
 
                                 $consulta = true;
 
@@ -379,6 +384,20 @@ if(isset($_POST["actions"])){
                     if($resultado) echo json_encode("True") ;
                     if(!$resultado) echo json_encode("False");
         
+        
+                } catch (Exception $e) {
+                    echo $e->getMessage();
+                }
+                break; 
+            case 'Buscar Graduados':
+                try {
+                   
+                    $sql = "SELECT * FROM alumnos WHERE estado='graduado'";
+                    $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
+                    
+
+                    if($resultado) echo json_encode($resultado) ;
+                    if(!$resultado) echo json_encode("False");
         
                 } catch (Exception $e) {
                     echo $e->getMessage();

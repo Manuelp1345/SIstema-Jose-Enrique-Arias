@@ -1,8 +1,9 @@
 const error = $(".alert-danger"),
   succes = $(".alert-success"),
-  contenido = $(".table, .menu"),
+  contenido = $("#AlumnosMain,#TablaMain"),
   tablaAlumno = $(".alumno"),
-  welcome = $(".welcome");
+  graduados = $("#AlumnosGraduados,#TablaGraduados");
+welcome = $(".welcome");
 
 const añoDB = [
   "primer_año",
@@ -28,7 +29,9 @@ const primeraLetraMayuscula = (cadena) =>
 const back = document.querySelector("#back").addEventListener("click", () => {
   const año = localStorage.getItem("año"),
     seccion = localStorage.getItem("seccion");
-  seccionNav(año, seccion);
+  localStorage.getItem("graduado") == "graduado"
+    ? RenderGraduados()
+    : seccionNav(año, seccion);
 });
 function format(input) {
   let num = input;
@@ -46,6 +49,7 @@ function format(input) {
 
 //muetras una año y seccion
 const seccionNav = (año, seccion) => {
+  localStorage.removeItem("graduado");
   $("#TablaMain").DataTable().clear().destroy();
 
   const agregar = document.querySelector("tbody");
@@ -57,6 +61,7 @@ const seccionNav = (año, seccion) => {
 
   welcome.css("display", "none");
   tablaAlumno.css("display", "none");
+  graduados.css("display", "none");
   contenido.css("display", "block");
 
   let titulo = $(".menu h5");
@@ -430,6 +435,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
   localStorage.setItem("nombre", nombre);
 
   contenido.css("display", "none");
+  graduados.css("display", "none");
   tablaAlumno.css("display", "block");
 
   const Infoalumno = document.querySelector("#InfoAlumno"),
@@ -458,7 +464,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
 
   fetchF(form).then((data) => {
     data = JSON.parse(data);
-
+    console.log(data);
     console.log(
       (data[0].Total =
         '{"primer_lapso":"0","segundo_lapso":"0","tercer_lapso":"0"}')
@@ -1135,5 +1141,63 @@ function ModificarSeccionAño() {
             localStorage.getItem("estado")
           );
       });
+  });
+}
+
+function RenderGraduados() {
+  localStorage.removeItem("graduado");
+  welcome.css("display", "none");
+  tablaAlumno.css("display", "none");
+  contenido.css("display", "none");
+  graduados.css("display", "block");
+
+  const años = {
+    primer_año: 1,
+    segundo_año: 2,
+    tercer_año: 3,
+    cuarto_año: 4,
+    quinto_año: 5,
+  };
+
+  const tablaGraduados = document.querySelector("#TBGraduados");
+
+  let form = new FormData();
+
+  form.append("actions", "Buscar Graduados");
+
+  fetchF(form).then((data) => {
+    localStorage.setItem("graduado", "graduado");
+    data = JSON.parse(data);
+    console.log(data);
+    if (data == "False")
+      return (tablaGraduados.innerHTML =
+        "<h4 class='text-center'>No hay alumnos graduados</h4>");
+    let i = 1;
+    tablaGraduados.innerHTML = "";
+    data.forEach((element) => {
+      tablaGraduados.innerHTML += `<tr>
+        <th scope="row">${i}</th>
+        <td>${format(element.cedula)}</td>
+        <td>${element.nombre.toUpperCase()}</td>
+        <td>${element.apellido.toUpperCase()}</td>
+        <td>${element.ano.replace("_", " ").toUpperCase()}</td>
+        <td>${element.seccion}</td>
+        <td> 
+        <div class="btn-group">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+        <div class="dropdown-menu">
+        <a class="dropdown-item" onclick="editar(${
+          element.cedula
+        },'${element.nombre.toUpperCase()} ${element.apellido.toUpperCase()}',${
+        element.notas
+      },'${element.seccion}',${años[element.ano]},'${
+        element.estado
+      }')" href="#">Editar</a>
+        </div>
+        </div>
+        </td>
+      </tr>`;
+      i++;
+    });
   });
 }

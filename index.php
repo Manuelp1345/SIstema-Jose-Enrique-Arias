@@ -49,6 +49,7 @@ require "BackEnd/actions.php"
 
 <?php 
   require "partials/alumnosMain.php";
+  require "partials/alumnosGraduados.php";
   require "partials/alumno.php";
   require "partials/modalEditarNotas.php";
   require "partials/modalCambiarSeccionAnio.php";

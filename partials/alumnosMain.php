@@ -1,4 +1,4 @@
-  <div class="menu animate__animated animate__fadeInLeft animate__faster">
+  <div id="AlumnosMain" class="menu animate__animated animate__fadeInLeft animate__faster">
       <div class="card text-center">
       <div class="card-body">
         <h5 class="card-title"></h5>
