@@ -392,7 +392,7 @@ if(isset($_POST["actions"])){
             case 'Buscar Graduados':
                 try {
                    
-                    $sql = "SELECT * FROM alumnos WHERE estado='graduado'";
+                    $sql = "SELECT * FROM alumnos";
                     $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
                     
 

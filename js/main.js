@@ -1181,7 +1181,8 @@ function RenderGraduados() {
         <td>${element.nombre.toUpperCase()}</td>
         <td>${element.apellido.toUpperCase()}</td>
         <td>${element.ano.replace("_", " ").toUpperCase()}</td>
-        <td>${element.seccion}</td>
+        <td>${primeraLetraMayuscula(element.seccion)}</td>
+        <td>${primeraLetraMayuscula(element.estado)}</td>
         <td> 
         <div class="btn-group">
         <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
@@ -1198,6 +1199,15 @@ function RenderGraduados() {
         </td>
       </tr>`;
       i++;
+    });
+    $("#TablaGraduados").DataTable({
+      pageLength: 10,
+      lengthMenu: [10, 20, 25, 30, 35],
+      retrieve: true,
+      order: [[1, "asc"]],
+      language: {
+        url: "/sistema/DataTables/Spanish.json",
+      },
     });
   });
 }

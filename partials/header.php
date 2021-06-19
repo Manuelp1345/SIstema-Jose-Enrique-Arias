@@ -155,10 +155,7 @@
                     </ul>
                 </li>
                 <li>
-                    <a onclick="RenderGraduados()">Graduados</a>
-                </li>
-                <li>
-                    <a href="#">Alumnos</a>
+                    <a onclick="RenderGraduados()">Alumnos</a>
                 </li>
                 <li class="d-none" >
                     <a onclick="cerrar()" class="sesion" href="/login">Cerrar Sesion</a>
