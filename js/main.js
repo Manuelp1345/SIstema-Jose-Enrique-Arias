@@ -104,45 +104,46 @@ const seccionNav = (año, seccion) => {
     x2 = 0;
 
   agregar.innerHTML = "";
-  fetchF(form).then((data) => {
-    data = JSON.parse(data);
-    let alumnos = data;
+  fetchF(form)
+    .then((data) => {
+      data = JSON.parse(data);
+      let alumnos = data;
 
-    x2 = alumnos.length;
+      x2 = alumnos.length;
 
-    for (let i = 0; i < alumnos.length; i++, x++) {
-      let form2 = new FormData();
+      for (let i = 0; i < alumnos.length; i++, x++) {
+        let form2 = new FormData();
 
-      form2.append("año", añoDB[año - 1]);
-      form2.append("notas", alumnos[i][14]);
-      form2.append("actions", "Editar");
+        form2.append("año", añoDB[año - 1]);
+        form2.append("notas", alumnos[i][14]);
+        form2.append("actions", "Editar");
 
-      fetchF(form2).then((data) => {
-        data = JSON.parse(data);
+        fetchF(form2).then((data) => {
+          data = JSON.parse(data);
 
-        let notas = data[0];
+          let notas = data[0];
 
-        let primer_lapso = 0,
-          segundo_lapso = 0,
-          tercer_lapso = 0,
-          notaFinal = 0;
+          let primer_lapso = 0,
+            segundo_lapso = 0,
+            tercer_lapso = 0,
+            notaFinal = 0;
 
-        materias = Object.entries(notas);
-        notas = Object.values(notas);
+          materias = Object.entries(notas);
+          notas = Object.values(notas);
 
-        for (let i = 1; i < notas.length; i++) {
-          primer_lapso += parseInt(JSON.parse(notas[i]).primer_lapso);
-          segundo_lapso += parseInt(JSON.parse(notas[i]).segundo_lapso);
-          tercer_lapso += parseInt(JSON.parse(notas[i]).tercer_lapso);
-        }
+          for (let i = 1; i < notas.length; i++) {
+            primer_lapso += parseInt(JSON.parse(notas[i]).primer_lapso);
+            segundo_lapso += parseInt(JSON.parse(notas[i]).segundo_lapso);
+            tercer_lapso += parseInt(JSON.parse(notas[i]).tercer_lapso);
+          }
 
-        primer_lapso = primer_lapso / parseInt(notas.length - 1);
-        segundo_lapso = segundo_lapso / parseInt(notas.length - 1);
-        tercer_lapso = tercer_lapso / parseInt(notas.length - 1);
+          primer_lapso = primer_lapso / parseInt(notas.length - 1);
+          segundo_lapso = segundo_lapso / parseInt(notas.length - 1);
+          tercer_lapso = tercer_lapso / parseInt(notas.length - 1);
 
-        notaFinal = (primer_lapso + segundo_lapso + tercer_lapso) / 3;
+          notaFinal = (primer_lapso + segundo_lapso + tercer_lapso) / 3;
 
-        agregar.innerHTML += `
+          agregar.innerHTML += `
                             <tr>
                             <th scope="row">${i + 1}</th>
                             <td>${format(alumnos[i][1])}</td>
@@ -159,31 +160,37 @@ const seccionNav = (año, seccion) => {
                             <a class="dropdown-item" onclick="editar(${
                               alumnos[i][1]
                             },'${alumnos[i][3].trim()} ${alumnos[
-          i
-        ][4].trim()}',${alumnos[i][14]},'${seccion}',${año},'${
-          alumnos[i][15]
-        }')" href="#">Editar</a>
+            i
+          ][4].trim()}',${alumnos[i][14]},'${seccion}',${año},'${
+            alumnos[i][15]
+          }')" href="#">Editar</a>
                             </div>
                             </div>
                             </td>
                             </tr>`;
-        if (x == x2) {
-          setTimeout(() => {
-            console.log("hello");
-            $("#TablaMain").DataTable({
-              pageLength: 10,
-              lengthMenu: [10, 20, 25, 30, 35],
-              retrieve: true,
-              order: [[1, "asc"]],
-              language: {
-                url: "/sistema/DataTables/Spanish.json",
-              },
-            });
-          }, 250);
-        }
+          if (x == x2) {
+            setTimeout(() => {
+              $("#TablaMain").DataTable({
+                pageLength: 10,
+                lengthMenu: [10, 20, 25, 30, 35],
+                retrieve: true,
+                order: [[1, "asc"]],
+                language: {
+                  url: "/sistema/DataTables/Spanish.json",
+                },
+              });
+            }, 250);
+          }
+        });
+      }
+    })
+    .catch((e) => {
+      Swal.fire({
+        title: "Opss!",
+        text: "A ocurrido un error al intentar buscar los alumnos, Por favor Reinicia al sistema. Verifica la conexión a la base de datos",
+        icon: "error",
       });
-    }
-  });
+    });
 };
 
 //agregarmos un alumno
@@ -318,8 +325,6 @@ function editar(cedula, nombre, notas, sec, año, state) {
   });
 
   selector.addEventListener("change", () => {
-    $("#notasexport").DataTable().clear().destroy();
-
     localStorage.setItem("añoaux", parseInt(selector.value));
 
     let form = new FormData();
@@ -329,28 +334,23 @@ function editar(cedula, nombre, notas, sec, año, state) {
     form.append("notas", notas);
     form.append("actions", "Editar");
 
-    agregar.innerHTML = "";
+    $("#notasexport").DataTable().clear().destroy();
     fetchF(form).then((data) => {
+      agregar.innerHTML = "";
+
       data = JSON.parse(data);
-      console.log(data);
-      console.log(
-        (data[0].Total =
-          '{"primer_lapso":"0","segundo_lapso":"0","tercer_lapso":"0"}')
-      );
+      data[0].Total =
+        '{"primer_lapso":"0","segundo_lapso":"0","tercer_lapso":"0"}';
 
       let notasObject = data[0];
 
       let materiasObject = data[0];
-
-      console.log(notasObject, materiasObject);
 
       localStorage.setItem("DBnotas", JSON.stringify(notasObject));
 
       notasObject = Object.values(notasObject);
 
       materiasObject = Object.entries(materiasObject);
-
-      console.log(notasObject, materiasObject);
 
       let P1 = 0,
         P2 = 0,
@@ -362,9 +362,11 @@ function editar(cedula, nombre, notas, sec, año, state) {
         P3 += parseFloat(JSON.parse(notasObject[i]).tercer_lapso);
 
         if (i == materiasObject.length - 1) {
-          notasObject[10] = `{"primer_lapso":"${parseFloat(
-            P1 / (i - 1)
-          ).toFixed(1)}","segundo_lapso":"${parseFloat(P2 / (i - 1)).toFixed(
+          notasObject[
+            materiasObject.length - 1
+          ] = `{"primer_lapso":"${parseFloat(P1 / (i - 1)).toFixed(
+            1
+          )}","segundo_lapso":"${parseFloat(P2 / (i - 1)).toFixed(
             1
           )}","tercer_lapso":"${parseFloat(P3 / (i - 1)).toFixed(1)}"}`;
         }
@@ -443,7 +445,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
     });
   });
 
-  $("#notasexport").DataTable().clear().destroy();
+  agregar.innerHTML = ``;
 
   localStorage.setItem("cedula", cedula);
   localStorage.setItem("nota", notas);
@@ -475,29 +477,22 @@ function editar(cedula, nombre, notas, sec, año, state) {
   form.append("notas", notas);
   form.append("actions", "Editar");
 
-  agregar.innerHTML = ``;
-
   fetchF(form).then((data) => {
+    $("#notasexport").DataTable().clear().destroy();
+    agregar.innerHTML = ``;
     data = JSON.parse(data);
-    console.log(data);
-    console.log(
-      (data[0].Total =
-        '{"primer_lapso":"0","segundo_lapso":"0","tercer_lapso":"0"}')
-    );
+    data[0].Total =
+      '{"primer_lapso":"0","segundo_lapso":"0","tercer_lapso":"0"}';
 
     let notasObject = data[0];
 
     let materiasObject = data[0];
-
-    console.log(notasObject, materiasObject);
 
     localStorage.setItem("DBnotas", JSON.stringify(notasObject));
 
     notasObject = Object.values(notasObject);
 
     materiasObject = Object.entries(materiasObject);
-
-    console.log(notasObject, materiasObject);
 
     let P1 = 0,
       P2 = 0,
@@ -509,9 +504,9 @@ function editar(cedula, nombre, notas, sec, año, state) {
       P3 += parseFloat(JSON.parse(notasObject[i]).tercer_lapso);
 
       if (i == materiasObject.length - 1) {
-        notasObject[10] = `{"primer_lapso":"${parseFloat(P1 / (i - 1)).toFixed(
-          1
-        )}","segundo_lapso":"${parseFloat(P2 / (i - 1)).toFixed(
+        notasObject[materiasObject.length - 1] = `{"primer_lapso":"${parseFloat(
+          P1 / (i - 1)
+        ).toFixed(1)}","segundo_lapso":"${parseFloat(P2 / (i - 1)).toFixed(
           1
         )}","tercer_lapso":"${parseFloat(P3 / (i - 1)).toFixed(1)}"}`;
       }
@@ -569,7 +564,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
           title: `Alumno  ${nombre}   C.I: ${
             format(cedula) + " "
           }  Año: ${primeraLetraMayuscula(
-            añoDB[localStorage.getItem("añoaux") - 1].replace("_", " ")
+            añoDB[localStorage.getItem("año") - 1].replace("_", " ")
           )}  Sección:  ${sec}`,
           exportOptions: {
             columns: ":visible",
@@ -632,7 +627,7 @@ function enviarNotas() {
       parseFloat(lapsos.tercer_lapso)) /
     3;
 
-  aux >= 10 ? (lapsos.ap = 1) : (lapsos.ap = 0);
+  aux > 9 ? (lapsos.ap = 1) : (lapsos.ap = 0);
 
   let form = new FormData();
 
@@ -677,14 +672,7 @@ function enviarNotas() {
     error.css("display", "none");
     succes.css("display", "block");
     succes.html("Las notas han sido actualizadas");
-    editar(
-      cedula,
-      nombre,
-      nota,
-      seccion,
-      localStorage.getItem("año"),
-      localStorage.getItem("estado")
-    );
+    editar(cedula, nombre, nota, seccion, año, localStorage.getItem("estado"));
     setTimeout(() => {
       succes.css("display", "none");
     }, 5000);
@@ -1137,32 +1125,41 @@ function ModificarSeccionAño() {
   form.append("seccion", seccion);
   form.append("actions", "CambiarSeccionAño");
 
-  fetchF(form).then((data) => {
-    if (JSON.parse(data) == "True")
-      Swal.fire({
-        title: "Modificado!",
-        text: "Cambios Realizados con Éxito",
-        icon: "success",
-        confirmButtonText: "Entendido",
-      }).then((e) => {
-        localStorage.setItem("año", año);
-        localStorage.setItem("seccion", seccion);
+  fetchF(form)
+    .then((data) => {
+      if (JSON.parse(data) == "True")
+        Swal.fire({
+          title: "Modificado!",
+          text: "Cambios Realizados con Éxito",
+          icon: "success",
+          confirmButtonText: "Entendido",
+        }).then((e) => {
+          localStorage.setItem("año", año);
+          localStorage.setItem("seccion", seccion);
 
-        if (e.isConfirmed == true)
-          editar(
-            localStorage.getItem("cedula"),
-            `${localStorage.getItem("nombre")}`,
-            localStorage.getItem("nota"),
-            seccion,
-            año,
-            localStorage.getItem("estado")
-          );
+          if (e.isConfirmed == true)
+            editar(
+              localStorage.getItem("cedula"),
+              `${localStorage.getItem("nombre")}`,
+              localStorage.getItem("nota"),
+              seccion,
+              año,
+              localStorage.getItem("estado")
+            );
+        });
+    })
+    .catch((e) => {
+      Swal.fire({
+        title: "Opss!",
+        text: "A ocurrido un error al intentar cambiar el año y/o sección del alumno. Por favor verifica que seleccionaste un año y/o sección validos",
+        icon: "error",
       });
-  });
+    });
 }
 
 function RenderGraduados() {
   localStorage.removeItem("graduado");
+  $("#TablaGraduados").DataTable().clear().destroy();
   welcome.css("display", "none");
   tablaAlumno.css("display", "none");
   contenido.css("display", "none");
@@ -1182,17 +1179,17 @@ function RenderGraduados() {
 
   form.append("actions", "Buscar Graduados");
 
-  fetchF(form).then((data) => {
-    localStorage.setItem("graduado", "graduado");
-    data = JSON.parse(data);
-    console.log(data);
-    if (data == "False")
-      return (tablaGraduados.innerHTML =
-        "<h4 class='text-center'>No hay alumnos graduados</h4>");
-    let i = 1;
-    tablaGraduados.innerHTML = "";
-    data.forEach((element) => {
-      tablaGraduados.innerHTML += `<tr>
+  fetchF(form)
+    .then((data) => {
+      localStorage.setItem("graduado", "graduado");
+      data = JSON.parse(data);
+      if (data == "False")
+        return (tablaGraduados.innerHTML =
+          "<h4 class='text-center'>No hay alumnos graduados</h4>");
+      let i = 1;
+      tablaGraduados.innerHTML = "";
+      data.forEach((element) => {
+        tablaGraduados.innerHTML += `<tr>
         <th scope="row">${i}</th>
         <td>${format(element.cedula)}</td>
         <td>${element.nombre.toUpperCase()}</td>
@@ -1207,24 +1204,31 @@ function RenderGraduados() {
         <a class="dropdown-item" onclick="editar(${
           element.cedula
         },'${element.nombre.toUpperCase()} ${element.apellido.toUpperCase()}',${
-        element.notas
-      },'${element.seccion}',${años[element.ano]},'${
-        element.estado
-      }')" href="#">Editar</a>
+          element.notas
+        },'${element.seccion}',${años[element.ano]},'${
+          element.estado
+        }')" href="#">Editar</a>
         </div>
         </div>
         </td>
       </tr>`;
-      i++;
+        i++;
+      });
+      $("#TablaGraduados").DataTable({
+        pageLength: 10,
+        lengthMenu: [10, 20, 25, 30, 35],
+        retrieve: true,
+        order: [[1, "asc"]],
+        language: {
+          url: "/sistema/DataTables/Spanish.json",
+        },
+      });
+    })
+    .catch((e) => {
+      Swal.fire({
+        title: "Opss!",
+        text: "A ocurrido un error al intentar buscar los alumnos, Por favor Reinicia al sistema. Verifica la conexión a la base de datos",
+        icon: "error",
+      });
     });
-    $("#TablaGraduados").DataTable({
-      pageLength: 10,
-      lengthMenu: [10, 20, 25, 30, 35],
-      retrieve: true,
-      order: [[1, "asc"]],
-      language: {
-        url: "/sistema/DataTables/Spanish.json",
-      },
-    });
-  });
 }

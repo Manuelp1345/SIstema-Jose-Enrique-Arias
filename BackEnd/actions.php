@@ -215,8 +215,10 @@ if(isset($_POST["actions"])){
                             if($rp<3 && $rpa <1){
 
                                 if($SiguienteAño == "Graduado"){
-                                    $sql = "UPDATE alumnos SET estado = '$SiguienteAño' WHERE cedula = '$cedula'";
-                                    $resultado = $conn->query($sql);
+                                    if($rp == 0 ){
+                                        $sql = "UPDATE alumnos SET estado = '$SiguienteAño' WHERE cedula = '$cedula'";
+                                        $resultado = $conn->query($sql);
+                                    }
                                 }else{
                                     $sql = "INSERT INTO $SiguienteAño (`id`) VALUES (NULL)";
                                     $resultado = $conn->query($sql);
