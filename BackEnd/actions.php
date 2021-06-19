@@ -367,6 +367,23 @@ if(isset($_POST["actions"])){
                     echo $e->getMessage();
                 }
                 break; 
+            case 'State':
+                try {
+                    $estado = $_POST["estado"];
+                    $cedula = $_POST["cedula"];
+
+                    $sql = "UPDATE alumnos SET estado='$estado' WHERE cedula='$cedula'";
+                    $resultado = $conn->query($sql);
+                    
+
+                    if($resultado) echo json_encode("True") ;
+                    if(!$resultado) echo json_encode("False");
+        
+        
+                } catch (Exception $e) {
+                    echo $e->getMessage();
+                }
+                break; 
         
         default:
             echo "por favor incie sesion o recargue la pagina";

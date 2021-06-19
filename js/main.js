@@ -46,6 +46,8 @@ function format(input) {
 
 //muetras una año y seccion
 const seccionNav = (año, seccion) => {
+  $("#TablaMain").DataTable().clear().destroy();
+
   const agregar = document.querySelector("tbody");
 
   localStorage.setItem("año", año);
@@ -104,8 +106,6 @@ const seccionNav = (año, seccion) => {
     x2 = alumnos.length;
 
     for (let i = 0; i < alumnos.length; i++, x++) {
-      $("#TablaMain").DataTable().clear().destroy();
-
       let form2 = new FormData();
 
       form2.append("año", añoDB[año - 1]);
@@ -155,9 +155,9 @@ const seccionNav = (año, seccion) => {
                               alumnos[i][1]
                             },'${alumnos[i][3].trim()} ${alumnos[
           i
-        ][4].trim()}',${
-          alumnos[i][14]
-        },'${seccion}',${año})" href="#">Editar</a>
+        ][4].trim()}',${alumnos[i][14]},'${seccion}',${año},'${
+          alumnos[i][15]
+        }')" href="#">Editar</a>
                             </div>
                             </div>
                             </td>
@@ -247,15 +247,19 @@ function alumno() {
 }
 
 //motramos las notas de un alumno
-function editar(cedula, nombre, notas, sec, año) {
+function editar(cedula, nombre, notas, sec, año, state) {
   const agregar = document.getElementById("notasAlumnos");
   agregar.innerHTML = ``;
-  const selector = document.querySelector("#SelectAÑo"),
-    Select1 = document.querySelector("#Select1"),
-    Select2 = document.querySelector("#Select2"),
-    Select3 = document.querySelector("#Select3"),
-    Select4 = document.querySelector("#Select4"),
-    Select5 = document.querySelector("#Select5");
+
+  localStorage.setItem("estado", state);
+
+  const estado = document.querySelector("#State");
+  (selector = document.querySelector("#SelectAÑo")),
+    (Select1 = document.querySelector("#Select1")),
+    (Select2 = document.querySelector("#Select2")),
+    (Select3 = document.querySelector("#Select3")),
+    (Select4 = document.querySelector("#Select4")),
+    (Select5 = document.querySelector("#Select5"));
 
   Select2.classList.replace("d-block", "d-none");
   Select3.classList.replace("d-block", "d-none");
@@ -266,6 +270,8 @@ function editar(cedula, nombre, notas, sec, año) {
   Select3.removeAttribute("selected");
   Select4.removeAttribute("selected");
   Select5.removeAttribute("selected");
+
+  estado.value = state;
 
   if (año == 1) Select1.setAttribute("selected", "");
 
@@ -286,6 +292,24 @@ function editar(cedula, nombre, notas, sec, año) {
     if (año == 5) Select5.setAttribute("selected", "");
   }
 
+  estado.addEventListener("change", () => {
+    let form = new FormData();
+
+    form.append("cedula", cedula);
+    form.append("estado", estado.value);
+    form.append("actions", "State");
+
+    fetchF(form).then((data) => {
+      if (JSON.parse(data) == "True")
+        Swal.fire({
+          title: "Modificado!",
+          text: "Cambios Realizados con Éxito",
+          icon: "success",
+          confirmButtonText: "Entendido",
+        });
+    });
+  });
+
   selector.addEventListener("change", () => {
     localStorage.setItem("añoaux", parseInt(selector.value));
 
@@ -297,6 +321,7 @@ function editar(cedula, nombre, notas, sec, año) {
     form.append("actions", "Editar");
 
     fetchF(form).then((data) => {
+      agregar.innerHTML = "";
       data = JSON.parse(data);
 
       let notasObject = data[0];
@@ -309,31 +334,44 @@ function editar(cedula, nombre, notas, sec, año) {
 
       materiasObject = Object.entries(materiasObject);
 
-      agregar.innerHTML = ``;
+      let P1 = 0,
+        P2 = 0,
+        P3 = 0;
 
       for (let i = 1; i < materiasObject.length; i++) {
+        P1 += parseFloat(JSON.parse(notasObject[i]).primer_lapso);
+        P2 += parseFloat(JSON.parse(notasObject[i]).segundo_lapso);
+        P3 += parseFloat(JSON.parse(notasObject[i]).tercer_lapso);
+
+        if (i == materiasObject.length - 1) {
+          notasObject[10] = `{"primer_lapso":"${parseFloat(
+            P1 / (i - 1)
+          ).toFixed(1)}","segundo_lapso":"${parseFloat(P2 / (i - 1)).toFixed(
+            1
+          )}","tercer_lapso":"${parseFloat(P3 / (i - 1)).toFixed(1)}"}`;
+        }
+
         agregar.innerHTML += `
                   <tr>
                   <th scope="row">${materiasObject[i][0].replaceAll(
                     "_",
                     " "
                   )}</th>
-                  <td class="text-center">${parseInt(
+                  <td class="text-center">${parseFloat(
                     JSON.parse(notasObject[i]).primer_lapso
                   )}</td>
-                  <td class="text-center">${parseInt(
+                  <td class="text-center">${parseFloat(
                     JSON.parse(notasObject[i]).segundo_lapso
                   )}</td>
-                  <td class="text-center">${parseInt(
+                  <td class="text-center">${parseFloat(
                     JSON.parse(notasObject[i]).tercer_lapso
                   )}</td>
                   <td class="text-center">${(
-                    (parseInt(JSON.parse(notasObject[i]).primer_lapso) +
-                      parseInt(JSON.parse(notasObject[i]).segundo_lapso) +
-                      parseInt(JSON.parse(notasObject[i]).tercer_lapso)) /
+                    (parseFloat(JSON.parse(notasObject[i]).primer_lapso) +
+                      parseFloat(JSON.parse(notasObject[i]).segundo_lapso) +
+                      parseFloat(JSON.parse(notasObject[i]).tercer_lapso)) /
                     3
                   ).toFixed(1)}</td>
- 
                   <td class='ms-3'> 
                   <button type="button" class="btn btn-primary" onclick="editarN('${
                     materiasObject[i][0]
@@ -616,7 +654,14 @@ function enviarNotas() {
     error.css("display", "none");
     succes.css("display", "block");
     succes.html("Las notas han sido actualizadas");
-    editar(cedula, nombre, nota, seccion, localStorage.getItem("año"));
+    editar(
+      cedula,
+      nombre,
+      nota,
+      seccion,
+      localStorage.getItem("año"),
+      localStorage.getItem("estado")
+    );
     setTimeout(() => {
       succes.css("display", "none");
     }, 5000);
@@ -671,7 +716,8 @@ function reporte(type) {
             `${localStorage.getItem("nombre")}`,
             localStorage.getItem("nota"),
             localStorage.getItem("seccion"),
-            localStorage.getItem("año")
+            localStorage.getItem("año"),
+            localStorage.getItem("estado")
           );
         }
       }, 1000);
@@ -1085,7 +1131,8 @@ function ModificarSeccionAño() {
             `${localStorage.getItem("nombre")}`,
             localStorage.getItem("nota"),
             seccion,
-            año
+            año,
+            localStorage.getItem("estado")
           );
       });
   });

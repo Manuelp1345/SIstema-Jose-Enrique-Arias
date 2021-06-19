@@ -28,9 +28,9 @@
             <div class="col-5 d-flex flex-row">
               <h4 class="col-3 my-4 mx-0">Estado:</h4>
               <select class="form-select py-1 my-4 mx-0 w-50 col-2" name="State" id="State">
-                      <option id="State1" value="1">Cursando</option>
-                      <option id="State2" value="2">Retirado</option>
-                      <option id="State3" value="3">Graduado</option>
+                      <option id="State1" value="cursando">Cursando</option>
+                      <option id="State2" value="retirado">Retirado</option>
+                      <option id="State3" value="graduado">Graduado</option>
               </select>
             </div>
           </div>
