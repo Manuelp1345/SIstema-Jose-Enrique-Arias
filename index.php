@@ -60,13 +60,13 @@ require "BackEnd/actions.php"
           </div>
           <div class="calendar-body">
             <div class="calendar-week-day">
+              <div>Dom</div>
               <div>Lun</div>
               <div>Mar</div>
               <div>Mié</div>
               <div>Jue</div>
               <div>Vie</div>
               <div>Sab</div>
-              <div>Dom</div>
             </div>
             <div class="calendar-days"></div>
           </div>
