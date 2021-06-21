@@ -7,10 +7,10 @@
     <title>U.E | José Enrique Arias | </title>
     	
     <link rel="icon" href="img/logo.png" type="image/png" />
-    <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="DataTables/datatables.min.css"/>
     <link rel="stylesheet" href="css/animate.min.css">
-
+    <link rel="stylesheet" href="css/calendary.css">
+    <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/main.css">
 
 </head>
