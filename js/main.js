@@ -763,10 +763,16 @@ function test() {
       fetchF(form2).then((data) => {
         data = JSON.parse(data);
 
+        data[0].Total =
+          '{"primer_lapso":"0","segundo_lapso":"0","tercer_lapso":"0"}';
         let notas = data[0];
 
         materias = Object.entries(notas);
         notas = Object.values(notas);
+
+        let P1 = 0,
+          P2 = 0,
+          P3 = 0;
 
         agregar.innerHTML += `
                             <tr>
@@ -782,24 +788,37 @@ function test() {
                             </tr>`;
 
         for (let i = 1; i < notas.length; i++) {
+          P1 += parseFloat(JSON.parse(notas[i]).primer_lapso);
+          P2 += parseFloat(JSON.parse(notas[i]).segundo_lapso);
+          P3 += parseFloat(JSON.parse(notas[i]).tercer_lapso);
+
+          if (i == materias.length - 1) {
+            notas[materias.length - 1] = `{"primer_lapso":"${parseFloat(
+              P1 / (i - 1)
+            ).toFixed(1)}","segundo_lapso":"${parseFloat(P2 / (i - 1)).toFixed(
+              1
+            )}","tercer_lapso":"${parseFloat(P3 / (i - 1)).toFixed(1)}"}`;
+          }
           agregar.innerHTML += `
                             <tr>
                             <td></td>
                             <td></td>
-                            <td>${materias[i][0].replaceAll("_", " ")}</td>
-                            <td class="text-center">${parseInt(
+                            <td>${materias[i][0]
+                              .replaceAll("_", " ")
+                              .toUpperCase()}</td>
+                            <td class="text-center">${parseFloat(
                               JSON.parse(notas[i]).primer_lapso
                             )}</td>
-                            <td class="text-center">${parseInt(
+                            <td class="text-center">${parseFloat(
                               JSON.parse(notas[i]).segundo_lapso
                             )}</td>
-                            <td class="text-center">${parseInt(
+                            <td class="text-center">${parseFloat(
                               JSON.parse(notas[i]).tercer_lapso
                             )}</td>
                             <td class="text-center">${(
-                              (parseInt(JSON.parse(notas[i]).primer_lapso) +
-                                parseInt(JSON.parse(notas[i]).segundo_lapso) +
-                                parseInt(JSON.parse(notas[i]).tercer_lapso)) /
+                              (parseFloat(JSON.parse(notas[i]).primer_lapso) +
+                                parseFloat(JSON.parse(notas[i]).segundo_lapso) +
+                                parseFloat(JSON.parse(notas[i]).tercer_lapso)) /
                               3
                             ).toFixed(1)}</td>
                             </tr>`;
