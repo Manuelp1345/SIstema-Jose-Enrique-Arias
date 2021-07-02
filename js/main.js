@@ -266,6 +266,9 @@ function editar(cedula, nombre, notas, sec, año, state) {
   $("#notasexport").DataTable().clear().destroy();
 
   localStorage.setItem("estado", state);
+  localStorage.setItem("cedula", cedula);
+  localStorage.setItem("nota", notas);
+  localStorage.setItem("nombre", nombre);
 
   const estado = document.querySelector("#State");
   (selector = document.querySelector("#SelectAÑo")),
@@ -305,24 +308,6 @@ function editar(cedula, nombre, notas, sec, año, state) {
     Select5.classList.replace("d-none", "d-block");
     if (año == 5) Select5.setAttribute("selected", "");
   }
-
-  estado.addEventListener("change", () => {
-    let form = new FormData();
-
-    form.append("cedula", cedula);
-    form.append("estado", estado.value);
-    form.append("actions", "State");
-
-    fetchF(form).then((data) => {
-      if (JSON.parse(data) == "True")
-        Swal.fire({
-          title: "Modificado!",
-          text: "Cambios Realizados con Éxito",
-          icon: "success",
-          confirmButtonText: "Entendido",
-        });
-    });
-  });
 
   selector.addEventListener("change", () => {
     localStorage.setItem("añoaux", parseInt(selector.value));
@@ -446,10 +431,6 @@ function editar(cedula, nombre, notas, sec, año, state) {
   });
 
   agregar.innerHTML = ``;
-
-  localStorage.setItem("cedula", cedula);
-  localStorage.setItem("nota", notas);
-  localStorage.setItem("nombre", nombre);
 
   contenido.css("display", "none");
   graduados.css("display", "none");
@@ -584,6 +565,25 @@ function editar(cedula, nombre, notas, sec, año, state) {
     });
   });
 }
+
+estado = document.querySelector("#State");
+estado.addEventListener("change", () => {
+  let form = new FormData();
+
+  form.append("cedula", localStorage.getItem("cedula"));
+  form.append("estado", estado.value);
+  form.append("actions", "State");
+
+  fetchF(form).then((data) => {
+    if (JSON.parse(data) == "True")
+      Swal.fire({
+        title: "Modificado!",
+        text: "Cambios Realizados con Éxito",
+        icon: "success",
+        confirmButtonText: "Entendido",
+      });
+  });
+});
 
 //editar las notas del alumno
 function editarN(materia, id, nota, nombre, cedula, p, s, t) {
