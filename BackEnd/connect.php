@@ -1,6 +1,4 @@
 <?php 
-error_reporting(E_ERROR);
-
 $Host = "localhost";
 $Usuario= "root" ;
 $Contraseña = "";

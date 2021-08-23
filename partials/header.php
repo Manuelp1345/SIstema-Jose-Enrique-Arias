@@ -15,7 +15,7 @@
 
 </head>
 
-<body class=" col-12">
+<body id="workSpace" class=" col-12">
 
 
 <button class="Menu btn btn-primary position-absolute" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
@@ -155,10 +155,10 @@
                     </ul>
                 </li>
                 <li>
-                    <a onclick="RenderGraduados()">Alumnos</a>
+                    <a data-bs-dismiss="offcanvas" onclick="RenderGraduados()">Alumnos</a>
                 </li>
-                <li class="d-none" >
-                    <a onclick="cerrar()" class="sesion" href="/login">Cerrar Sesion</a>
+                <li >
+                    <a class="sesion" href="/sistema/CerrarSesion.php">Cerrar Sesion</a>
                 </li>
             </ul>
         </nav>

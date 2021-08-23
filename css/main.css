@@ -5,7 +5,7 @@ html {
 }
 
 body {
-  background-color: rgba(235, 235, 235, 0.912);
+  background-color: transparent;
   display: flex;
   height: auto;
   min-height: 100%;
@@ -22,6 +22,18 @@ h2 {
 
 .login-c h3 {
   margin: 1rem;
+}
+
+.bg-logo {
+  background: url("../img/1.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.login-c {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 1rem;
 }
 
 .login {

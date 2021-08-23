@@ -1,6 +1,11 @@
-<?php require "partials/header.php";
+<?php 
+session_start();
+if(!isset($_SESSION["usuario"])){
+  header("Location: login.php");
+}
 
-require "BackEnd/actions.php"
+require "partials/header.php";
+
 
 ?>
 
@@ -45,7 +50,7 @@ require "BackEnd/actions.php"
         </div>
       </div>
     <div class="light col-6 d-flex justify-content-center align-items-center rounded-3">
-            <div class="calendar">
+        <div class="calendar">
           <div class="calendar-header">
             <span class="month-picker" id="month-picker">February</span>
             <div class="year-picker">
@@ -78,6 +83,7 @@ require "BackEnd/actions.php"
 </div>
 
 
+
 <?php 
   require "partials/alumnosMain.php";
   require "partials/alumnosGraduados.php";
@@ -86,12 +92,7 @@ require "BackEnd/actions.php"
   require "partials/modalCambiarSeccionAnio.php";
   require "partials/modalAgregarAlumno.php";
   require "partials/modalPasarAnio.php";
-  ?>
-
-
-  <script src="js/sweetalert2.all.min.js"></script>
-
-
+?>
 
   <?php require "partials/footer.php" ?>
 

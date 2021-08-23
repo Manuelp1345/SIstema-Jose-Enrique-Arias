@@ -1,4 +1,7 @@
 <?php 
+session_start();
+
+
 require_once "connect.php";
 
 if(isset($_POST["actions"])){
@@ -229,7 +232,7 @@ if(isset($_POST["actions"])){
                                     
                                     $sql = "UPDATE alumnos SET ano = '$SiguienteAño' WHERE cedula = '$cedula'";
                                     $resultado = $conn->query($sql);
-                                 }
+                                    }
 
                                 $consulta = true;
 
@@ -237,7 +240,7 @@ if(isset($_POST["actions"])){
 
                     }
 
-                    if($consulta) echo "Se a pasado la session de año";
+                    if($consulta) echo "Se ha pasado la sección de año";
     
                 } catch (Exception $e) {
                     echo $e->getMessage();
@@ -252,8 +255,8 @@ if(isset($_POST["actions"])){
                 $data = new stdClass();
 
                 $ano = $_POST["año"];
-                $seccion = $_POST["cedula"];
-                $sql = "SELECT * FROM alumnos WHERE cedula='$seccion'";
+                $cedula = $_POST["cedula"];
+                $sql = "SELECT * FROM alumnos WHERE cedula='$cedula'";
                 $resultado = $conn->query($sql)->fetch_object();
                 
                 $data->alumno=$resultado;
@@ -393,7 +396,7 @@ if(isset($_POST["actions"])){
                 break; 
             case 'Buscar Graduados':
                 try {
-                   
+                
                     $sql = "SELECT * FROM alumnos";
                     $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
                     
@@ -405,9 +408,55 @@ if(isset($_POST["actions"])){
                     echo $e->getMessage();
                 }
                 break; 
+            case 'Registro':
+                try {
+                    
+                    $nombre = filter_var( strtolower($_POST["nombre"]), FILTER_SANITIZE_STRING) ;
+                    $apellido =filter_var( strtolower($_POST["apellido"]), FILTER_SANITIZE_STRING) ;
+                    $Correo =filter_var( strtolower($_POST["correo"]), FILTER_SANITIZE_EMAIL) ;
+                    $clave = $_POST["clave"];
+                    $clave = hash("sha512", $clave);
+
+                    $sql = "SELECT * FROM `usuarios` WHERE email='$Correo'";
+                    $resultado = $conn->query($sql)->fetch_assoc();
+
+                    if($resultado === null){
+
+                        $sql = "INSERT INTO `usuarios`(`id`, `nombre`, `apellido`, `email`, `password`, `role`) VALUES (null,'$nombre','$apellido','$Correo','$clave','admin') ";
+                        $resultado = $conn->query($sql);
+                        $id = mysqli_insert_id($conn);
+
+                        if($id != 0) echo "True";
+                        if($id == 0) echo "false";
+                    }else{
+                        echo "false";
+                    }
+        
+                } catch (Exception $e) {
+                    echo $e->getMessage();
+                }
+                
+            break; 
+
+            case "Login":
+                $Correo =filter_var( strtolower($_POST["correo"]), FILTER_SANITIZE_EMAIL) ;
+                $clave = $_POST["clave"];
+                $clave = hash("sha512", $clave);
+                
+                $sql = "SELECT * FROM `usuarios` WHERE email='$Correo'";
+                $resultado = $conn->query($sql)->fetch_assoc();
+
+                if($clave === $resultado["password"]){
+                    $_SESSION["usuario"]= $Correo;
+                    echo "True";
+                }else{
+                    echo "False";
+                }
+
+            break;
         
         default:
-            echo "por favor incie sesion o recargue la pagina";
+            echo "Por favor, inicie sesión o recargue la página";
             break;
     }
     
