@@ -26,25 +26,28 @@
             </select>
           </div>
           <div class="col-5 d-flex flex-row">
-            <h4 class="col-3 my-4 mx-0">Estado:</h4>
+            <h4 class="col-3 my-4 mx-0">Condición:</h4>
             <select class="form-select py-1 my-4 mx-0 w-50 col-2" name="State" id="State">
                     <option id="State1" value="cursando">Cursando</option>
                     <option id="State2" value="retirado">Retirado</option>
+                    <option id="State3" value="repitiente">Repitiente</option>
                     <option id="State3" value="graduado">Graduado</option>
             </select>
           </div>
         </div>
+        <div class="col-12 d-flex flex-row">
+          <h4 id="contenedorGp" class="col-6 my-4 mx-0">Grupo Estable: <input disabled type="text" id="gpdb"></input></h4>
+        </div>
       </div>
       <br><br>
-    <div class="table-responsive">
-      <table id="notasexport" class="display py-3 my-3 col-auto table alumno center">
-        <thead class="table-dark">
+      <table id="notasexport" class="py-3 my-3 col-12 table alumno">
+        <thead class="col-12 table-dark">
           <tr class="thead-dark">
-            <th scope="col">Áreas</th>
-            <th scope="col">Primer Momento</th>
-            <th scope="col">Segundo Momento</th>
-            <th scope="col">Tercer Momento</th>
-            <th scope="col">Nota Final</th>
+            <th scope="col-4">Áreas</th >
+            <th scope="col-2">Primer Momento</th>
+            <th scope="col-2">Segundo Momento</th>
+            <th scope="col-2">Tercer Momento</th>
+            <th scope="col-2">Nota Final</th>
             <th class='ms-3' scope="col">Editar </th>
           </tr>
         </thead>
@@ -52,6 +55,6 @@
 
         </tbody>
       </table>
-    </div>
+
   </div>
 </div>

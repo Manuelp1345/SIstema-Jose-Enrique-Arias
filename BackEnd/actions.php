@@ -15,7 +15,7 @@ if(isset($_POST["actions"])){
             try {
                 $ano = $_POST["año"];
                 $seccion = $_POST["seccion"];
-                $sql = "SELECT * FROM alumnos  WHERE ano='$ano' AND seccion='$seccion' AND estado='cursando' ORDER BY cedula ASC ";
+                $sql = "SELECT * FROM alumnos  WHERE ano='$ano' AND seccion='$seccion' AND estado='cursando' OR estado='Repitiente' ORDER BY cedula ASC ";
                 $resultado = $conn->query($sql)->fetch_all();
                 
                 echo json_encode($resultado);
@@ -49,7 +49,14 @@ if(isset($_POST["actions"])){
                     $sql = "SELECT * FROM $año WHERE id = '$notas' ";
                     $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
 
-                    echo json_encode($resultado);
+                    if(empty($resultado)){
+                        echo "Error";
+
+                    }else{
+
+                        echo json_encode($resultado);
+                    }
+
 
                 } catch (Exception $e) {
                     echo $e->getMessage();
@@ -108,9 +115,13 @@ if(isset($_POST["actions"])){
                     $Telfono = $_POST["Telfono"];
                     $Correo = $_POST["Correo"];
                     $seccion = $_POST["seccion"];
+                    $estado = $_POST["estado"];
+                    $GrupoEstable = $_POST["gp"];
 
-                    $sql = "INSERT INTO alumnos (cedula,cedula_escolar,nombre,apellido,sexo,fecha_de_nacimiento,edad,lugar_de_nacimiento,telefono,direccion,correo,ano,seccion,notas,estado,Representate) VALUES
-                    ($cedula,'$cedulaE','$nombre','$apellido','$sexo','$Fnacimiento',$edad,'$LugarNacimiento',$Telfono,'$Direccion','$Correo','$año','$seccion',$id,'cursando',$idr)";
+
+
+                    $sql = "INSERT INTO alumnos (cedula,cedula_escolar,nombre,apellido,sexo,fecha_de_nacimiento,edad,lugar_de_nacimiento,telefono,direccion,correo,ano,seccion,notas,estado,Representate,grupo_estable) VALUES
+                    ($cedula,'$cedulaE','$nombre','$apellido','$sexo','$Fnacimiento',$edad,'$LugarNacimiento',$Telfono,'$Direccion','$Correo','$año','$seccion',$id,'$estado',$idr,'$GrupoEstable')";
                     $resultado = $conn->query($sql);
 
                     if($resultado) echo "Alumno agregado con exito";
@@ -178,6 +189,7 @@ if(isset($_POST["actions"])){
                         $rpa= 0;
                         $cedula = $value[1];
                         $notas = $value[14];
+                        $estado = $value[15];
 
                             if($AnteriorAño != ""){
 
@@ -216,6 +228,12 @@ if(isset($_POST["actions"])){
                             }
 
                             if($rp<3 && $rpa <1){
+
+                                if($estado == "repitiente"){
+                                    $sql = "UPDATE alumnos SET estado='cursando' WHERE cedula='$cedula'";
+                                    $resultado = $conn->query($sql);
+                                }
+
 
                                 if($SiguienteAño == "Graduado"){
                                     if($rp == 0 ){
@@ -417,12 +435,12 @@ if(isset($_POST["actions"])){
                     $clave = $_POST["clave"];
                     $clave = hash("sha512", $clave);
 
-                    $sql = "SELECT * FROM `usuarios` WHERE email='$Correo'";
+                    $sql = "SELECT * FROM usuarios WHERE email='$Correo'";
                     $resultado = $conn->query($sql)->fetch_assoc();
 
                     if($resultado === null){
 
-                        $sql = "INSERT INTO `usuarios`(`id`, `nombre`, `apellido`, `email`, `password`, `role`) VALUES (null,'$nombre','$apellido','$Correo','$clave','admin') ";
+                        $sql = "INSERT INTO usuarios (`id`, `nombre`, `apellido`, `email`, `password`, `role`) VALUES (null,'$nombre','$apellido','$Correo','$clave','admin') ";
                         $resultado = $conn->query($sql);
                         $id = mysqli_insert_id($conn);
 
@@ -443,7 +461,7 @@ if(isset($_POST["actions"])){
                 $clave = $_POST["clave"];
                 $clave = hash("sha512", $clave);
                 
-                $sql = "SELECT * FROM `usuarios` WHERE email='$Correo'";
+                $sql = "SELECT * FROM usuarios WHERE email='$Correo'";
                 $resultado = $conn->query($sql)->fetch_assoc();
 
                 if($clave === $resultado["password"]){
@@ -452,6 +470,30 @@ if(isset($_POST["actions"])){
                 }else{
                     echo "False";
                 }
+
+            break;
+
+            case "Grupo Estable":
+                $cedula = $_POST["cedula"];
+                
+                $sql = "SELECT * FROM alumnos WHERE cedula='$cedula'";
+                $resultado = $conn->query($sql)->fetch_object();
+                echo $resultado->grupo_estable;
+
+            break;
+
+            case "EditarGp":
+                $cedula = $_POST["cedula"];
+                $GrupoEstable = $_POST["gp"];
+
+                    
+                $sql = "UPDATE alumnos SET grupo_estable='$GrupoEstable' WHERE cedula='$cedula'";
+                $resultado = $conn->query($sql);
+                    
+
+                if($resultado) echo json_encode("True") ;
+                if(!$resultado) echo json_encode("False");
+
 
             break;
         

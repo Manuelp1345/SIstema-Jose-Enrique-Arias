@@ -26,14 +26,64 @@ const fetchF = async (body) => {
 //Utilidades
 const primeraLetraMayuscula = (cadena) =>
   cadena.charAt(0).toUpperCase().concat(cadena.substring(1, cadena.length));
-const back = document.querySelector("#back").addEventListener("click", () => {
-  const año = localStorage.getItem("año"),
-    seccion = localStorage.getItem("seccion");
-  localStorage.getItem("graduado") == "graduado"
-    ? RenderGraduados()
-    : seccionNav(año, seccion);
-});
-function format(input) {
+if (document.querySelector("#back")) {
+  document.querySelector("#back").addEventListener("click", () => {
+    const año = localStorage.getItem("año"),
+      seccion = localStorage.getItem("seccion");
+    localStorage.getItem("graduado") == "graduado"
+      ? RenderGraduados()
+      : seccionNav(año, seccion);
+  });
+}
+
+if (document.querySelector("#contenedorGp")) {
+  document
+    .querySelector("#contenedorGp")
+    .addEventListener("click", function () {
+      document.querySelector("#gpdb").removeAttribute("disabled");
+    });
+  document.querySelector("#gpdb").addEventListener("blur", function () {
+    let form = new FormData();
+
+    form.append("cedula", localStorage.getItem("cedula"));
+    form.append("gp", document.querySelector("#gpdb").value);
+    form.append("actions", "EditarGp");
+
+    fetchF(form).then((data) => {
+      if (JSON.parse(data) == "True")
+        document.querySelector("#gpdb").setAttribute("disabled", "disabled");
+      Swal.fire({
+        title: "Modificado!",
+        text: "Cambios Realizados con Éxito",
+        icon: "success",
+        confirmButtonText: "Entendido",
+      });
+    });
+  });
+}
+
+if (document.querySelector("#State")) {
+  estado = document.querySelector("#State");
+  estado.addEventListener("change", () => {
+    let form = new FormData();
+
+    form.append("cedula", localStorage.getItem("cedula"));
+    form.append("estado", estado.value);
+    form.append("actions", "State");
+
+    fetchF(form).then((data) => {
+      if (JSON.parse(data) == "True")
+        Swal.fire({
+          title: "Modificado!",
+          text: "Cambios Realizados con Éxito",
+          icon: "success",
+          confirmButtonText: "Entendido",
+        });
+    });
+  });
+}
+//funcion de separadores de miles para las cedulas
+/* function format(input) {
   let num = input;
   if (!isNaN(num)) {
     num = num
@@ -45,6 +95,22 @@ function format(input) {
     num = num.split("").reverse().join("").replace(/^[\.]/, "");
     return num;
   }
+} */
+if (document.querySelector("#fechaNacimiento")) {
+  document.querySelector("#fechaNacimiento").addEventListener("blur", () => {
+    let añoActual = new Date(),
+      FechaNacimiento = new Date($("#fechaNacimiento").val()),
+      edad = añoActual.getFullYear() - FechaNacimiento.getFullYear(),
+      m = añoActual.getMonth() - FechaNacimiento.getMonth();
+
+    if (
+      m < 0 ||
+      (m === 0 && añoActual.getDate() < FechaNacimiento.getFullYear())
+    ) {
+      edad--;
+    }
+    document.querySelector("#Edad").value = parseInt(edad);
+  });
 }
 
 //muetras una año y seccion
@@ -146,7 +212,7 @@ const seccionNav = (año, seccion) => {
           agregar.innerHTML += `
                             <tr>
                             <th scope="row">${i + 1}</th>
-                            <td>${format(alumnos[i][1])}</td>
+                            <td>${alumnos[i][1]}</td>
                             <td>${alumnos[i][3].toUpperCase()} </td>
                             <td>${alumnos[i][4].toUpperCase()}</td>
                             <td>${parseInt(primer_lapso)}</td>
@@ -201,14 +267,35 @@ function alumno() {
 
   let form = new FormData();
 
+  let direcionNacimiento = `${primeraLetraMayuscula(
+    $("#pais").val()
+  )}, Edo. ${primeraLetraMayuscula(
+    $("#estado").val()
+  )}, ${primeraLetraMayuscula($("#Municipio").val())} `;
+
+  let dni = "";
+
+  if ($("#cedulaEscolar").prop("checked")) {
+    dni = "CE";
+  }
+  if ($("#pasaporte").prop("checked")) {
+    dni = "P";
+  }
+  if (
+    $("#dni").prop("checked") ||
+    (!$("#pasaporte").prop("checked") && $("#cedulaEscolar").prop("checked"))
+  ) {
+    dni = "V";
+  }
+
   form.append("nombre", $("#Nombre").val().trim());
   form.append("apellido", $("#Apellido").val().trim());
   form.append("cedula", $("#Cedula").val());
-  form.append("cedulaE", $("#cedulaEscolar").prop("checked"));
+  form.append("cedulaE", dni);
   form.append("sexo", $("#Sexo").val());
   form.append("Fnacimiento", $("#fechaNacimiento").val());
   form.append("edad", $("#Edad").val());
-  form.append("LugarNacimiento", $("#LugarNacimiento").val());
+  form.append("LugarNacimiento", direcionNacimiento);
   form.append("Telfono", $("#Telfono").val());
   form.append("Direccion", $("#Direccion").val());
   form.append("Correo", $("#Correo").val());
@@ -220,8 +307,10 @@ function alumno() {
   form.append("TelfonoR", $("#TelfonoR").val());
   form.append("DireccionR", $("#DireccionR").val());
   form.append("CorreoR", $("#CorreoR").val());
+  form.append("estado", $("#Condicion").val());
   form.append("año", añoDB[año - 1]);
   form.append("seccion", seccion);
+  form.append("gp", $("#gp").val());
   form.append("actions", "Alumno");
 
   if ($("#Nombre").val() === "") {
@@ -265,18 +354,27 @@ function editar(cedula, nombre, notas, sec, año, state) {
 
   $("#notasexport").DataTable().clear().destroy();
 
+  let form2 = new FormData();
+
+  form2.append("cedula", cedula);
+  form2.append("actions", "Grupo Estable");
+
+  fetchF(form2).then(
+    (e) => (document.querySelector("#gpdb").value = e.toLocaleUpperCase())
+  );
+
   localStorage.setItem("estado", state);
   localStorage.setItem("cedula", cedula);
   localStorage.setItem("nota", notas);
   localStorage.setItem("nombre", nombre);
 
-  const estado = document.querySelector("#State");
-  (selector = document.querySelector("#SelectAÑo")),
-    (Select1 = document.querySelector("#Select1")),
-    (Select2 = document.querySelector("#Select2")),
-    (Select3 = document.querySelector("#Select3")),
-    (Select4 = document.querySelector("#Select4")),
-    (Select5 = document.querySelector("#Select5"));
+  const estado = document.querySelector("#State"),
+    selector = document.querySelector("#SelectAÑo"),
+    Select1 = document.querySelector("#Select1"),
+    Select2 = document.querySelector("#Select2"),
+    Select3 = document.querySelector("#Select3"),
+    Select4 = document.querySelector("#Select4"),
+    Select5 = document.querySelector("#Select5");
 
   Select2.classList.replace("d-block", "d-none");
   Select3.classList.replace("d-block", "d-none");
@@ -289,6 +387,10 @@ function editar(cedula, nombre, notas, sec, año, state) {
   Select5.removeAttribute("selected");
 
   estado.value = state;
+  selector.value =
+    parseInt(localStorage.getItem("añoaux")) > año
+      ? año
+      : parseInt(localStorage.getItem("añoaux"));
 
   if (año == 1) Select1.setAttribute("selected", "");
 
@@ -313,6 +415,8 @@ function editar(cedula, nombre, notas, sec, año, state) {
     localStorage.setItem("añoaux", parseInt(selector.value));
 
     let form = new FormData();
+
+    console.log(añoDB[parseInt(selector.value) - 1]);
 
     form.append("cedula", cedula);
     form.append("año", añoDB[parseInt(selector.value) - 1]);
@@ -358,9 +462,8 @@ function editar(cedula, nombre, notas, sec, año, state) {
 
         agregar.innerHTML += `
                   <tr>
-                  <th scope="row">${materiasObject[i][0].replaceAll(
-                    "_",
-                    " "
+                  <th scope="row">${primeraLetraMayuscula(
+                    materiasObject[i][0].replaceAll("_", " ")
                   )}</th>
                   <td class="text-center">${parseFloat(
                     JSON.parse(notasObject[i]).primer_lapso
@@ -407,7 +510,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
             ttileAttr: "Exportar a excel",
             text: "Exportar a Excel",
             title: `Alumno  ${nombre}   C.I: ${
-              format(cedula) + " "
+              cedula + " "
             }  Año: ${primeraLetraMayuscula(
               añoDB[localStorage.getItem("añoaux") - 1].replace("_", " ")
             )}  Sección:  ${sec}`,
@@ -442,7 +545,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
     InfoSec = document.querySelector("#InfoSec");
 
   Infoalumno.innerHTML = `Alumno: ${nombre.toUpperCase()}.`;
-  InfoCI.innerHTML = `C.I: ${format(cedula)}.`;
+  InfoCI.innerHTML = `C.I: ${cedula}.`;
   InfoAnio.innerHTML = `Año: ${añoDB[año - 1]
     .replace("_", " ")
     .toUpperCase()}.`;
@@ -494,9 +597,8 @@ function editar(cedula, nombre, notas, sec, año, state) {
 
       agregar.innerHTML += `
                 <tr>
-                <th scope="row">${materiasObject[i][0].replaceAll(
-                  "_",
-                  " "
+                <th scope="row">${primeraLetraMayuscula(
+                  materiasObject[i][0].replaceAll("_", " ")
                 )}</th>
                 <td class="text-center">${parseFloat(
                   JSON.parse(notasObject[i]).primer_lapso
@@ -543,7 +645,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
           ttileAttr: "Exportar a excel",
           text: "Exportar a Excel",
           title: `Alumno  ${nombre}   C.I: ${
-            format(cedula) + " "
+            cedula + " "
           }  Año: ${primeraLetraMayuscula(
             añoDB[localStorage.getItem("año") - 1].replace("_", " ")
           )}  Sección:  ${sec}`,
@@ -565,25 +667,6 @@ function editar(cedula, nombre, notas, sec, año, state) {
     });
   });
 }
-
-estado = document.querySelector("#State");
-estado.addEventListener("change", () => {
-  let form = new FormData();
-
-  form.append("cedula", localStorage.getItem("cedula"));
-  form.append("estado", estado.value);
-  form.append("actions", "State");
-
-  fetchF(form).then((data) => {
-    if (JSON.parse(data) == "True")
-      Swal.fire({
-        title: "Modificado!",
-        text: "Cambios Realizados con Éxito",
-        icon: "success",
-        confirmButtonText: "Entendido",
-      });
-  });
-});
 
 //editar las notas del alumno
 function editarN(materia, id, nota, nombre, cedula, p, s, t) {
@@ -776,10 +859,11 @@ function test() {
 
         agregar.innerHTML += `
                             <tr>
-                            <td>${format(alumnos[i][1])}</td>
-                            <td>${alumnos[i][3].toUpperCase()} ${alumnos[
+                            <th scope="row">${i + 1}</th>
+                            <th>${alumnos[i][1]}</th>
+                            <th>${alumnos[i][3].toUpperCase()} ${alumnos[
           i
-        ][4].toUpperCase()} </td>
+        ][4].toUpperCase()} </th>
                             <td></td>
                             <td></td>
                             <td></td>
@@ -803,9 +887,11 @@ function test() {
                             <tr>
                             <td></td>
                             <td></td>
-                            <td>${materias[i][0]
+
+                            <td></td>
+                            <th>${materias[i][0]
                               .replaceAll("_", " ")
-                              .toUpperCase()}</td>
+                              .toUpperCase()}</th>
                             <td class="text-center">${parseFloat(
                               JSON.parse(notas[i]).primer_lapso
                             )}</td>
@@ -880,7 +966,11 @@ function datosAlumno() {
     document.querySelector("#Apellido").value = alumno.apellido.toUpperCase();
     document.querySelector("#Cedula").value = alumno.cedula;
     document.querySelector("#cedulaEscolar").checked =
-      alumno.cedula_escolar == "true" ? true : false;
+      alumno.cedula_escolar == "CE" ? true : false;
+    document.querySelector("#pasaporte").checked =
+      alumno.cedula_escolar == "P" ? true : false;
+    document.querySelector("#dni").checked =
+      alumno.cedula_escolar == "V" ? true : false;
     document.querySelector("#Sexo").value = alumno.sexo;
     document.querySelector("#fechaNacimiento").value =
       alumno.fecha_de_nacimiento;
@@ -903,7 +993,8 @@ function datosAlumno() {
 
     tabla.innerHTML = `
         <tr>
-          <td>${format(alumno.cedula)}</td>
+          <td>1</td>
+          <td>${alumno.cedula_escolar}- ${alumno.cedula}</td>
           <td>${alumno.nombre.toUpperCase()} ${alumno.apellido.toUpperCase()}</td>
           <td>${alumno.sexo}</td>
           <td>${alumno.fecha_de_nacimiento}</td>
@@ -916,6 +1007,7 @@ function datosAlumno() {
 
         <tr>
         <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
         <th class="table-dark" scope="col" >Representante</th>
         <th class="table-dark" ></th>
         <th class="table-dark" ></th>
@@ -924,9 +1016,12 @@ function datosAlumno() {
         <th class="table-dark" ></th>
         <th class="table-dark" ></th>
         <th class="table-dark" ></th>
+        <th class="table-dark" scope="col"></th>
+
         </tr>
 
         <tr>
+        <th class="table-dark" ></th>
         <th class="table-dark" scope="col">Cédula</th>
         <th class="table-dark" scope="col">Nombre y Apellido</th>
         <th class="table-dark" scope="col">Dirección</th>
@@ -936,10 +1031,12 @@ function datosAlumno() {
         <th class="table-dark" scope="col">Sexo</th>
         <th class="table-dark" scope="col"></th>
         <th class="table-dark" scope="col"></th>
+        <th class="table-dark" scope="col"></th>
+
         </tr>
 
         <tr>
-        <td> ${format(representante.cedula)} </td>
+        <td> ${representante.cedula} </td>
         <td> ${representante.nombre.toUpperCase()} ${representante.apellido.toUpperCase()} </td>
         <td> ${representante.direccion} </td>
         <td> ${representante.correo} </td>
@@ -947,6 +1044,8 @@ function datosAlumno() {
         <td> ${representante.telefono} </td>
         <td> ${representante.sexo} </td>
         <td></td>
+        <td></td>
+
         <td></td>
         </tr>
         
@@ -1004,10 +1103,14 @@ function ReporteAlumnos() {
         <th class="table-dark" ></th>
         <th class="table-dark" ></th>
         <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+
+
         </tr>
 
         <tr>
-          <td>${format(alumno[i].cedula)}</td>
+          <th>${i + 1}</th>
+          <td>${alumno[i].cedula}</td>
           <td>${alumno[i].nombre.toUpperCase()} ${alumno[
         i
       ].apellido.toUpperCase()}</td>
@@ -1030,6 +1133,9 @@ function ReporteAlumnos() {
         <th class="table-dark" ></th>
         <th class="table-dark" ></th>
         <th class="table-dark" ></th>
+
+        <th class="table-dark" ></th>
+        
         </tr>
 
         <tr>
@@ -1040,12 +1146,14 @@ function ReporteAlumnos() {
         <th class="table-dark" scope="col">Filiación</th>
         <th class="table-dark" scope="col">Teléfono</th>
         <th class="table-dark" scope="col">Sexo</th>
-        <th class="table-dark" scope="col"></th>
-        <th class="table-dark" scope="col"></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+        <th class="table-dark" ></th>
+
         </tr>
 
         <tr>
-        <td> ${format(representante.cedula)} </td>
+        <td> ${representante.cedula} </td>
         <td> ${
           representante.nombre.toUpperCase() +
           representante.apellido.toUpperCase()
@@ -1055,6 +1163,7 @@ function ReporteAlumnos() {
         <td> ${representante.filiacion} </td>
         <td> ${representante.telefono} </td>
         <td> ${representante.sexo} </td>
+        <td></td>
         <td></td>
         <td></td>
         </tr>
@@ -1092,13 +1201,25 @@ function ModificarDatosalumno() {
   ids = JSON.parse(ids);
   $("#modal").removeAttr("data-bs-dismiss");
 
+  let dni = "";
+
+  if ($("#cedulaEscolar").prop("checked")) {
+    dni = "CE";
+  }
+  if ($("#pasaporte").prop("checked")) {
+    dni = "P";
+  }
+  if ($("#dni").prop("checked")) {
+    dni = "V";
+  }
+
   let form = new FormData();
   form.append("idAlumno", ids.alumno);
   form.append("idRepresentante", ids.representante);
   form.append("nombre", $("#Nombre").val().trim());
   form.append("apellido", $("#Apellido").val().trim());
   form.append("cedula", $("#Cedula").val());
-  form.append("cedulaE", $("#cedulaEscolar").prop("checked"));
+  form.append("cedulaE", dni);
   form.append("sexo", $("#Sexo").val());
   form.append("Fnacimiento", $("#fechaNacimiento").val());
   form.append("edad", $("#Edad").val());
@@ -1208,9 +1329,13 @@ function RenderGraduados() {
       let i = 1;
       tablaGraduados.innerHTML = "";
       data.forEach((element) => {
+        let nombre =
+          element.nombre.toUpperCase() + " " + element.apellido.toUpperCase();
         tablaGraduados.innerHTML += `<tr>
+
+
         <th scope="row">${i}</th>
-        <td>${format(element.cedula)}</td>
+        <td>${element.cedula}</td>
         <td>${element.nombre.toUpperCase()}</td>
         <td>${element.apellido.toUpperCase()}</td>
         <td>${element.ano.replace("_", " ").toUpperCase()}</td>
@@ -1222,11 +1347,9 @@ function RenderGraduados() {
         <div class="dropdown-menu">
         <a class="dropdown-item" onclick="editar(${
           element.cedula
-        },'${element.nombre.toUpperCase()} ${element.apellido.toUpperCase()}',${
-          element.notas
-        },'${element.seccion}',${años[element.ano]},'${
-          element.estado
-        }')" href="#">Editar</a>
+        },'${nombre.toString()}',${element.notas},'${element.seccion}',${
+          años[element.ano]
+        },'${element.estado}')" href="#">Editar</a>
         </div>
         </div>
         </td>
@@ -1250,4 +1373,31 @@ function RenderGraduados() {
         icon: "error",
       });
     });
+}
+
+function clean() {
+  document.querySelector("#Nombre").value = "";
+  document.querySelector("#Apellido").value = "";
+  document.querySelector("#Cedula").value = "";
+  document.querySelector("#cedulaEscolar").checked = false;
+  document.querySelector("#pasaporte").checked = false;
+  document.querySelector("#dni").checked = false;
+  document.querySelector("#Sexo").value = "s";
+  document.querySelector("#fechaNacimiento").value = "";
+  document.querySelector("#Edad").value = "";
+  document.querySelector("#pais").value = "";
+  document.querySelector("#estado").value = "";
+  document.querySelector("#Municipio").value = "";
+  document.querySelector("#Telfono").value = "";
+  document.querySelector("#Direccion").value = "";
+  document.querySelector("#Correo").value = "";
+  document.querySelector("#NombreR").value = "";
+  document.querySelector("#ApellidoR").value = "";
+  document.querySelector("#CedulaR").value = "";
+  document.querySelector("#TelfonoR").value = "";
+  document.querySelector("#SexoR").value = "s";
+  document.querySelector("#Filiacion").value = "";
+  document.querySelector("#DireccionR").value = "";
+  document.querySelector("#CorreoR").value = "";
+  document.querySelector("#Condicion").value = "c";
 }
