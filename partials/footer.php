@@ -7,7 +7,6 @@
 
 <?php  if ($_SERVER["REQUEST_URI"] !="/sistema/login.php" && $_SERVER["REQUEST_URI"] !="/sistema/register.php") { ?>
 
-    <script src="js/calendary.js"></script>
     <script src="js/main.js"></script>
 <?php  }?>
 

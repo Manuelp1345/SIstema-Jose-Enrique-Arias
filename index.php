@@ -22,9 +22,9 @@ require "partials/header.php";
   </div>
 </div><br>
 
-<div class="row">
+<div class="row ">
     <div class="col-12 d-flex flex-row justify-content-center align-items-center">
-      <div class="col-6 d-flex flex-column flex-wrap">
+      <div class="col-6 d-flex flex-column flex-wrap mx-2">
         <div class="col-12 my-2 shadow-lg ">
           <div class="card rounded rounded-3 ">
             <div class="card-body">
@@ -49,35 +49,20 @@ require "partials/header.php";
           </div>
         </div>
       </div>
-    <div class="light col-6 d-flex justify-content-center align-items-center rounded-3">
-        <div class="calendar">
-          <div class="calendar-header">
-            <span class="month-picker" id="month-picker">February</span>
-            <div class="year-picker">
-              <span class="year-change" id="prev-year">
-                <pre><</pre>
-              </span>
-              <span id="year">2021</span>
-              <span class="year-change" id="next-year">
-                <pre>></pre>
-              </span>
+      <div class="col-6 d-flex flex-column flex-wrap mx-2">
+        <div class="col-12 my-2 shadow-lg ">
+          <div class="card rounded rounded-3 ">
+            <div class="card-body">
+              <h5 class="card-title">Información del usuario</h5>
+                <ul id="userInfo" class="list-group">
+
+                </ul>
             </div>
           </div>
-          <div class="calendar-body">
-            <div class="calendar-week-day">
-              <div>Dom</div>
-              <div>Lun</div>
-              <div>Mar</div>
-              <div>Mié</div>
-              <div>Jue</div>
-              <div>Vie</div>
-              <div>Sab</div>
-            </div>
-            <div class="calendar-days"></div>
-          </div>
-          <div class="month-list"></div>
         </div>
-    </div>
+      </div>
+      
+
     </div>
   </div>
 </div>

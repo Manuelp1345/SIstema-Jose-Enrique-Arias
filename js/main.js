@@ -13,6 +13,7 @@ const añoDB = [
   "quinto_año",
 ];
 
+//Utilidades
 const fetchF = async (body) => {
   const e = await fetch("BackEnd/actions.php", {
     method: "POST",
@@ -23,9 +24,9 @@ const fetchF = async (body) => {
   return data;
 };
 
-//Utilidades
 const primeraLetraMayuscula = (cadena) =>
   cadena.charAt(0).toUpperCase().concat(cadena.substring(1, cadena.length));
+
 if (document.querySelector("#back")) {
   document.querySelector("#back").addEventListener("click", () => {
     const año = localStorage.getItem("año"),
@@ -44,10 +45,16 @@ if (document.querySelector("#contenedorGp")) {
     });
   document.querySelector("#gpdb").addEventListener("blur", function () {
     let form = new FormData();
+    let dateTime = new Date();
 
     form.append("cedula", localStorage.getItem("cedula"));
     form.append("gp", document.querySelector("#gpdb").value);
     form.append("actions", "EditarGp");
+    form.append("dateTime", dateTime);
+    form.append(
+      "userId",
+      parseInt(JSON.parse(localStorage.getItem("user")).id)
+    );
 
     fetchF(form).then((data) => {
       if (JSON.parse(data) == "True")
@@ -66,10 +73,16 @@ if (document.querySelector("#State")) {
   estado = document.querySelector("#State");
   estado.addEventListener("change", () => {
     let form = new FormData();
+    let dateTime = new Date();
 
     form.append("cedula", localStorage.getItem("cedula"));
     form.append("estado", estado.value);
     form.append("actions", "State");
+    form.append("dateTime", dateTime);
+    form.append(
+      "userId",
+      parseInt(JSON.parse(localStorage.getItem("user")).id)
+    );
 
     fetchF(form).then((data) => {
       if (JSON.parse(data) == "True")
@@ -96,6 +109,7 @@ if (document.querySelector("#State")) {
     return num;
   }
 } */
+
 if (document.querySelector("#fechaNacimiento")) {
   document.querySelector("#fechaNacimiento").addEventListener("blur", () => {
     let añoActual = new Date(),
@@ -110,6 +124,15 @@ if (document.querySelector("#fechaNacimiento")) {
       edad--;
     }
     document.querySelector("#Edad").value = parseInt(edad);
+  });
+
+  //verificar si seleciona repitiente para mostras las areas a selecionar
+  document.querySelector("#Condicion").addEventListener("change", function () {
+    this.value == "repitiente"
+      ? document.querySelector("#areasRp").classList.replace("d-none", "d-flex")
+      : document
+          .querySelector("#areasRp")
+          .classList.replace("d-flex", "d-none");
   });
 }
 
@@ -179,10 +202,17 @@ const seccionNav = (año, seccion) => {
 
       for (let i = 0; i < alumnos.length; i++, x++) {
         let form2 = new FormData();
+        let dateTime = new Date();
 
         form2.append("año", añoDB[año - 1]);
         form2.append("notas", alumnos[i][14]);
         form2.append("actions", "Editar");
+        form2.append("dateTime", dateTime);
+        form2.append("cedula", localStorage.getItem("cedula"));
+        form2.append(
+          "userId",
+          parseInt(JSON.parse(localStorage.getItem("user")).id)
+        );
 
         fetchF(form2).then((data) => {
           data = JSON.parse(data);
@@ -287,6 +317,7 @@ function alumno() {
   ) {
     dni = "V";
   }
+  let dateTime = new Date();
 
   form.append("nombre", $("#Nombre").val().trim());
   form.append("apellido", $("#Apellido").val().trim());
@@ -312,6 +343,8 @@ function alumno() {
   form.append("seccion", seccion);
   form.append("gp", $("#gp").val());
   form.append("actions", "Alumno");
+  form.append("dateTime", dateTime);
+  form.append("userId", parseInt(JSON.parse(localStorage.getItem("user")).id));
 
   if ($("#Nombre").val() === "") {
     succes.css("display", "none");
@@ -415,13 +448,17 @@ function editar(cedula, nombre, notas, sec, año, state) {
     localStorage.setItem("añoaux", parseInt(selector.value));
 
     let form = new FormData();
-
-    console.log(añoDB[parseInt(selector.value) - 1]);
+    let dateTime = new Date();
 
     form.append("cedula", cedula);
     form.append("año", añoDB[parseInt(selector.value) - 1]);
     form.append("notas", notas);
     form.append("actions", "Editar");
+    form.append("dateTime", dateTime);
+    form.append(
+      "userId",
+      parseInt(JSON.parse(localStorage.getItem("user")).id)
+    );
 
     $("#notasexport").DataTable().clear().destroy();
     fetchF(form).then((data) => {
@@ -507,7 +544,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
           {
             extend: "excelHtml5",
             className: "export",
-            ttileAttr: "Exportar a excel",
+            ttileAttr: "Exportar a Excel",
             text: "Exportar a Excel",
             title: `Alumno  ${nombre}   C.I: ${
               cedula + " "
@@ -555,11 +592,14 @@ function editar(cedula, nombre, notas, sec, año, state) {
   document.querySelector("#AñoChange").value = año;
 
   let form = new FormData();
+  let dateTime = new Date();
 
   form.append("cedula", cedula);
   form.append("año", añoDB[año - 1]);
   form.append("notas", notas);
   form.append("actions", "Editar");
+  form.append("dateTime", dateTime);
+  form.append("userId", parseInt(JSON.parse(localStorage.getItem("user")).id));
 
   fetchF(form).then((data) => {
     $("#notasexport").DataTable().clear().destroy();
@@ -713,12 +753,18 @@ function enviarNotas() {
   aux > 9 ? (lapsos.ap = 1) : (lapsos.ap = 0);
 
   let form = new FormData();
+  let dateTime = new Date();
+
+  console.log(dateTime);
 
   form.append("materia", materia);
   form.append("nota", id);
+  form.append("cedula", cedula);
+  form.append("dateTime", dateTime);
   form.append("año", añoDB[año - 1]);
   form.append("datos", JSON.stringify(lapsos));
   form.append("actions", "mofificar Notas");
+  form.append("userId", parseInt(JSON.parse(localStorage.getItem("user")).id));
 
   if (
     lapsos.primer_lapso == "" ||
@@ -818,6 +864,14 @@ function reporte(type) {
       break;
   }
 }
+function openBitacora() {
+  window.open(`/sistema/bitacora.php`, "", "width=1024,height=720,toolbar=yes");
+}
+
+function openAdmin() {
+  window.open(`/sistema/admin.php`, "", "width=1024,height=720,toolbar=yes");
+}
+
 function test() {
   const año = localStorage.getItem("año"),
     seccion = localStorage.getItem("seccion"),
@@ -1214,6 +1268,8 @@ function ModificarDatosalumno() {
   }
 
   let form = new FormData();
+  let dateTime = new Date();
+
   form.append("idAlumno", ids.alumno);
   form.append("idRepresentante", ids.representante);
   form.append("nombre", $("#Nombre").val().trim());
@@ -1238,6 +1294,8 @@ function ModificarDatosalumno() {
   form.append("año", añoDB[año - 1]);
   form.append("seccion", seccion);
   form.append("actions", "ModoficarDatos");
+  form.append("dateTime", dateTime);
+  form.append("userId", parseInt(JSON.parse(localStorage.getItem("user")).id));
 
   fetchF(form).then((data) => {
     if (data == "True")
@@ -1260,10 +1318,14 @@ function ModificarSeccionAño() {
     cedula = localStorage.getItem("cedula");
 
   let form = new FormData();
+  let dateTime = new Date();
+
   form.append("año", añoDB[año - 1]);
   form.append("cedula", cedula);
   form.append("seccion", seccion);
+  form.append("dateTime", dateTime);
   form.append("actions", "CambiarSeccionAño");
+  form.append("userId", parseInt(JSON.parse(localStorage.getItem("user")).id));
 
   fetchF(form)
     .then((data) => {
@@ -1399,5 +1461,103 @@ function clean() {
   document.querySelector("#Filiacion").value = "";
   document.querySelector("#DireccionR").value = "";
   document.querySelector("#CorreoR").value = "";
+  document.querySelector("#gp").value = "";
+
   document.querySelector("#Condicion").value = "c";
+}
+
+if (document.querySelector("#bitacora")) {
+  let form = new FormData();
+  contenidoBitacora = document.querySelector("#containerBitacora");
+
+  contenidoBitacora.innerHTML = "";
+
+  form.append("actions", "Bitacora");
+  fetchF(form).then((e) => {
+    data = JSON.parse(e);
+    data.forEach((value, i) => {
+      if (i % 2 == 0) {
+        contenidoBitacora.innerHTML += `<p class="m-0 list-group-item list-group-item-action list-group-item-secondary"> <span class=" fw-bold">${
+          i + 1
+        }# | ${moment(value[2]).calendar()}</span>: ${value[1]}</p>`;
+      } else {
+        contenidoBitacora.innerHTML += `<p class="m-0 list-group-item list-group-item-action list-group-item-dark"><span class=" fw-bold">${
+          i + 1
+        }# | ${moment(value[2]).calendar()}</span>: ${value[1]}</p>`;
+      }
+    });
+  });
+}
+
+const renderUsers = () => {
+  let contenido = document.querySelector("#adminTable tbody");
+  let form = new FormData();
+  contenido.innerHTML = "";
+  form.append("actions", "admin");
+  fetchF(form).then((e) => {
+    data = JSON.parse(e);
+    data.forEach((value) => {
+      contenido.innerHTML += `
+    <tr>
+      <th class=" px-5 mx-5" scope="row">${value[1].toLocaleUpperCase()}</th>
+      <th class=" px-5 mx-5" scope="row">${value[2].toLocaleUpperCase()}</th>
+      <th class=" px-5 mx-5" scope="row">${value[3]}</th>
+      <th class=" px-5 mx-5" scope="row">
+        <select id="${value[0]}" class="form-select me-5 ms-3" >
+        <option ${
+          value[5] == "admin" ? "selected" : ""
+        } value="admin">Administrador </option>
+        <option ${
+          value[5] == "user" ? "selected" : ""
+        } value="user">Usuario </option>
+        </select>
+      </th>
+    </tr>
+    `;
+    });
+  });
+};
+
+if (document.querySelector("#admin")) {
+  renderUsers();
+  document.querySelector("#admin").addEventListener("click", function (e) {
+    if ("SELECT" == e.target.tagName) {
+      e.target.addEventListener("change", () => {
+        let form = new FormData();
+        form.append("id", e.target.id);
+        form.append("role", e.target.value);
+        form.append("actions", "admin users");
+        fetchF(form).then((e) => {
+          if (e == "True") {
+            Swal.fire({
+              title: "Modificado!",
+              text: "Cambios Realizados con Éxito",
+              icon: "success",
+              confirmButtonText: "Entendido",
+            });
+          }
+        });
+      });
+    }
+  });
+}
+
+if (document.querySelector("#userInfo")) {
+  let contenido = document.querySelector("#userInfo");
+  let user = JSON.parse(localStorage.getItem("user"));
+
+  contenido.innerHTML = `
+ <li class="list-group-item"><span class=" fw-bold">Nombre:</span> ${user.nombre.toUpperCase()}</li>
+ <li class="list-group-item"><span class=" fw-bold">Apellido:</span> ${user.apellido.toUpperCase()}</li>
+ <li class="list-group-item"><span class=" fw-bold">Correo:</span> ${
+   user.email
+ }</li>
+ <li class="list-group-item"><span class=" fw-bold">Rol:</span> ${
+   user.role == "admin"
+     ? "Administrador"
+     : user.role == "superadmin"
+     ? "Super Administrador"
+     : "Usuario"
+ }</li>
+ `;
 }

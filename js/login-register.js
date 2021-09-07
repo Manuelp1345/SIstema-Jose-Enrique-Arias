@@ -34,8 +34,8 @@ if (btn_r) {
       form.append("actions", "Login");
 
       fetchF(form).then((e) => {
-        console.log(e);
-        if (e == "True") {
+        if (e != "False") {
+          localStorage.setItem("user", e);
           window.location = "/sistema/";
         }
         if (e == "False") {

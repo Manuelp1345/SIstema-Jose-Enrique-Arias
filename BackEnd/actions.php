@@ -65,6 +65,15 @@ if(isset($_POST["actions"])){
 
         case "Alumno":
             try {
+                $userId = $_POST["userId"];
+                $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                $resultado = $conn->query($sql)->fetch_assoc();
+                $user = $resultado;
+                $fecha = $_POST["dateTime"];
+
+
+
+                if("admin" == $resultado["role"]){
 
                 //validamos que el numero de cedula no se encuentra en la base de datos
                 $año = $_POST["año"];
@@ -118,19 +127,24 @@ if(isset($_POST["actions"])){
                     $estado = $_POST["estado"];
                     $GrupoEstable = $_POST["gp"];
 
-
-
                     $sql = "INSERT INTO alumnos (cedula,cedula_escolar,nombre,apellido,sexo,fecha_de_nacimiento,edad,lugar_de_nacimiento,telefono,direccion,correo,ano,seccion,notas,estado,Representate,grupo_estable) VALUES
                     ($cedula,'$cedulaE','$nombre','$apellido','$sexo','$Fnacimiento',$edad,'$LugarNacimiento',$Telfono,'$Direccion','$Correo','$año','$seccion',$id,'$estado',$idr,'$GrupoEstable')";
                     $resultado = $conn->query($sql);
 
-                    if($resultado) echo "Alumno agregado con exito";
                     if(!$resultado) echo "No se pudo agregar el alumno, verifique que todos los campos esten llenos";
+                    if($resultado){
+                        echo "Alumno agregado con exito";
+                        $correoUser = $user['email'];
+                        $data = "El usuario $correoUser Ingreso al estudiante con la cedula $cedula en $año Seccion $seccion";
+                        $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                        $resultado = $conn->query($sql);
+                    };
 
                 }
                 else{
                     echo "El Numero de cedula ya esta en el sistema";
                 }
+            }
 
             } catch (Exception $e) {
                 echo $e->getMessage();
@@ -140,6 +154,14 @@ if(isset($_POST["actions"])){
             case "mofificar Notas":
                 try {
                     //actulizamos las notas de una materia en espesifico
+                    $userId = $_POST["userId"];
+                    $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                    $resultado = $conn->query($sql)->fetch_assoc();
+                    $user = $resultado;
+                    $fecha = $_POST["dateTime"];
+
+
+                    if("admin" == $resultado["role"]){
 
                     $año = $_POST["año"];
                     $materia = $_POST["materia"];
@@ -150,6 +172,14 @@ if(isset($_POST["actions"])){
                     $resultado = $conn->query($sql);
     
                     echo json_encode($resultado);
+
+                    $correoUser = $user['email'];
+                    $cedula = $_POST["cedula"];
+                    $np = json_decode($datos);
+                    $data = "El usuario $correoUser Modifico y/o ingreso notas de $materia (Primer lapso: $np->primer_lapso, Segundo lapso: $np->segundo_lapso, Tercer lapso: $np->tercer_lapso) del alumno con el numero de cedula: $cedula";
+                    $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                    $resultado = $conn->query($sql);
+                }
     
     
                 } catch (Exception $e) {
@@ -159,6 +189,13 @@ if(isset($_POST["actions"])){
             case "Pasar Seccion":
                 try {
                     //Pasar alumnos al siguiente año 
+                    $userId = $_POST["userId"];
+                    $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                    $resultado = $conn->query($sql)->fetch_assoc();
+                    $user = $resultado;
+                    $fecha = $_POST["dateTime"];
+
+                    if("admin" == $resultado["role"]){
 
                     $año = $_POST["año"];
                     $seccion = $_POST["seccion"];
@@ -258,7 +295,16 @@ if(isset($_POST["actions"])){
 
                     }
 
-                    if($consulta) echo "Se ha pasado la sección de año";
+                    if($consulta) {
+                    
+                        echo "Se ha pasado la sección de año";
+                        $correoUser = $user['email'];
+                        $cedula = $_POST["cedula"];
+                        $data = "El usuario $correoUser paso de año a: $año seccion $seccion";
+                        $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                        $resultado = $conn->query($sql);
+                    }
+                }
     
                 } catch (Exception $e) {
                     echo $e->getMessage();
@@ -320,6 +366,13 @@ if(isset($_POST["actions"])){
 
         case 'ModoficarDatos':
             try {
+                $userId = $_POST["userId"];
+                $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                $resultado = $conn->query($sql)->fetch_assoc();
+                $user = $resultado;
+                $fecha = $_POST["dateTime"];
+
+                if("admin" == $resultado["role"]){
                     
                    //ingresamos los datos del representante
                     $idR = $_POST["idRepresentante"];
@@ -353,8 +406,16 @@ if(isset($_POST["actions"])){
                     $sql = "UPDATE alumnos SET cedula=$cedula,cedula_escolar='$cedulaE',nombre='$nombre',apellido='$apellido',sexo='$sexo',fecha_de_nacimiento='$Fnacimiento',edad=$edad,lugar_de_nacimiento='$LugarNacimiento',telefono=$Telfono,direccion='$Direccion',correo='$Correo' WHERE id = $id";
                     $resultado = $conn->query($sql);
 
-                    if($resultado) echo "True";
+                    if($resultado){
+                        echo "True";
+                        $correoUser = $user['email'];
+                        $cedula = $_POST["cedula"];
+                        $data = "El usuario $correoUser Modifico los datos del alumno: $cedula";
+                        $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                        $resultado = $conn->query($sql);
+                    };
                     if(!$resultado) echo "False";
+                }
     
             } catch (Exception $e) {
                 echo $e->getMessage();
@@ -363,32 +424,48 @@ if(isset($_POST["actions"])){
 
             case 'CambiarSeccionAño':
                 try {
+
+                    $userId = $_POST["userId"];
+                    $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                    $resultado = $conn->query($sql)->fetch_assoc();
+                    $user = $resultado;
+                    $fecha = $_POST["dateTime"];
+
+                    if("admin" == $resultado["role"]){
         
-                    $ano = $_POST["año"];
-                    $seccion = $_POST["seccion"];
-                    $cedula = $_POST["cedula"];
+                        $ano = $_POST["año"];
+                        $seccion = $_POST["seccion"];
+                        $cedula = $_POST["cedula"];
 
-                    $sql = "SELECT notas FROM `alumnos` WHERE cedula='$cedula'";
-                    $notas = $conn->query($sql)->fetch_object();
- 
-                    $sql = "SELECT $ano FROM notas WHERE id = '$notas->notas'";
-                    $resultado = $conn->query($sql)->fetch_object();
+                        $sql = "SELECT notas FROM `alumnos` WHERE cedula='$cedula'";
+                        $notas = $conn->query($sql)->fetch_object();
+    
+                        $sql = "SELECT $ano FROM notas WHERE id = '$notas->notas'";
+                        $resultado = $conn->query($sql)->fetch_object();
 
-                    if($resultado->$ano == null){
-                        $sql = "INSERT INTO $ano (`id`) VALUES (NULL)";
+                        if($resultado->$ano == null){
+                            $sql = "INSERT INTO $ano (`id`) VALUES (NULL)";
+                            $resultado = $conn->query($sql);
+                            $id = mysqli_insert_id($conn);
+                            
+                            $sql = "UPDATE notas SET $ano = '$id' WHERE id = '$notas->notas'";
+                            $resultado = $conn->query($sql);
+                        }
+
+                        $sql = "UPDATE alumnos SET seccion='$seccion',ano='$ano' WHERE cedula='$cedula'";
                         $resultado = $conn->query($sql);
-                        $id = mysqli_insert_id($conn);
                         
-                        $sql = "UPDATE notas SET $ano = '$id' WHERE id = '$notas->notas'";
-                        $resultado = $conn->query($sql);
+
+                        if($resultado){ 
+                            echo json_encode("True");
+                            $correoUser = $user['email'];
+                            $cedula = $_POST["cedula"];
+                            $data = "El usuario $correoUser Modifico de año y/o seccion del alumno: $cedula";
+                            $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                            $resultado = $conn->query($sql);
+                        } ;
+                        if(!$resultado) echo json_encode("False");
                     }
-
-                    $sql = "UPDATE alumnos SET seccion='$seccion',ano='$ano' WHERE cedula='$cedula'";
-                    $resultado = $conn->query($sql);
-                    
-
-                    if($resultado) echo json_encode("True") ;
-                    if(!$resultado) echo json_encode("False");
         
         
                 } catch (Exception $e) {
@@ -397,16 +474,31 @@ if(isset($_POST["actions"])){
                 break; 
             case 'State':
                 try {
-                    $estado = $_POST["estado"];
-                    $cedula = $_POST["cedula"];
+                    $userId = $_POST["userId"];
+                    $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                    $resultado = $conn->query($sql)->fetch_assoc();
+                    $user = $resultado;
+                    $fecha = $_POST["dateTime"];
 
-                    $sql = "UPDATE alumnos SET estado='$estado' WHERE cedula='$cedula'";
-                    $resultado = $conn->query($sql);
-                    
+                    if("admin" == $resultado["role"]){
 
-                    if($resultado) echo json_encode("True") ;
-                    if(!$resultado) echo json_encode("False");
-        
+                        $estado = $_POST["estado"];
+                        $cedula = $_POST["cedula"];
+
+                        $sql = "UPDATE alumnos SET estado='$estado' WHERE cedula='$cedula'";
+                        $resultado = $conn->query($sql);
+                        
+
+                        if($resultado) {
+                            echo json_encode("True");
+                            $correoUser = $user['email'];
+                            $cedula = $_POST["cedula"];
+                            $data = "El usuario $correoUser cambio la condicion del alumno: $cedula";
+                            $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                            $resultado = $conn->query($sql);
+                        } ;
+                        if(!$resultado) echo json_encode("False");
+                    }
         
                 } catch (Exception $e) {
                     echo $e->getMessage();
@@ -440,7 +532,7 @@ if(isset($_POST["actions"])){
 
                     if($resultado === null){
 
-                        $sql = "INSERT INTO usuarios (`id`, `nombre`, `apellido`, `email`, `password`, `role`) VALUES (null,'$nombre','$apellido','$Correo','$clave','admin') ";
+                        $sql = "INSERT INTO usuarios (`id`, `nombre`, `apellido`, `email`, `password`, `role`) VALUES (null,'$nombre','$apellido','$Correo','$clave','user') ";
                         $resultado = $conn->query($sql);
                         $id = mysqli_insert_id($conn);
 
@@ -465,8 +557,9 @@ if(isset($_POST["actions"])){
                 $resultado = $conn->query($sql)->fetch_assoc();
 
                 if($clave === $resultado["password"]){
-                    $_SESSION["usuario"]= $Correo;
-                    echo "True";
+                    unset($resultado["password"]);
+                    $_SESSION["usuario"]= $resultado;
+                    echo json_encode($resultado);
                 }else{
                     echo "False";
                 }
@@ -474,6 +567,7 @@ if(isset($_POST["actions"])){
             break;
 
             case "Grupo Estable":
+                
                 $cedula = $_POST["cedula"];
                 
                 $sql = "SELECT * FROM alumnos WHERE cedula='$cedula'";
@@ -483,20 +577,61 @@ if(isset($_POST["actions"])){
             break;
 
             case "EditarGp":
-                $cedula = $_POST["cedula"];
-                $GrupoEstable = $_POST["gp"];
+                $userId = $_POST["userId"];
+                $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                $resultado = $conn->query($sql)->fetch_assoc();
+                $user = $resultado;
+                $fecha = $_POST["dateTime"];
 
-                    
-                $sql = "UPDATE alumnos SET grupo_estable='$GrupoEstable' WHERE cedula='$cedula'";
+                if("admin" == $resultado["role"]){
+
+                    $cedula = $_POST["cedula"];
+                    $GrupoEstable = $_POST["gp"];
+
+                        
+                    $sql = "UPDATE alumnos SET grupo_estable='$GrupoEstable' WHERE cedula='$cedula'";
+                    $resultado = $conn->query($sql);
+                        
+
+                    if($resultado) {
+                        echo json_encode("True");
+                        $correoUser = $user['email'];
+                        $cedula = $_POST["cedula"];
+                        $data = "El usuario $correoUser Modifico el grupo estable del alumno: $cedula";
+                        $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                        $resultado = $conn->query($sql);
+                    } ;
+                    if(!$resultado) echo json_encode("False");
+                }
+
+            break;
+
+            case "Bitacora":
+                                
+                $sql = "SELECT * FROM bitacora ORDER BY id DESC";
+                $resultado = $conn->query($sql)->fetch_all();
+                echo json_encode($resultado);
+
+            break;
+            case "admin":
+                                
+                $sql = "SELECT * FROM usuarios WHERE `role`='admin' OR `role`='user'";
+                $resultado = $conn->query($sql)->fetch_all();
+                echo json_encode($resultado);
+
+            break;
+            case "admin users":
+                $id = $_POST["id"];
+                $role = $_POST["role"];
+                                
+                $sql = "UPDATE usuarios SET `role`='$role' WHERE id='$id'";
                 $resultado = $conn->query($sql);
-                    
-
-                if($resultado) echo json_encode("True") ;
-                if(!$resultado) echo json_encode("False");
+                
+                if($resultado) echo "True";
+                if(!$resultado) echo "False";
 
 
             break;
-        
         default:
             echo "Por favor, inicie sesión o recargue la página";
             break;

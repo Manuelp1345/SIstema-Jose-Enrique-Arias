@@ -24,7 +24,7 @@
 
 <div class="offcanvas offcanvas-start bg-primary " tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
   <div class="offcanvas-header py-0">
-    <h5 class="offcanvas-title text-white" id="offcanvasExampleLabel"> <span class=" fs-2 "> ≡</span> Menú</h5>
+    <h3 class="offcanvas-title text-white" id="offcanvasExampleLabel"> <span class=" fs-2 "> ≡</span> Menú</h3>
     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body py-0 d-flex align-items-center flex-column">
@@ -32,7 +32,7 @@
         <nav id="sidebar">
             <div class="sidebar-header d-flex flex-column my-0 align-items-center justify-content-center">
                 <img class="logo" src="img/logo.png" alt="">
-                <h3 class="text-center">| U.E | <br> José Enrique Arias</h3>
+                <h4 class="text-center">| U.E | <br> José Enrique Arias</h4>
             </div>
 
             <ul class="list-unstyled components">
@@ -157,6 +157,19 @@
                 <li>
                     <a data-bs-dismiss="offcanvas" onclick="RenderGraduados()">Alumnos</a>
                 </li>
+                <li>
+                    <a data-bs-dismiss="offcanvas" onclick="openBitacora()">Bitácora</a>
+                </li>
+                <?php 
+                    $user = $_SESSION["usuario"];
+                    if($user["role"] == "admin" || $user["role"] == "superadmin"){
+                ?>
+                <li>
+                    <a data-bs-dismiss="offcanvas" onclick="openAdmin()">Administración</a>
+                </li>
+                <?php 
+                    }
+                ?>
                 <li >
                     <a class="sesion" href="/sistema/CerrarSesion.php">Cerrar Sesion</a>
                 </li>

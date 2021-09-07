@@ -90,7 +90,98 @@
               
               <label for="CorreoR">Correo</label>
               <input  class="form-control" type="email" placeholder="Correo" name="CorreoR" id="CorreoR">
+                <div id="areasRp" class="form-check d-none flex-column animate__animated animate__fadeInRight">
+                  <h4 class=" mt-2">Selecione las areas repitientes</h4>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m1" >
+                    <label class="form-check-label my-2" for="m1">
+                      Castellano
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m2" >
+                    <label class="form-check-label my-2" for="m2">
+                      Ingles y otras lenguas extranjeras
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m3" >
+                    <label class="form-check-label my-2" for="m3">
+                      Matematicas
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m4" >
+                    <label class="form-check-label my-2" for="m4">
+                      Educacion Fisica
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m5" >
+                    <label class="form-check-label my-2" for="m5">
+                      Arte y Patrimonio
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m6" >
+                    <label class="form-check-label my-2" for="m6">
+                      Fisica
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m7" >
+                    <label class="form-check-label my-2" for="m7">
+                      Quimica
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m8" >
+                    <label class="form-check-label my-2" for="m8">
+                      Biologia
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m9" >
+                    <label class="form-check-label my-2" for="m9">
+                      Ciencias Naturales
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m10" >
+                    <label class="form-check-label my-2" for="m10">
+                      Geografia, Historia y Ciudadania
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m11" >
+                    <label class="form-check-label my-2" for="m11">
+                      Formacion para la Soberania Nacional
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m12" >
+                    <label class="form-check-label my-2" for="m12">
+                      Ciencias de la Tierra
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2" type="checkbox" value="" id="m13" >
+                    <label class="form-check-label my-2" for="m13">
+                      Orientacion y convivencia
+                    </label>
+                  </div>
+                  <div class="">
+                    <input class="form-check-input repitiente my-2"  type="checkbox" value="" id="m14" >
+                    <label class="form-check-label my-2" for="m14">
+                      Participaón en Grupos de creaón, Recreación y Producción
+                    </label>
+                  </div>
+
+
+                </div>
               </div>
+
+
           </div>
                 <div class="alert alert-danger" role="alert"></div>
                 <div class="alert alert-success" role="alert"></div>
