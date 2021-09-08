@@ -38,6 +38,103 @@
         <div class="col-12 d-flex flex-row">
           <h4 id="contenedorGp" class="col-6 my-4 mx-0">Grupo Estable: <input disabled type="text" id="gpdb"></input></h4>
         </div>
+        <div  id="contenedorRp" class="col-12 d-none flex-row flex-wrap">
+        <h4>Areas Repitiente:</h4>
+
+          <div class="col-12 my-4 mx-0 d-flex flex-row flex-wrap">
+              <div class="col-4">
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="1" >
+                <label class="form-check-label my-2 ms-2 col-12" for="1">
+                  Castellano
+                </label>
+              </div>
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="2" >
+                <label class="form-check-label my-2 ms-2 col-12" for="2">
+                  Ingles y otras lenguas extranjeras
+                </label>
+              </div>
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="3" >
+                <label class="form-check-label my-2 ms-2 col-12" for="3">
+                  Matematicas
+                </label>
+              </div>
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="4" >
+                <label class="form-check-label my-2 ms-2 col-12" for="4">
+                  Educacion Fisica
+                </label>
+              </div>
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="5" >
+                <label class="form-check-label my-2 ms-2 col-12" for="5">
+                  Arte y Patrimonio
+                </label>
+              </div>
+              </div>
+              <div class="col-4">
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="6" >
+                <label class="form-check-label my-2 ms-2 col-12" for="6">
+                  Fisica
+                </label>
+              </div>
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="7" >
+                <label class="form-check-label my-2 ms-2 col-12" for="7">
+                  Quimica
+                </label>
+              </div>
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="8" >
+                <label class="form-check-label my-2 ms-2 col-12" for="8">
+                  Biologia
+                </label>
+              </div>
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="9" >
+                <label class="form-check-label my-2 ms-2 col-12" for="9">
+                  Ciencias Naturales
+                </label>
+              </div>
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="10" >
+                <label class="form-check-label my-2 ms-2 col-12" for="10">
+                  Geografia, Historia y Ciudadania
+                </label>
+              </div>
+              </div>
+              <div class="col-4">
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="11" >
+                <label class="form-check-label my-2 ms-2 col-12" for="11">
+                  Formacion para la Soberania Nacional
+                </label>
+              </div>
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="12" >
+                <label class="form-check-label my-2 ms-2 col-12" for="12">
+                  Ciencias de la Tierra
+                </label>
+              </div>
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="13" >
+                <label class="form-check-label my-2 ms-2 col-12" for="13">
+                  Orientacion y convivencia
+                </label>
+              </div>
+              <div class="mx-4 d-flex flex-row">
+                <input class="form-check-input px-2 rp my-2"  type="checkbox" value="" id="14" >
+                <label class="form-check-label my-2 ms-2 col-12" for="14">
+                  Participaón en Grupos de creaón, Recreación y Producción
+                </label>
+              </div>
+              </div>
+          </div>
+          
+        </div>
       </div>
       <br><br>
       <table id="notasexport" class="py-3 my-3 col-12 table alumno">

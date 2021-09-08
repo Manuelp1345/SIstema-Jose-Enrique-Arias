@@ -15,7 +15,7 @@ if(isset($_POST["actions"])){
             try {
                 $ano = $_POST["año"];
                 $seccion = $_POST["seccion"];
-                $sql = "SELECT * FROM alumnos  WHERE ano='$ano' AND seccion='$seccion' AND estado='cursando' OR estado='Repitiente' ORDER BY cedula ASC ";
+                $sql = "SELECT * FROM alumnos  WHERE ano='$ano' AND seccion='$seccion' AND estado='cursando' OR ano='$ano' AND seccion='$seccion' AND estado='Repitiente' ORDER BY cedula ASC ";
                 $resultado = $conn->query($sql)->fetch_all();
                 
                 echo json_encode($resultado);
@@ -49,8 +49,9 @@ if(isset($_POST["actions"])){
                     $sql = "SELECT * FROM $año WHERE id = '$notas' ";
                     $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
 
-                    if(empty($resultado)){
-                        echo "Error";
+
+                    if(!$resultado){
+                        echo json_encode("Error");
 
                     }else{
 
@@ -73,7 +74,7 @@ if(isset($_POST["actions"])){
 
 
 
-                if("admin" == $resultado["role"]){
+                if("admin" == $resultado["role"] || "superadmin" == $resultado["role"]){
 
                 //validamos que el numero de cedula no se encuentra en la base de datos
                 $año = $_POST["año"];
@@ -126,9 +127,11 @@ if(isset($_POST["actions"])){
                     $seccion = $_POST["seccion"];
                     $estado = $_POST["estado"];
                     $GrupoEstable = $_POST["gp"];
+                    $repitiente = $_POST["repitiente"];
 
-                    $sql = "INSERT INTO alumnos (cedula,cedula_escolar,nombre,apellido,sexo,fecha_de_nacimiento,edad,lugar_de_nacimiento,telefono,direccion,correo,ano,seccion,notas,estado,Representate,grupo_estable) VALUES
-                    ($cedula,'$cedulaE','$nombre','$apellido','$sexo','$Fnacimiento',$edad,'$LugarNacimiento',$Telfono,'$Direccion','$Correo','$año','$seccion',$id,'$estado',$idr,'$GrupoEstable')";
+
+                    $sql = "INSERT INTO alumnos (cedula,cedula_escolar,nombre,apellido,sexo,fecha_de_nacimiento,edad,lugar_de_nacimiento,telefono,direccion,correo,ano,seccion,notas,estado,Representate,grupo_estable,repitiente) VALUES
+                    ($cedula,'$cedulaE','$nombre','$apellido','$sexo','$Fnacimiento',$edad,'$LugarNacimiento',$Telfono,'$Direccion','$Correo','$año','$seccion',$id,'$estado',$idr,'$GrupoEstable','$repitiente')";
                     $resultado = $conn->query($sql);
 
                     if(!$resultado) echo "No se pudo agregar el alumno, verifique que todos los campos esten llenos";
@@ -161,7 +164,7 @@ if(isset($_POST["actions"])){
                     $fecha = $_POST["dateTime"];
 
 
-                    if("admin" == $resultado["role"]){
+                    if("admin" == $resultado["role"] || "superadmin" == $resultado["role"]){
 
                     $año = $_POST["año"];
                     $materia = $_POST["materia"];
@@ -195,7 +198,7 @@ if(isset($_POST["actions"])){
                     $user = $resultado;
                     $fecha = $_POST["dateTime"];
 
-                    if("admin" == $resultado["role"]){
+                    if("admin" == $resultado["role"] || "superadmin" == $resultado["role"]){
 
                     $año = $_POST["año"];
                     $seccion = $_POST["seccion"];
@@ -268,6 +271,11 @@ if(isset($_POST["actions"])){
 
                                 if($estado == "repitiente"){
                                     $sql = "UPDATE alumnos SET estado='cursando' WHERE cedula='$cedula'";
+                                    $resultado = $conn->query($sql);
+
+                                    $repitiente = "[false,false,false,false,false,false,false,false,false,false,false,false,false,false]";
+
+                                    $sql = "UPDATE alumnos SET `repitiente`='$repitiente' WHERE cedula='$cedula'";
                                     $resultado = $conn->query($sql);
                                 }
 
@@ -372,7 +380,7 @@ if(isset($_POST["actions"])){
                 $user = $resultado;
                 $fecha = $_POST["dateTime"];
 
-                if("admin" == $resultado["role"]){
+                if("admin" == $resultado["role"] || "superadmin" == $resultado["role"]){
                     
                    //ingresamos los datos del representante
                     $idR = $_POST["idRepresentante"];
@@ -431,7 +439,7 @@ if(isset($_POST["actions"])){
                     $user = $resultado;
                     $fecha = $_POST["dateTime"];
 
-                    if("admin" == $resultado["role"]){
+                    if("admin" == $resultado["role"] || "superadmin" == $resultado["role"]){
         
                         $ano = $_POST["año"];
                         $seccion = $_POST["seccion"];
@@ -480,7 +488,7 @@ if(isset($_POST["actions"])){
                     $user = $resultado;
                     $fecha = $_POST["dateTime"];
 
-                    if("admin" == $resultado["role"]){
+                    if("admin" == $resultado["role"] || "superadmin" == $resultado["role"]){
 
                         $estado = $_POST["estado"];
                         $cedula = $_POST["cedula"];
@@ -583,7 +591,7 @@ if(isset($_POST["actions"])){
                 $user = $resultado;
                 $fecha = $_POST["dateTime"];
 
-                if("admin" == $resultado["role"]){
+                if("admin" == $resultado["role"] || "superadmin" == $resultado["role"]){
 
                     $cedula = $_POST["cedula"];
                     $GrupoEstable = $_POST["gp"];
@@ -621,6 +629,14 @@ if(isset($_POST["actions"])){
 
             break;
             case "admin users":
+                $userId = $_POST["userId"];
+                $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                $resultado = $conn->query($sql)->fetch_assoc();
+                $user = $resultado;
+
+                if("superadmin" == $resultado["role"]){
+
+
                 $id = $_POST["id"];
                 $role = $_POST["role"];
                                 
@@ -630,6 +646,45 @@ if(isset($_POST["actions"])){
                 if($resultado) echo "True";
                 if(!$resultado) echo "False";
 
+                }
+            break;
+
+            case "find repitientes":
+                $id = $_POST["cedula"];
+
+                $sql = "SELECT repitiente FROM alumnos WHERE `cedula`=$id";
+                $resultado = $conn->query($sql)->fetch_object();
+                echo json_encode($resultado);
+
+            break;
+            case "modifi repitiente":
+                $userId = $_POST["userId"];
+                $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                $resultado = $conn->query($sql)->fetch_assoc();
+                $user = $resultado;
+                $fecha = $_POST["dateTime"];
+
+                if("admin" == $resultado["role"] || "superadmin" == $resultado["role"]){
+
+                    
+
+                    $cedula = $_POST["cedula"];
+                    $repitiente = $_POST["repitiente"];
+                        
+                    $sql = "UPDATE alumnos SET `repitiente`='$repitiente' WHERE cedula='$cedula'";
+                    $resultado = $conn->query($sql);
+                        
+
+                    if($resultado) {
+                        echo json_encode("True");
+                        $correoUser = $user['email'];
+                        $cedula = $_POST["cedula"];
+                        $data = "El usuario $correoUser Modifico las areas repitientes del alumno: $cedula";
+                        $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                        $resultado = $conn->query($sql);
+                    } ;
+                    if(!$resultado) echo json_encode("False");
+                }
 
             break;
         default:

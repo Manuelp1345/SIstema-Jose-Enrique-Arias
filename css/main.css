@@ -218,3 +218,7 @@ ul ul a {
   top: -5px !important;
   left: -5px !important;
 }
+
+.pointer {
+  cursor: pointer;
+}

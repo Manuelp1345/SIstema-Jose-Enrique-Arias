@@ -13,6 +13,23 @@ const añoDB = [
   "quinto_año",
 ];
 
+let areas = [
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+  false,
+];
+
 //Utilidades
 const fetchF = async (body) => {
   const e = await fetch("BackEnd/actions.php", {
@@ -34,6 +51,22 @@ if (document.querySelector("#back")) {
     localStorage.getItem("graduado") == "graduado"
       ? RenderGraduados()
       : seccionNav(año, seccion);
+    areas = [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+    ];
   });
 }
 
@@ -67,6 +100,37 @@ if (document.querySelector("#contenedorGp")) {
       });
     });
   });
+
+  document
+    .querySelector("#contenedorRp")
+    .addEventListener("click", function (e) {
+      if (e.target.classList.contains("rp")) {
+        e.target.addEventListener("change", () => {
+          if (e.target.checked) areas[e.target.id - 1] = e.target.checked;
+          if (!e.target.checked) areas[e.target.id - 1] = e.target.checked;
+          let form = new FormData();
+          let dateTime = new Date();
+          form.append("cedula", localStorage.getItem("cedula"));
+          form.append("repitiente", JSON.stringify(areas));
+          form.append("actions", "modifi repitiente");
+          form.append("dateTime", dateTime);
+          form.append(
+            "userId",
+            parseInt(JSON.parse(localStorage.getItem("user")).id)
+          );
+          fetchF(form).then((data) => {
+            if (JSON.parse(data) == "True") {
+              Swal.fire({
+                title: "Modificado!",
+                text: "Cambios Realizados con Éxito",
+                icon: "success",
+                confirmButtonText: "Entendido",
+              });
+            }
+          });
+        });
+      }
+    });
 }
 
 if (document.querySelector("#State")) {
@@ -85,13 +149,23 @@ if (document.querySelector("#State")) {
     );
 
     fetchF(form).then((data) => {
-      if (JSON.parse(data) == "True")
+      if (JSON.parse(data) == "True") {
         Swal.fire({
           title: "Modificado!",
           text: "Cambios Realizados con Éxito",
           icon: "success",
           confirmButtonText: "Entendido",
         });
+        if (estado.value == "repitiente") {
+          document
+            .querySelector("#contenedorRp")
+            .classList.replace("d-none", "d-flex");
+        } else {
+          document
+            .querySelector("#contenedorRp")
+            .classList.replace("d-flex", "d-none");
+        }
+      }
     });
   });
 }
@@ -125,7 +199,9 @@ if (document.querySelector("#fechaNacimiento")) {
     }
     document.querySelector("#Edad").value = parseInt(edad);
   });
+}
 
+if (document.querySelector("#Condicion")) {
   //verificar si seleciona repitiente para mostras las areas a selecionar
   document.querySelector("#Condicion").addEventListener("change", function () {
     this.value == "repitiente"
@@ -134,6 +210,17 @@ if (document.querySelector("#fechaNacimiento")) {
           .querySelector("#areasRp")
           .classList.replace("d-flex", "d-none");
   });
+
+  document
+    .querySelector("#modalalumno")
+    .addEventListener("click", function (e) {
+      if (e.target.classList.contains("repitiente")) {
+        e.target.addEventListener("change", () => {
+          if (e.target.checked) areas[e.target.id - 1] = true;
+          if (!e.target.checked) areas[e.target.id - 1] = false;
+        });
+      }
+    });
 }
 
 //muetras una año y seccion
@@ -342,6 +429,7 @@ function alumno() {
   form.append("año", añoDB[año - 1]);
   form.append("seccion", seccion);
   form.append("gp", $("#gp").val());
+  form.append("repitiente", JSON.stringify(areas));
   form.append("actions", "Alumno");
   form.append("dateTime", dateTime);
   form.append("userId", parseInt(JSON.parse(localStorage.getItem("user")).id));
@@ -384,6 +472,25 @@ function alumno() {
 function editar(cedula, nombre, notas, sec, año, state) {
   const agregar = document.getElementById("notasAlumnos");
   agregar.innerHTML = ``;
+  areas = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ];
+  document.querySelectorAll(".rp").forEach((value, i) => {
+    value.checked = areas[i];
+  });
 
   $("#notasexport").DataTable().clear().destroy();
 
@@ -420,6 +527,18 @@ function editar(cedula, nombre, notas, sec, año, state) {
   Select5.removeAttribute("selected");
 
   estado.value = state;
+
+  if (state == "repitiente") {
+    document
+      .querySelector("#contenedorRp")
+      .classList.replace("d-none", "d-flex");
+    findRepitiente();
+  } else {
+    document
+      .querySelector("#contenedorRp")
+      .classList.replace("d-flex", "d-none");
+  }
+
   selector.value =
     parseInt(localStorage.getItem("añoaux")) > año
       ? año
@@ -755,15 +874,13 @@ function enviarNotas() {
   let form = new FormData();
   let dateTime = new Date();
 
-  console.log(dateTime);
-
   form.append("materia", materia);
   form.append("nota", id);
   form.append("cedula", cedula);
-  form.append("dateTime", dateTime);
   form.append("año", añoDB[año - 1]);
   form.append("datos", JSON.stringify(lapsos));
   form.append("actions", "mofificar Notas");
+  form.append("dateTime", dateTime);
   form.append("userId", parseInt(JSON.parse(localStorage.getItem("user")).id));
 
   if (
@@ -814,10 +931,13 @@ function PasarSeccion() {
     seccion = localStorage.getItem("seccion");
 
   let data = new FormData();
+  let dateTime = new Date();
 
   data.append("año", añoDB[año - 1]);
   data.append("seccion", seccion);
   data.append("actions", "Pasar Seccion");
+  data.append("dateTime", dateTime);
+  data.append("userId", parseInt(JSON.parse(localStorage.getItem("user")).id));
 
   fetchF(data).then(() => seccionNav(año, seccion));
 }
@@ -1462,8 +1582,27 @@ function clean() {
   document.querySelector("#DireccionR").value = "";
   document.querySelector("#CorreoR").value = "";
   document.querySelector("#gp").value = "";
-
   document.querySelector("#Condicion").value = "c";
+  areas = [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+  ];
+  document.querySelectorAll(".repitiente").forEach((value, i) => {
+    value.checked = areas[i];
+  });
+  document.querySelector("#areasRp").classList.replace("d-flex", "d-none");
 }
 
 if (document.querySelector("#bitacora")) {
@@ -1526,6 +1665,10 @@ if (document.querySelector("#admin")) {
         let form = new FormData();
         form.append("id", e.target.id);
         form.append("role", e.target.value);
+        form.append(
+          "userId",
+          parseInt(JSON.parse(localStorage.getItem("user")).id)
+        );
         form.append("actions", "admin users");
         fetchF(form).then((e) => {
           if (e == "True") {
@@ -1561,3 +1704,16 @@ if (document.querySelector("#userInfo")) {
  }</li>
  `;
 }
+
+const findRepitiente = () => {
+  let form = new FormData();
+  form.append("cedula", localStorage.getItem("cedula"));
+  form.append("userId", parseInt(JSON.parse(localStorage.getItem("user")).id));
+  form.append("actions", "find repitientes");
+  fetchF(form).then((e) => {
+    areas = JSON.parse(JSON.parse(e).repitiente);
+    document.querySelectorAll(".rp").forEach((value, i) => {
+      value.checked = areas[i];
+    });
+  });
+};
