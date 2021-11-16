@@ -1203,7 +1203,7 @@ if(isset($_POST["actions"])){
 
             case "Bitacora":
                                 
-                $sql = "SELECT * FROM bitacora ORDER BY id DESC";
+                $sql = "SELECT * FROM bitacora ORDER BY id DESC LIMIT 300";
                 if($_POST["BDR"] != null)
                 $resultado = $connR->query($sql)->fetch_all();
                 else
