@@ -1667,6 +1667,7 @@ function ModificarDatosalumno() {
 
   let form = new FormData();
   let dateTime = new Date();
+
   if (window.location.pathname.split("/")[2] == "periodo") {
     form.append("BDR", "BDR");
   }
@@ -1764,7 +1765,8 @@ function ModificarSeccionAño() {
 }
 
 function RenderGraduados(bdr = null) {
-  history.pushState(null, null, "/?Alumnos");
+  if (document.querySelector("#sidebar"))
+    history.pushState(null, null, "/?Alumnos");
 
   localStorage.removeItem("graduado");
   $("#TablaGraduados").DataTable().clear().destroy();
