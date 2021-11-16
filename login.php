@@ -45,5 +45,6 @@ if(isset($_SESSION["usuario"])){
 
     </div>
 </div>
-<script src="js/login-register.js"></script>
+
 <?php require "partials/footer.php" ?>
+<script src="js/login-register.js"></script> 

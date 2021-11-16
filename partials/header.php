@@ -37,7 +37,7 @@
 
             <ul class="list-unstyled components">
                 <li >
-                    <a href="/sistema/" >Inicio</a>
+                    <a href="/" >Inicio</a>
                 </li>
                 <li>
                     <a href="#primer-año" data-bs-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Primer Año</a>
@@ -171,7 +171,7 @@
                     }
                 ?>
                 <li >
-                    <a class="sesion " href="/sistema/CerrarSesion.php">Cerrar Sesion</a>
+                    <a class="sesion " href="/CerrarSesion.php">Cerrar Sesion</a>
                 </li>
             </ul>
         </nav>

@@ -30,9 +30,17 @@ let areas = [
   false,
 ];
 
+const currentUrl = window.location.search.substring(1).split("&");
+
+console.log(currentUrl);
+
+if (window.location.pathname == "/admin.php") {
+  localStorage.setItem("respaldo", "false");
+}
+
 //Utilidades
 const fetchF = async (body) => {
-  const e = await fetch("BackEnd/actions.php", {
+  const e = await fetch(`${window.location.origin}/BackEnd/actions.php`, {
     method: "POST",
     body,
   });
@@ -40,6 +48,19 @@ const fetchF = async (body) => {
 
   return data;
 };
+
+if (document.querySelector("#TotalAlumnos")) {
+  const span = document.querySelector("#TotalAlumnos");
+  const periodo = document.querySelector("#periodoIndex");
+  periodo.innerHTML = `${new Date().getFullYear()}-${
+    new Date().getFullYear() + 1
+  }`;
+  const form = new FormData();
+  form.append("actions", "TotalAlumnos");
+  fetchF(form).then((e) => {
+    span.innerHTML = e;
+  });
+}
 
 const primeraLetraMayuscula = (cadena) =>
   cadena.charAt(0).toUpperCase().concat(cadena.substring(1, cadena.length));
@@ -79,7 +100,9 @@ if (document.querySelector("#contenedorGp")) {
   document.querySelector("#gpdb").addEventListener("blur", function () {
     let form = new FormData();
     let dateTime = new Date();
-
+    if (window.location.pathname.split("/")[2] == "periodo") {
+      form.append("BDR", "BDR");
+    }
     form.append("cedula", localStorage.getItem("cedula"));
     form.append("gp", document.querySelector("#gpdb").value);
     form.append("actions", "EditarGp");
@@ -110,6 +133,10 @@ if (document.querySelector("#contenedorGp")) {
           if (!e.target.checked) areas[e.target.id - 1] = e.target.checked;
           let form = new FormData();
           let dateTime = new Date();
+          if (window.location.pathname.split("/")[2] == "periodo") {
+            form.append("BDR", "BDR");
+          }
+
           form.append("cedula", localStorage.getItem("cedula"));
           form.append("repitiente", JSON.stringify(areas));
           form.append("actions", "modifi repitiente");
@@ -138,7 +165,9 @@ if (document.querySelector("#State")) {
   estado.addEventListener("change", () => {
     let form = new FormData();
     let dateTime = new Date();
-
+    if (window.location.pathname.split("/")[2] == "periodo") {
+      form.append("BDR", "BDR");
+    }
     form.append("cedula", localStorage.getItem("cedula"));
     form.append("estado", estado.value);
     form.append("actions", "State");
@@ -233,6 +262,8 @@ const seccionNav = (año, seccion) => {
   localStorage.setItem("año", año);
   localStorage.setItem("seccion", seccion);
 
+  history.pushState(null, null, `/?seccion&${año}&${seccion}`);
+
   localStorage.removeItem("añoaux");
 
   welcome.css("display", "none");
@@ -271,6 +302,9 @@ const seccionNav = (año, seccion) => {
   }
 
   let form = new FormData();
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
 
   form.append("año", añoDB[año - 1]);
   form.append("seccion", seccion);
@@ -287,51 +321,55 @@ const seccionNav = (año, seccion) => {
 
       x2 = alumnos.length;
 
-      for (let i = 0; i < alumnos.length; i++, x++) {
-        let form2 = new FormData();
-        let dateTime = new Date();
-
-        form2.append("año", añoDB[año - 1]);
-        form2.append("notas", alumnos[i][14]);
-        form2.append("actions", "Editar");
-        form2.append("dateTime", dateTime);
-        form2.append("cedula", localStorage.getItem("cedula"));
-        form2.append(
-          "userId",
-          parseInt(JSON.parse(localStorage.getItem("user")).id)
-        );
-
-        fetchF(form2).then((data) => {
-          data = JSON.parse(data);
-
-          let notas = data[0];
-
-          let primer_lapso = 0,
-            segundo_lapso = 0,
-            tercer_lapso = 0,
-            notaFinal = 0;
-
-          materias = Object.entries(notas);
-          notas = Object.values(notas);
-
-          for (let i = 1; i < notas.length; i++) {
-            primer_lapso += parseInt(JSON.parse(notas[i]).primer_lapso);
-            segundo_lapso += parseInt(JSON.parse(notas[i]).segundo_lapso);
-            tercer_lapso += parseInt(JSON.parse(notas[i]).tercer_lapso);
+      Promise.all(
+        alumnos.map((alumno, i) => {
+          let form2 = new FormData();
+          let dateTime = new Date();
+          if (window.location.pathname.split("/")[2] == "periodo") {
+            form.append("BDR", "BDR");
           }
 
-          primer_lapso = primer_lapso / parseInt(notas.length - 1);
-          segundo_lapso = segundo_lapso / parseInt(notas.length - 1);
-          tercer_lapso = tercer_lapso / parseInt(notas.length - 1);
+          form2.append("año", añoDB[año - 1]);
+          form2.append("notas", alumno[14]);
+          form2.append("actions", "Editar");
+          form2.append("dateTime", dateTime);
+          form2.append("cedula", localStorage.getItem("cedula"));
+          form2.append(
+            "userId",
+            parseInt(JSON.parse(localStorage.getItem("user")).id)
+          );
 
-          notaFinal = (primer_lapso + segundo_lapso + tercer_lapso) / 3;
+          fetchF(form2).then((data) => {
+            data = JSON.parse(data);
 
-          agregar.innerHTML += `
+            let notas = data[0];
+
+            let primer_lapso = 0,
+              segundo_lapso = 0,
+              tercer_lapso = 0,
+              notaFinal = 0;
+
+            materias = Object.entries(notas);
+            notas = Object.values(notas);
+
+            for (let i = 1; i < notas.length; i++) {
+              primer_lapso += parseInt(JSON.parse(notas[i]).primer_lapso);
+              segundo_lapso += parseInt(JSON.parse(notas[i]).segundo_lapso);
+              tercer_lapso += parseInt(JSON.parse(notas[i]).tercer_lapso);
+            }
+
+            primer_lapso = primer_lapso / parseInt(notas.length - 1);
+            segundo_lapso = segundo_lapso / parseInt(notas.length - 1);
+            tercer_lapso = tercer_lapso / parseInt(notas.length - 1);
+
+            notaFinal = (primer_lapso + segundo_lapso + tercer_lapso) / 3;
+
+            agregar.innerHTML += `
                             <tr>
                             <th scope="row">${i + 1}</th>
-                            <td>${alumnos[i][1]}</td>
-                            <td>${alumnos[i][3].toUpperCase()} </td>
-                            <td>${alumnos[i][4].toUpperCase()}</td>
+                            <td>${alumno[1]}</td>
+                            <td>${alumno[3].toUpperCase()} </td>
+                            <td>${alumno[4].toUpperCase()}</td>
                             <td>${parseInt(primer_lapso)}</td>
                             <td>${parseInt(segundo_lapso)}</td>
                             <td>${parseInt(tercer_lapso)}</td>
@@ -341,31 +379,28 @@ const seccionNav = (año, seccion) => {
                             <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
                             <div class="dropdown-menu">
                             <a class="dropdown-item" onclick="editar(${
-                              alumnos[i][1]
-                            },'${alumnos[i][3].trim()} ${alumnos[
-            i
-          ][4].trim()}',${alumnos[i][14]},'${seccion}',${año},'${
-            alumnos[i][15]
-          }')" href="#">Editar</a>
+                              alumno[1]
+                            },'${alumno[3].trim()} ${alumno[4].trim()}',${
+              alumno[14]
+            },'${seccion}',${año},'${alumno[15]}')" href="#">Editar</a>
                             </div>
                             </div>
                             </td>
                             </tr>`;
-          if (x == x2) {
-            setTimeout(() => {
+            if (alumnos.length == i + 1) {
               $("#TablaMain").DataTable({
                 pageLength: 10,
                 lengthMenu: [10, 20, 25, 30, 35],
                 retrieve: true,
                 order: [[1, "asc"]],
                 language: {
-                  url: "/sistema/DataTables/Spanish.json",
+                  url: "/DataTables/Spanish.json",
                 },
               });
-            }, 250);
-          }
-        });
-      }
+            }
+          });
+        })
+      );
     })
     .catch((e) => {
       Swal.fire({
@@ -383,6 +418,9 @@ function alumno() {
   $("#modal").removeAttr("data-bs-dismiss");
 
   let form = new FormData();
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
 
   let direcionNacimiento = `${primeraLetraMayuscula(
     $("#pais").val()
@@ -434,23 +472,152 @@ function alumno() {
   form.append("dateTime", dateTime);
   form.append("userId", parseInt(JSON.parse(localStorage.getItem("user")).id));
 
-  if ($("#Nombre").val() === "") {
-    succes.css("display", "none");
-
-    error.css({ display: "block" });
-    return error.text("Por Favor Ingrese un nombre");
-  }
   if ($("#Apellido").val() === "") {
     succes.css("display", "none");
 
     error.css({ display: "block" });
     return error.text("Por Favor Ingrese un apellido");
   }
+
+  if ($("#Nombre").val() === "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese un nombre");
+  }
   if ($("#Cedula").val() === "") {
     succes.css("display", "none");
     error.css({ display: "block" });
-    return error.text("Por Favor Ingrese un cedula");
+    return error.text("Por Favor Ingrese una cedula para el estudiante");
   }
+  if ($("#Cedula").val().length < 8) {
+    succes.css("display", "none");
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese una cedula valida para el estudiante");
+  }
+  if (
+    !$("#dni").prop("checked") &&
+    !$("#pasaporte").prop("checked") &&
+    !$("#cedulaEscolar").prop("checked")
+  ) {
+    succes.css("display", "none");
+    error.css({ display: "block" });
+    return error.text("Por Favor seleccione un tipo de documento");
+  }
+  if ($("#Sexo").val() == null) {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor seleccione el sexo del estudiante");
+  }
+  if (
+    new Date().getFullYear() -
+      parseInt($("#fechaNacimiento").val().split("-")[0]) <=
+      9 ||
+    $("#fechaNacimiento").val() == ""
+  ) {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese una Fecha de Nacimiento valida");
+  }
+  if ($("#pais").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese el pais");
+  }
+  if ($("#estado").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese el estado");
+  }
+  if ($("#Municipio").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese el municipio");
+  }
+  if ($("#Telfono").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese el Numero de telefono del estudiante");
+  }
+  if ($("#Direccion").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese la direccion del estudiante");
+  }
+  if ($("#Correo").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese el correo del estudiante");
+  }
+  if ($("#gp").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese el grupo estable del estudiante");
+  }
+  if ($("#Condicion").val() == null) {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese la condicion del estudiante");
+  }
+  if ($("#NombreR").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese el nombre del representante");
+  }
+  if ($("#ApellidoR").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese el apellido del representante");
+  }
+  if ($("#CedulaR").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese la cedula del representante");
+  }
+  if ($("#SexoR").val() == null) {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese el sexo del representante");
+  }
+  if ($("#Filiacion").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese la filiacion con el representante");
+  }
+  if ($("#TelfonoR").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese el telefono del representante");
+  }
+  if ($("#DireccionR").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese la direccion del representante");
+  }
+  if ($("#CorreoR").val() == "") {
+    succes.css("display", "none");
+
+    error.css({ display: "block" });
+    return error.text("Por Favor Ingrese el correo del representante");
+  }
+
   $("#modal").attr("data-bs-dismiss", "modal");
   fetchF(form).then((data) => {
     if (data !== "Alumno agregado con exito") {
@@ -495,18 +662,30 @@ function editar(cedula, nombre, notas, sec, año, state) {
   $("#notasexport").DataTable().clear().destroy();
 
   let form2 = new FormData();
-
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
   form2.append("cedula", cedula);
   form2.append("actions", "Grupo Estable");
 
-  fetchF(form2).then(
-    (e) => (document.querySelector("#gpdb").value = e.toLocaleUpperCase())
-  );
+  fetchF(form2).then((e) => {
+    if (JSON.parse(e).grupo_estable)
+      document.querySelector("#gpdb").value = JSON.parse(e).grupo_estable;
+    if (JSON.parse(e).periodo)
+      document.querySelector("#gpdb").value = JSON.parse(e).grupo_estable;
+    document.querySelector("#periodo").innerHTML = JSON.parse(e).periodo;
+  });
 
   localStorage.setItem("estado", state);
   localStorage.setItem("cedula", cedula);
   localStorage.setItem("nota", notas);
   localStorage.setItem("nombre", nombre);
+
+  history.pushState(
+    null,
+    null,
+    `?alumno&${cedula}&${nombre}&${notas}&${sec}&${año}&${state}`
+  );
 
   const estado = document.querySelector("#State"),
     selector = document.querySelector("#SelectAÑo"),
@@ -568,6 +747,9 @@ function editar(cedula, nombre, notas, sec, año, state) {
 
     let form = new FormData();
     let dateTime = new Date();
+    if (window.location.pathname.split("/")[2] == "periodo") {
+      form.append("BDR", "BDR");
+    }
 
     form.append("cedula", cedula);
     form.append("año", añoDB[parseInt(selector.value) - 1]);
@@ -585,7 +767,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
 
       data = JSON.parse(data);
       data[0].Total =
-        '{"primer_lapso":"0","segundo_lapso":"0","tercer_lapso":"0"}';
+        '{"primer_lapso":0,"segundo_lapso":0,"tercer_lapso":0,"revision":0,"ap":0}';
 
       let notasObject = data[0];
 
@@ -599,12 +781,14 @@ function editar(cedula, nombre, notas, sec, año, state) {
 
       let P1 = 0,
         P2 = 0,
-        P3 = 0;
+        P3 = 0,
+        R = 0;
 
       for (let i = 1; i < materiasObject.length; i++) {
         P1 += parseFloat(JSON.parse(notasObject[i]).primer_lapso);
         P2 += parseFloat(JSON.parse(notasObject[i]).segundo_lapso);
         P3 += parseFloat(JSON.parse(notasObject[i]).tercer_lapso);
+        R += parseFloat(JSON.parse(notasObject[i]).revision);
 
         if (i == materiasObject.length - 1) {
           notasObject[
@@ -613,7 +797,8 @@ function editar(cedula, nombre, notas, sec, año, state) {
             1
           )}","segundo_lapso":"${parseFloat(P2 / (i - 1)).toFixed(
             1
-          )}","tercer_lapso":"${parseFloat(P3 / (i - 1)).toFixed(1)}"}`;
+          )}","tercer_lapso":"${parseFloat(P3 / (i - 1)).toFixed(1)}"
+          ,"revision":"${parseInt(R / (i - 1).toFixed(1))}"}`;
         }
 
         agregar.innerHTML += `
@@ -630,10 +815,17 @@ function editar(cedula, nombre, notas, sec, año, state) {
                   <td class="text-center">${parseFloat(
                     JSON.parse(notasObject[i]).tercer_lapso
                   )}</td>
+                  <td class="text-center">${parseFloat(
+                    JSON.parse(notasObject[i]).revision
+                  )}</td>
                   <td class="text-center">${(
                     (parseFloat(JSON.parse(notasObject[i]).primer_lapso) +
                       parseFloat(JSON.parse(notasObject[i]).segundo_lapso) +
-                      parseFloat(JSON.parse(notasObject[i]).tercer_lapso)) /
+                      parseFloat(
+                        JSON.parse(notasObject[i]).revision != 0
+                          ? parseFloat(JSON.parse(notasObject[i]).revision)
+                          : parseFloat(JSON.parse(notasObject[i]).tercer_lapso)
+                      )) /
                     3
                   ).toFixed(1)}</td>
                   <td class='ms-3'> 
@@ -657,7 +849,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
         retrieve: true,
         dom: "Bfrtip",
         language: {
-          url: "/sistema/DataTables/Spanish.json",
+          url: "/DataTables/Spanish.json",
         },
         buttons: [
           {
@@ -672,6 +864,22 @@ function editar(cedula, nombre, notas, sec, año, state) {
             )}  Sección:  ${sec}`,
             exportOptions: {
               columns: ":visible",
+            },
+          },
+          {
+            text: "Exportar a excel (Boletin)",
+            action: function (e, dt, node, config) {
+              const form = new FormData();
+              if (window.location.pathname.split("/")[2] == "periodo") {
+                form.append("BDR", "BDR");
+              }
+
+              form.append("cedula", cedula);
+              form.append("año", añoDB[localStorage.getItem("añoaux") - 1]);
+              form.append("actions", "GenerarBoletin");
+              fetchF(form).then((data) =>
+                window.open(`backend/${data}`, "_blank")
+              );
             },
           },
           {
@@ -700,7 +908,9 @@ function editar(cedula, nombre, notas, sec, año, state) {
     InfoAnio = document.querySelector("#InfoAnio"),
     InfoSec = document.querySelector("#InfoSec");
 
-  Infoalumno.innerHTML = `Alumno: ${nombre.toUpperCase()}.`;
+  Infoalumno.innerHTML = `Alumno: ${nombre
+    .toUpperCase()
+    .replaceAll("%20", " ")}.`;
   InfoCI.innerHTML = `C.I: ${cedula}.`;
   InfoAnio.innerHTML = `Año: ${añoDB[año - 1]
     .replace("_", " ")
@@ -712,6 +922,10 @@ function editar(cedula, nombre, notas, sec, año, state) {
 
   let form = new FormData();
   let dateTime = new Date();
+
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
 
   form.append("cedula", cedula);
   form.append("año", añoDB[año - 1]);
@@ -725,7 +939,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
     agregar.innerHTML = ``;
     data = JSON.parse(data);
     data[0].Total =
-      '{"primer_lapso":"0","segundo_lapso":"0","tercer_lapso":"0"}';
+      '{"primer_lapso":0,"segundo_lapso":0,"tercer_lapso":0,"revision":0,"ap":0}';
 
     let notasObject = data[0];
 
@@ -740,19 +954,34 @@ function editar(cedula, nombre, notas, sec, año, state) {
     let P1 = 0,
       P2 = 0,
       P3 = 0;
+    R = 0;
 
     for (let i = 1; i < materiasObject.length; i++) {
       P1 += parseFloat(JSON.parse(notasObject[i]).primer_lapso);
       P2 += parseFloat(JSON.parse(notasObject[i]).segundo_lapso);
       P3 += parseFloat(JSON.parse(notasObject[i]).tercer_lapso);
+      R += parseFloat(JSON.parse(notasObject[i]).revision);
 
       if (i == materiasObject.length - 1) {
         notasObject[materiasObject.length - 1] = `{"primer_lapso":"${parseFloat(
           P1 / (i - 1)
         ).toFixed(1)}","segundo_lapso":"${parseFloat(P2 / (i - 1)).toFixed(
           1
-        )}","tercer_lapso":"${parseFloat(P3 / (i - 1)).toFixed(1)}"}`;
+        )}","tercer_lapso":"${parseFloat(P3 / (i - 1)).toFixed(1)}"
+        ,"revision":"${parseInt(R / (i - 1).toFixed(1))}"}`;
       }
+
+      const btn = `                  <button type="button" class="btn btn-primary" onclick="editarN('${
+        materiasObject[i][0]
+      }',${JSON.parse(
+        notasObject[0]
+      )}, ${notas}, '${nombre}', ${cedula},${parseInt(
+        JSON.parse(notasObject[i]).primer_lapso
+      )},${parseInt(JSON.parse(notasObject[i]).segundo_lapso)},${parseInt(
+        JSON.parse(notasObject[i]).tercer_lapso
+      )})" data-bs-toggle="modal" data-bs-target="#editarnotas">
+      Editar
+      </button>`;
 
       agregar.innerHTML += `
                 <tr>
@@ -768,24 +997,21 @@ function editar(cedula, nombre, notas, sec, año, state) {
                 <td class="text-center">${parseFloat(
                   JSON.parse(notasObject[i]).tercer_lapso
                 )}</td>
+                <td class="text-center">${parseFloat(
+                  JSON.parse(notasObject[i]).revision
+                )}</td>
                 <td class="text-center">${(
                   (parseFloat(JSON.parse(notasObject[i]).primer_lapso) +
                     parseFloat(JSON.parse(notasObject[i]).segundo_lapso) +
-                    parseFloat(JSON.parse(notasObject[i]).tercer_lapso)) /
+                    parseFloat(
+                      JSON.parse(notasObject[i]).revision != 0
+                        ? parseFloat(JSON.parse(notasObject[i]).revision)
+                        : parseFloat(JSON.parse(notasObject[i]).tercer_lapso)
+                    )) /
                   3
                 ).toFixed(1)}</td>
                 <td class='ms-3'> 
-                <button type="button" class="btn btn-primary" onclick="editarN('${
-                  materiasObject[i][0]
-                }',${JSON.parse(
-        notasObject[0]
-      )}, ${notas}, '${nombre}', ${cedula},${parseInt(
-        JSON.parse(notasObject[i]).primer_lapso
-      )},${parseInt(JSON.parse(notasObject[i]).segundo_lapso)},${parseInt(
-        JSON.parse(notasObject[i]).tercer_lapso
-      )})" data-bs-toggle="modal" data-bs-target="#editarnotas">
-                Editar
-                </button>
+                  ${materiasObject[i][0] == "Total" ? "" : btn}
                 </td>
                 </tr>`;
     }
@@ -795,7 +1021,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
       retrieve: true,
       dom: "Bfrtip",
       language: {
-        url: "/sistema/DataTables/Spanish.json",
+        url: "/DataTables/Spanish.json",
       },
       buttons: [
         {
@@ -806,10 +1032,26 @@ function editar(cedula, nombre, notas, sec, año, state) {
           title: `Alumno  ${nombre}   C.I: ${
             cedula + " "
           }  Año: ${primeraLetraMayuscula(
-            añoDB[localStorage.getItem("año") - 1].replace("_", " ")
+            añoDB[año - 1].replace("_", " ")
           )}  Sección:  ${sec}`,
           exportOptions: {
             columns: ":visible",
+          },
+        },
+        {
+          text: "Exportar a excel (Boletin)",
+          action: function (e, dt, node, config) {
+            const form = new FormData();
+            if (window.location.pathname.split("/")[2] == "periodo") {
+              form.append("BDR", "BDR");
+            }
+
+            form.append("cedula", cedula);
+            form.append("año", añoDB[año - 1]);
+            form.append("actions", "GenerarBoletin");
+            fetchF(form).then((data) =>
+              window.open(`backend/${data}`, "_blank")
+            );
           },
         },
         {
@@ -856,12 +1098,14 @@ function enviarNotas() {
     primer_lapso: 0,
     segundo_lapso: 0,
     tercer_lapso: 0,
+    revision: 0,
     ap: 0,
   };
 
   lapsos.primer_lapso = $("#primer_lapso").val();
   lapsos.segundo_lapso = $("#segundo_lapso").val();
   lapsos.tercer_lapso = $("#tercer_lapso").val();
+  lapsos.revision = $("#revision").val();
 
   let aux =
     (parseFloat(lapsos.primer_lapso) +
@@ -873,6 +1117,9 @@ function enviarNotas() {
 
   let form = new FormData();
   let dateTime = new Date();
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
 
   form.append("materia", materia);
   form.append("nota", id);
@@ -910,6 +1157,11 @@ function enviarNotas() {
     error.css("display", "block");
     return error.html("Por favor ingrese una nota ( minimo: 0 / maximo: 20 )");
   }
+  if (lapsos.revision == "" || lapsos.revision > 20 || lapsos.revision < 0) {
+    succes.css("display", "none");
+    error.css("display", "block");
+    return error.html("Por favor ingrese una nota ( minimo: 0 / maximo: 20 )");
+  }
 
   $("#btnAgragar").attr("data-dismiss", "modal");
   error.css("display", "none");
@@ -932,6 +1184,9 @@ function PasarSeccion() {
 
   let data = new FormData();
   let dateTime = new Date();
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    data.append("BDR", "BDR");
+  }
 
   data.append("año", añoDB[año - 1]);
   data.append("seccion", seccion);
@@ -947,7 +1202,7 @@ function reporte(type) {
   switch (type) {
     case "notas":
       window.open(
-        `/sistema/reporte.php?query=${type}`,
+        `/reporte.php?query=${type}`,
         "",
         "width=1024,height=720,toolbar=yes"
       );
@@ -956,14 +1211,14 @@ function reporte(type) {
 
     case "datos":
       window.open(
-        `/sistema/reporte.php?query=${type}`,
+        `/reporte.php?query=${type}`,
         "",
         "width=1024,height=720,toolbar=yes"
       );
       break;
     case "datosAlumno":
       let ventana = window.open(
-        `/sistema/reporte.php?query=${type}`,
+        `/reporte.php?query=${type}`,
         "",
         "width=1024,height=720,toolbar=yes"
       );
@@ -985,11 +1240,11 @@ function reporte(type) {
   }
 }
 function openBitacora() {
-  window.open(`/sistema/bitacora.php`, "", "width=1024,height=720,toolbar=yes");
+  window.open(`/bitacora.php`, "", "width=1024,height=720,toolbar=yes");
 }
 
 function openAdmin() {
-  window.open(`/sistema/admin.php`, "", "width=1024,height=720,toolbar=yes");
+  window.open(`/admin.php`, "", "width=1024,height=720,toolbar=yes");
 }
 
 function test() {
@@ -1000,6 +1255,9 @@ function test() {
   let form = new FormData();
 
   $("#AreasAlumnos").DataTable().destroy();
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
 
   form.append("año", añoDB[año - 1]);
   form.append("seccion", seccion);
@@ -1013,6 +1271,10 @@ function test() {
     for (let i = 0; i < alumnos.length; i++) {
       let form2 = new FormData();
 
+      if (window.location.pathname.split("/")[2] == "periodo") {
+        form2.append("BDR", "BDR");
+      }
+
       form2.append("año", añoDB[año - 1]);
       form2.append("notas", alumnos[i][14]);
       form2.append("actions", "Editar");
@@ -1021,7 +1283,7 @@ function test() {
         data = JSON.parse(data);
 
         data[0].Total =
-          '{"primer_lapso":"0","segundo_lapso":"0","tercer_lapso":"0"}';
+          '{"primer_lapso":0,"segundo_lapso":0,"tercer_lapso":0,"revision":0,"ap":0}';
         let notas = data[0];
 
         materias = Object.entries(notas);
@@ -1030,32 +1292,35 @@ function test() {
         let P1 = 0,
           P2 = 0,
           P3 = 0;
-
-        agregar.innerHTML += `
+        (R = 0),
+          (agregar.innerHTML += `
                             <tr>
                             <th scope="row">${i + 1}</th>
                             <th>${alumnos[i][1]}</th>
                             <th>${alumnos[i][3].toUpperCase()} ${alumnos[
-          i
-        ][4].toUpperCase()} </th>
+            i
+          ][4].toUpperCase()} </th>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
-                            </tr>`;
+                            </tr>`);
 
         for (let i = 1; i < notas.length; i++) {
           P1 += parseFloat(JSON.parse(notas[i]).primer_lapso);
           P2 += parseFloat(JSON.parse(notas[i]).segundo_lapso);
           P3 += parseFloat(JSON.parse(notas[i]).tercer_lapso);
+          R += parseFloat(JSON.parse(notas[i]).revision);
 
           if (i == materias.length - 1) {
             notas[materias.length - 1] = `{"primer_lapso":"${parseFloat(
               P1 / (i - 1)
             ).toFixed(1)}","segundo_lapso":"${parseFloat(P2 / (i - 1)).toFixed(
               1
-            )}","tercer_lapso":"${parseFloat(P3 / (i - 1)).toFixed(1)}"}`;
+            )}","tercer_lapso":"${parseFloat(P3 / (i - 1)).toFixed(
+              1
+            )}","revision":"${parseFloat(R / (i - 1)).toFixed(1)}"}`;
           }
           agregar.innerHTML += `
                             <tr>
@@ -1075,10 +1340,16 @@ function test() {
                             <td class="text-center">${parseFloat(
                               JSON.parse(notas[i]).tercer_lapso
                             )}</td>
+                            <td class="text-center">${parseFloat(
+                              JSON.parse(notas[i]).revision
+                            )}</td>
                             <td class="text-center">${(
                               (parseFloat(JSON.parse(notas[i]).primer_lapso) +
                                 parseFloat(JSON.parse(notas[i]).segundo_lapso) +
-                                parseFloat(JSON.parse(notas[i]).tercer_lapso)) /
+                                parseFloat(JSON.parse(notas[i]).revision) !=
+                              0
+                                ? parseFloat(JSON.parse(notas[i]).revision)
+                                : parseFloat(JSON.parse(notas[i]).tercer_año)) /
                               3
                             ).toFixed(1)}</td>
                             </tr>`;
@@ -1091,7 +1362,7 @@ function test() {
             retrieve: true,
             dom: "Bfrtip",
             language: {
-              url: "/sistema/DataTables/Spanish.json",
+              url: "/DataTables/Spanish.json",
             },
             buttons: [
               {
@@ -1118,6 +1389,9 @@ function datosAlumno() {
     cedula = localStorage.getItem("cedula");
 
   let form = new FormData();
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
 
   form.append("cedula", cedula);
   form.append("año", añoDB[año - 1]);
@@ -1210,6 +1484,7 @@ function datosAlumno() {
         </tr>
 
         <tr>
+        <td></td>
         <td> ${representante.cedula} </td>
         <td> ${representante.nombre.toUpperCase()} ${representante.apellido.toUpperCase()} </td>
         <td> ${representante.direccion} </td>
@@ -1232,7 +1507,7 @@ function datosAlumno() {
       retrieve: true,
       dom: "Bfrtip",
       language: {
-        url: "/sistema/DataTables/Spanish.json",
+        url: "/DataTables/Spanish.json",
       },
       buttons: [
         {
@@ -1255,6 +1530,9 @@ function ReporteAlumnos() {
     tabla = document.querySelector("#DatosAlumnos");
 
   let form = new FormData();
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
 
   form.append("seccion", seccion);
   form.append("año", añoDB[año - 1]);
@@ -1351,7 +1629,7 @@ function ReporteAlumnos() {
       retrieve: true,
       dom: "Bfrtip",
       language: {
-        url: "/sistema/DataTables/Spanish.json",
+        url: "/DataTables/Spanish.json",
       },
       buttons: [
         {
@@ -1389,6 +1667,9 @@ function ModificarDatosalumno() {
 
   let form = new FormData();
   let dateTime = new Date();
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
 
   form.append("idAlumno", ids.alumno);
   form.append("idRepresentante", ids.representante);
@@ -1439,6 +1720,9 @@ function ModificarSeccionAño() {
 
   let form = new FormData();
   let dateTime = new Date();
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
 
   form.append("año", añoDB[año - 1]);
   form.append("cedula", cedula);
@@ -1479,7 +1763,9 @@ function ModificarSeccionAño() {
     });
 }
 
-function RenderGraduados() {
+function RenderGraduados(bdr = null) {
+  history.pushState(null, null, "/?Alumnos");
+
   localStorage.removeItem("graduado");
   $("#TablaGraduados").DataTable().clear().destroy();
   welcome.css("display", "none");
@@ -1498,7 +1784,9 @@ function RenderGraduados() {
   const tablaGraduados = document.querySelector("#TBGraduados");
 
   let form = new FormData();
-
+  if (bdr == "BDR") {
+    form.append("BDR", bdr);
+  }
   form.append("actions", "Buscar Graduados");
 
   fetchF(form)
@@ -1523,6 +1811,7 @@ function RenderGraduados() {
         <td>${element.ano.replace("_", " ").toUpperCase()}</td>
         <td>${primeraLetraMayuscula(element.seccion)}</td>
         <td>${primeraLetraMayuscula(element.estado)}</td>
+        <td>${primeraLetraMayuscula(element.periodo)}</td>
         <td> 
         <div class="btn-group">
         <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
@@ -1544,7 +1833,7 @@ function RenderGraduados() {
         retrieve: true,
         order: [[1, "asc"]],
         language: {
-          url: "/sistema/DataTables/Spanish.json",
+          url: "/DataTables/Spanish.json",
         },
       });
     })
@@ -1610,6 +1899,9 @@ if (document.querySelector("#bitacora")) {
   contenidoBitacora = document.querySelector("#containerBitacora");
 
   contenidoBitacora.innerHTML = "";
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
 
   form.append("actions", "Bitacora");
   fetchF(form).then((e) => {
@@ -1632,6 +1924,10 @@ const renderUsers = () => {
   let contenido = document.querySelector("#adminTable tbody");
   let form = new FormData();
   contenido.innerHTML = "";
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
+
   form.append("actions", "admin");
   fetchF(form).then((e) => {
     data = JSON.parse(e);
@@ -1663,6 +1959,10 @@ if (document.querySelector("#admin")) {
     if ("SELECT" == e.target.tagName) {
       e.target.addEventListener("change", () => {
         let form = new FormData();
+        if (window.location.pathname.split("/")[2] == "periodo") {
+          form.append("BDR", "BDR");
+        }
+
         form.append("id", e.target.id);
         form.append("role", e.target.value);
         form.append(
@@ -1687,7 +1987,9 @@ if (document.querySelector("#admin")) {
 
 if (document.querySelector("#userInfo")) {
   let contenido = document.querySelector("#userInfo");
-  let user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user"));
+  const nameWelcome = document.querySelector("#NameWelcome");
+  nameWelcome.innerHTML = `${user.nombre.toUpperCase()} ${user.apellido.toUpperCase()}`;
 
   contenido.innerHTML = `
  <li class="list-group-item"><span class=" fw-bold">Nombre:</span> ${user.nombre.toUpperCase()}</li>
@@ -1707,6 +2009,10 @@ if (document.querySelector("#userInfo")) {
 
 const findRepitiente = () => {
   let form = new FormData();
+  if (window.location.pathname.split("/")[2] == "periodo") {
+    form.append("BDR", "BDR");
+  }
+
   form.append("cedula", localStorage.getItem("cedula"));
   form.append("userId", parseInt(JSON.parse(localStorage.getItem("user")).id));
   form.append("actions", "find repitientes");
@@ -1717,3 +2023,147 @@ const findRepitiente = () => {
     });
   });
 };
+
+if (currentUrl[0] == "seccion") {
+  seccionNav(currentUrl[1], currentUrl[2]);
+} else if (currentUrl[0] == "alumno") {
+  welcome.css("display", "none");
+  editar(
+    currentUrl[1],
+    currentUrl[2],
+    currentUrl[3],
+    currentUrl[4],
+    currentUrl[5],
+    currentUrl[6]
+  );
+} else if (currentUrl[0] == "admin") {
+  window.location.href = "./admin.php";
+} else if (currentUrl[0] == "Alumnos") {
+  RenderGraduados();
+}
+
+if (document.querySelector("#boletin")) {
+  const btn = document.querySelector("#boletin"),
+    cedula = localStorage.getItem("cedula"),
+    año = localStorage.getItem("año");
+
+  btn.addEventListener("click", (e) => {
+    console.log("object");
+    e.preventDefault();
+    const form = new FormData();
+    if (window.location.pathname.split("/")[2] == "periodo") {
+      form.append("BDR", "BDR");
+    }
+
+    form.append("cedula", cedula);
+    form.append("año", añoDB[año - 1]);
+    form.append("actions", "GenerarBoletin");
+    console.log(form);
+    fetch("/backend/actions.php", {
+      method: "POST",
+      body: form,
+    }).then((res) => {
+      console.log(res);
+    });
+  });
+}
+
+const respaldo = async (e) => {
+  history.pushState(null, null, "/?admin&save");
+  const form = new FormData();
+
+  form.append("actions", "respaldo");
+  console.log(form);
+  await fetch("/backend/actions.php", {
+    method: "POST",
+    body: form,
+  }).then((res) => {
+    Swal.fire({
+      title: "Respaldo",
+      text: "Copia de seguridad realizada con exito",
+      icon: "success",
+      confirmButtonText: "ok",
+    });
+  });
+};
+
+if (document.querySelector("#respaldo")) {
+  const btn = document.querySelector("#respaldo");
+  const formR = document.querySelector("#FormRespaldo");
+  const btnR = document.querySelector("#btnR");
+  const btnL = document.querySelector("#btnL");
+  const confirmL = document.querySelector("#confirmL");
+  const formFind = document.querySelector("#FormBuscar");
+  const btnFind = document.querySelector("#buscarAlumno");
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    respaldo();
+  });
+  btnL.addEventListener("click", (e) => {
+    e.preventDefault();
+  });
+  confirmL.addEventListener("click", (e) => {
+    e.preventDefault();
+    const form = new FormData();
+    form.append("actions", "Limpiar");
+    fetchF(form).then((e) => {
+      Swal.fire({
+        title: "Sistema",
+        text: "Operacion Completada",
+        icon: "success",
+        confirmButtonText: "ok",
+      });
+    });
+  });
+  formR.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    btnR.classList.toggle("disabled");
+    btnR.innerHTML = `<div class="spinner-border text-light" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>`;
+    history.pushState(null, null, "/?admin&save");
+    const form = new FormData(formR);
+    form.append("actions", "restaurar");
+    console.log(form);
+    await fetch("/backend/actions.php", {
+      method: "POST",
+      body: form,
+    }).then((res) => {
+      btnR.classList.toggle("disabled");
+
+      btnR.innerHTML = "Restaurar";
+      Swal.fire({
+        title: "Sistema",
+        text: "Copia de seguridad Restauraza con exito",
+        icon: "success",
+        confirmButtonText: "ok",
+      });
+    });
+  });
+  formFind.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    btnFind.classList.toggle("disabled");
+
+    btnFind.innerHTML = `<div class="spinner-border text-light" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>`;
+    history.pushState(null, null, "/?admin&save");
+    const form = new FormData(formFind);
+    form.append("baseDeDatos", "baseDeDatos");
+    form.append("actions", "restaurar");
+    console.log(form);
+    await fetch("/backend/actions.php", {
+      method: "POST",
+      body: form,
+    }).then((res) => {
+      btnFind.classList.toggle("disabled");
+      btnFind.innerHTML = "Restaurar";
+      Swal.fire({
+        title: "Sistema",
+        text: "Periodo cargado con exito",
+        icon: "success",
+        confirmButtonText: "ok",
+      });
+    });
+  });
+}

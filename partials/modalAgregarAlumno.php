@@ -15,9 +15,9 @@
               <h5>Datos del Alumno</h5>
 
                 <label for="Apellido">Apellido</label>
-                <input type="text" class="form-control" id="Apellido" placeholder="Apellido">
+                <input type="text" class="form-control" id="Apellido" placeholder="Apellido" onkeypress="return validar(event)">
                 <label for="Nombre">Nombre</label>
-                <input type="text" class="form-control" id="Nombre" placeholder="Nombre">
+                <input type="text" class="form-control" id="Nombre" placeholder="Nombre" pattern="[A-Z]" title="Nombre del estudiante" onkeypress="return validar(event)">
                 <label for="Cedula">Cédula</label>
                 <input type="number" class="form-control" id="Cedula" placeholder="Cedula">
                 <div class=" p-3">
@@ -42,13 +42,13 @@
 
                 <label for="LugarNacimiento">Lugar de Nacimineto</label>
                 <div class=" form-group">
-                  <input  class="form-control my-2" type="tel" placeholder="País" name="pais" id="pais">
-                  <input  class="form-control my-2" type="tel" placeholder="Estado" name="estado" id="estado">
-                  <input  class="form-control my-2" type="tel" placeholder="Municipio" name="Municipio" id="Municipio">
+                  <input  class="form-control my-2" type="text" placeholder="País" name="pais" id="pais" onkeypress="return validar(event)">
+                  <input  class="form-control my-2" type="text" placeholder="Estado" name="estado" id="estado" onkeypress="return validar(event)">
+                  <input  class="form-control my-2" type="text" placeholder="Municipio" name="Municipio" id="Municipio" onkeypress="return validar(event)">
                 </div>
 
                 <label for="Telfono">Teléfono</label>
-                <input  class="form-control" type="tel" placeholder="Telefono" name="Telfono" id="Telfono">
+                <input  class="form-control" type="number" placeholder="Telefono" name="Telfono" id="Telfono">
 
                 <label for="Direccion">Dirección</label>
                 <input  class="form-control" type="text" placeholder="Direccion" name="Direccion" id="Direccion">
@@ -68,9 +68,9 @@
             <div class="form-group col-6">
             <h5>Datos del Representante</h5>
               <label for="ApellidoR">Apellido</label>
-              <input type="text" class="form-control" name="ApellidoR" id="ApellidoR" placeholder="Apellido">
+              <input type="text" class="form-control" name="ApellidoR" id="ApellidoR" placeholder="Apellido" onkeypress="return validar(event)">
               <label for="NombreR">Nombre</label>
-              <input type="text" class="form-control" name="NombreR" id="NombreR" placeholder="Nombre">
+              <input type="text" class="form-control" name="NombreR" id="NombreR" placeholder="Nombre" onkeypress="return validar(event)">
               <label for="CedulaR">Cédula</label>
               <input type="number" class="form-control" name="CedulaR" id="CedulaR" placeholder="Cedula">
               <select class="form-select my-3" name="SexoR" id="SexoR">
@@ -80,7 +80,7 @@
               </select>
 
               <label for="Filiacion">Filiación</label>
-              <input  class="form-control" type="text" placeholder="Filiacion" name="Filiacion" id="Filiacion">
+              <input  class="form-control" type="text" placeholder="Filiacion" name="Filiacion" id="Filiacion" onkeypress="return validar(event)">
 
               <label for="TelfonoR">Teléfono </label>
               <input  class="form-control" type="tel" placeholder="Telefono" name="TelfonoR" id="TelfonoR">
@@ -194,3 +194,13 @@
     </div>
   </div>
 </div>
+
+<script>
+  function validar(e) { // 1
+tecla = (document.all) ? e.keyCode : e.which; // 2
+if (tecla==8) return true; // 3
+patron =/[A-Za-z\s]/; // 4
+te = String.fromCharCode(tecla); // 5
+return patron.test(te); // 6
+}
+</script>

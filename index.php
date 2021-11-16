@@ -11,11 +11,14 @@ require "partials/header.php";
 
 <div id="index" class="container">
 
+<div class="welcome container-Home"> 
 
-<div class="welcome"> 
+  <div class="d-flex justify-content-center align-items-center pb-2">
+    <img src="img/logo.png" width="160" alt="">
+  </div>
   <div class="card text-center shadow">
     <div class="card-body">
-      <h5 class="card-title">Hola <span></span></h5>
+      <h5 class="card-title">Hola <span id="NameWelcome"></span></h5>
       <p class="card-text">
         Te damos la bienvenida al nuevo sistema de notas automatizado para la unidad educativa José Enrique Arias 
       </p>
@@ -53,9 +56,21 @@ require "partials/header.php";
         <div class="col-12 my-2 shadow-lg ">
           <div class="card rounded rounded-3 ">
             <div class="card-body">
-              <h5 class="card-title">Información del usuario</h5>
+              <h5>Estatus del sistema</h5>
+              <ul>
+                <li>Version del sistema: V-2.0</li>
+                <li>Ultima actualizacion: 13/11/2021</li>
+                <li>Estudiantes en el sistema: <span id="TotalAlumnos"></span></li>
+                <li>Periodo escolar: <span id="periodoIndex"></span></li>
+              </ul>
+          </div>
+          </div>
+        </div>
+        <div class="col-12 my-2 shadow-lg ">
+          <div class="card rounded rounded-3 ">
+            <div class="card-body">
+            <h5 class="card-title">Información del usuario</h5>
                 <ul id="userInfo" class="list-group">
-
                 </ul>
             </div>
           </div>

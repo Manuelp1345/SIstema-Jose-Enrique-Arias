@@ -174,7 +174,7 @@ ul ul a {
 }
 
 .container {
-  padding: 5rem;
+  padding: 1.8rem 1.5rem;
   margin: 0 auto;
   width: 100%;
   height: 100%;
@@ -217,6 +217,8 @@ ul ul a {
 .Menu {
   top: -5px !important;
   left: -5px !important;
+  position: fixed !important;
+  z-index: 2;
 }
 
 .pointer {

@@ -33,12 +33,17 @@
                     <option id="State3" value="repitiente">Repitiente</option>
                     <option id="State3" value="graduado">Graduado</option>
             </select>
+            
           </div>
         </div>
         <div class="col-12 d-flex flex-row">
-          <h4 id="contenedorGp" class="col-6 my-4 mx-0">Grupo Estable: <input disabled type="text" id="gpdb"></input></h4>
+          <h4 id="contenedorGp" class="col-6 my-4 me-2">Grupo Estable: <input disabled type="text" id="gpdb"></input></h4>
+        <h4 class="col-6 my-4 ms-5 ps-5">Periodo Escolar: <span id="periodo"></span></h4>
+
         </div>
+
         <div  id="contenedorRp" class="col-12 d-none flex-row flex-wrap">
+          
         <h4>Areas Repitiente:</h4>
 
           <div class="col-12 my-4 mx-0 d-flex flex-row flex-wrap">
@@ -144,6 +149,7 @@
             <th scope="col-2">Primer Momento</th>
             <th scope="col-2">Segundo Momento</th>
             <th scope="col-2">Tercer Momento</th>
+            <th scope="col-2">Revision</th>
             <th scope="col-2">Nota Final</th>
             <th class='ms-3' scope="col">Editar </th>
           </tr>

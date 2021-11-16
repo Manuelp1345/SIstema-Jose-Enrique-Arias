@@ -1,8 +1,12 @@
 <?php 
 session_start();
 
-
+require '../vendor/autoload.php';
 require_once "connect.php";
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 
 if(isset($_POST["actions"])){
 
@@ -15,7 +19,11 @@ if(isset($_POST["actions"])){
             try {
                 $ano = $_POST["año"];
                 $seccion = $_POST["seccion"];
+                
                 $sql = "SELECT * FROM alumnos  WHERE ano='$ano' AND seccion='$seccion' AND estado='cursando' OR ano='$ano' AND seccion='$seccion' AND estado='Repitiente' ORDER BY cedula ASC ";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_all();
+                else
                 $resultado = $conn->query($sql)->fetch_all();
                 
                 echo json_encode($resultado);
@@ -36,6 +44,9 @@ if(isset($_POST["actions"])){
                     $notas = 0;
 
                     $sql = "SELECT * FROM notas WHERE id = '$notasClient'";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql);
+                    else
                     $resultado = $conn->query($sql);
                     $fields = $resultado->fetch_fields();
                     $idNotas = $resultado->fetch_assoc();
@@ -47,6 +58,9 @@ if(isset($_POST["actions"])){
                     if ($fields[5]->name == $año) $notas = $idNotas["quinto_año"];
 
                     $sql = "SELECT * FROM $año WHERE id = '$notas' ";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql)->fetch_all(MYSQLI_ASSOC);
+                    else
                     $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
 
 
@@ -68,6 +82,9 @@ if(isset($_POST["actions"])){
             try {
                 $userId = $_POST["userId"];
                 $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_assoc();
+                else
                 $resultado = $conn->query($sql)->fetch_assoc();
                 $user = $resultado;
                 $fecha = $_POST["dateTime"];
@@ -78,71 +95,101 @@ if(isset($_POST["actions"])){
 
                 //validamos que el numero de cedula no se encuentra en la base de datos
                 $año = $_POST["año"];
+                $seccion = $_POST["seccion"];
                 $cedula = $_POST["cedula"];
                 $sql = "SELECT cedula FROM alumnos WHERE cedula = '$cedula'";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_assoc();
+                else
                 $resultado = $conn->query($sql)->fetch_assoc();
-                
+
+
                 if($resultado === null){
-                    
-                    //iniciamos las tablas de notas correspondientes al año
 
-                    $sql = "INSERT INTO $año (`id`) VALUES (NULL)";
+                //verificamos cuantos alumnos hay en la seccion
+                    $sql = "SELECT * FROM alumnos WHERE ano = '$año' AND seccion = '$seccion'";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql);
+                    else
                     $resultado = $conn->query($sql);
-                    $id = mysqli_insert_id($conn);
-                    
-                    $sql = "INSERT INTO `notas` (`id`, `$año`) VALUES (NULL, $id)";
-                    
-                    //incertamos el id guia de las notas correspondientes al año
+                    $filas = $resultado->num_rows;
 
-                    $resultado= $conn->query($sql);
-                    $id = mysqli_insert_id($conn);
-
-                    //ingresamos los datos del representante
-                    $cedulaR = $_POST["cedulaR"];
-                    $nombreR = $_POST["nombreR"];
-                    $apellidoR = $_POST["apellidoR"];
-                    $sexoR = $_POST["sexoR"];
-                    $Filiacion = $_POST["Filiacion"];
-                    $DireccionR = $_POST["DireccionR"];
-                    $TelfonoR = $_POST["TelfonoR"];
-                    $CorreoR = $_POST["CorreoR"];
-
-                    $sql = "INSERT INTO representante (cedula,nombre,apellido,sexo,filiacion,direccion,telefono,correo) VALUES ('$cedulaR','$nombreR','$apellidoR','$sexoR','$Filiacion','$DireccionR',$TelfonoR,'$CorreoR')";
-                    $resultado = $conn->query($sql);
-                    $idr = mysqli_insert_id($conn);
-
-                    //insertamos el alumno con los datos correspondiente  (datos ingresador por el usuario y
-                    // referencia a las tablas de notas y representante)
-                    $cedula = $_POST["cedula"];
-                    $cedulaE = $_POST["cedulaE"];
-                    $nombre = $_POST["nombre"];
-                    $apellido = $_POST["apellido"];
-                    $sexo = $_POST["sexo"];
-                    $Fnacimiento = $_POST["Fnacimiento"];
-                    $edad = $_POST["edad"];
-                    $LugarNacimiento = $_POST["LugarNacimiento"];
-                    $Direccion = $_POST["Direccion"];
-                    $Telfono = $_POST["Telfono"];
-                    $Correo = $_POST["Correo"];
-                    $seccion = $_POST["seccion"];
-                    $estado = $_POST["estado"];
-                    $GrupoEstable = $_POST["gp"];
-                    $repitiente = $_POST["repitiente"];
-
-
-                    $sql = "INSERT INTO alumnos (cedula,cedula_escolar,nombre,apellido,sexo,fecha_de_nacimiento,edad,lugar_de_nacimiento,telefono,direccion,correo,ano,seccion,notas,estado,Representate,grupo_estable,repitiente) VALUES
-                    ($cedula,'$cedulaE','$nombre','$apellido','$sexo','$Fnacimiento',$edad,'$LugarNacimiento',$Telfono,'$Direccion','$Correo','$año','$seccion',$id,'$estado',$idr,'$GrupoEstable','$repitiente')";
-                    $resultado = $conn->query($sql);
-
-                    if(!$resultado) echo "No se pudo agregar el alumno, verifique que todos los campos esten llenos";
-                    if($resultado){
-                        echo "Alumno agregado con exito";
-                        $correoUser = $user['email'];
-                        $data = "El usuario $correoUser Ingreso al estudiante con la cedula $cedula en $año Seccion $seccion";
-                        $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                if($filas < 35){
+                        //iniciamos las tablas de notas correspondientes al año
+                        $sql = "INSERT INTO $año (`id`) VALUES (NULL)";
+                        if($_POST["BDR"] != null)
+                        $resultado = $connR->query($sql);
+                        else
                         $resultado = $conn->query($sql);
-                    };
+                        $id = mysqli_insert_id($conn);
+                        
+                        $sql = "INSERT INTO `notas` (`id`, `$año`) VALUES (NULL, $id)";
+                        
+                        //incertamos el id guia de las notas correspondientes al año
+                        if($_POST["BDR"] != null)
+                        $resultado = $connR->query($sql);
+                        else
+                        $resultado= $conn->query($sql);
+                        $id = mysqli_insert_id($conn);
 
+                        //ingresamos los datos del representante
+                        $cedulaR = $_POST["cedulaR"];
+                        $nombreR = $_POST["nombreR"];
+                        $apellidoR = $_POST["apellidoR"];
+                        $sexoR = $_POST["sexoR"];
+                        $Filiacion = $_POST["Filiacion"];
+                        $DireccionR = $_POST["DireccionR"];
+                        $TelfonoR = $_POST["TelfonoR"];
+                        $CorreoR = $_POST["CorreoR"];
+
+                        $sql = "INSERT INTO representante (cedula,nombre,apellido,sexo,filiacion,direccion,telefono,correo) VALUES ('$cedulaR','$nombreR','$apellidoR','$sexoR','$Filiacion','$DireccionR',$TelfonoR,'$CorreoR')";
+                        if($_POST["BDR"] != null)
+                        $resultado = $connR->query($sql);
+                        else
+                        $resultado = $conn->query($sql);
+                        $idr = mysqli_insert_id($conn);
+
+                        //insertamos el alumno con los datos correspondiente  (datos ingresador por el usuario y
+                        // referencia a las tablas de notas y representante)
+                        $cedula = $_POST["cedula"];
+                        $cedulaE = $_POST["cedulaE"];
+                        $nombre = $_POST["nombre"];
+                        $apellido = $_POST["apellido"];
+                        $sexo = $_POST["sexo"];
+                        $Fnacimiento = $_POST["Fnacimiento"];
+                        $edad = $_POST["edad"];
+                        $LugarNacimiento = $_POST["LugarNacimiento"];
+                        $Direccion = $_POST["Direccion"];
+                        $Telfono = $_POST["Telfono"];
+                        $Correo = $_POST["Correo"];
+                        $estado = $_POST["estado"];
+                        $GrupoEstable = $_POST["gp"];
+                        $repitiente = $_POST["repitiente"];
+                        $periodo = date("Y")."-".date("Y")+1;
+
+
+                        $sql = "INSERT INTO alumnos (cedula,cedula_escolar,nombre,apellido,sexo,fecha_de_nacimiento,edad,lugar_de_nacimiento,telefono,direccion,correo,ano,seccion,notas,estado,Representate,grupo_estable,repitiente,periodo) VALUES
+                        ($cedula,'$cedulaE','$nombre','$apellido','$sexo','$Fnacimiento',$edad,'$LugarNacimiento',$Telfono,'$Direccion','$Correo','$año','$seccion',$id,'$estado',$idr,'$GrupoEstable','$repitiente','$periodo')";
+                        if($_POST["BDR"] != null)
+                        $resultado = $connR->query($sql);
+                        else
+                        $resultado = $conn->query($sql);
+
+                        if(!$resultado) echo "No se pudo agregar el alumno, verifique que todos los campos esten llenos";
+                        if($resultado){
+                            echo "Alumno agregado con exito";
+                            $correoUser = $user['email'];
+                            $data = "El usuario $correoUser Ingreso al estudiante con la cedula $cedula en $año Seccion $seccion";
+                            $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                            if($_POST["BDR"] != null)
+                            $resultado = $connR->query($sql);
+                            else
+                            $resultado = $conn->query($sql);
+                        };
+                    }
+                    else{
+                        echo "La seccion esta llena";
+                    }
                 }
                 else{
                     echo "El Numero de cedula ya esta en el sistema";
@@ -159,6 +206,9 @@ if(isset($_POST["actions"])){
                     //actulizamos las notas de una materia en espesifico
                     $userId = $_POST["userId"];
                     $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql)->fetch_assoc();
+                    else
                     $resultado = $conn->query($sql)->fetch_assoc();
                     $user = $resultado;
                     $fecha = $_POST["dateTime"];
@@ -172,6 +222,9 @@ if(isset($_POST["actions"])){
                     $nota = $_POST["nota"];
 
                     $sql = "UPDATE $año SET $materia = '$datos' WHERE id = '$nota'";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql);
+                    else
                     $resultado = $conn->query($sql);
     
                     echo json_encode($resultado);
@@ -181,6 +234,9 @@ if(isset($_POST["actions"])){
                     $np = json_decode($datos);
                     $data = "El usuario $correoUser Modifico y/o ingreso notas de $materia (Primer lapso: $np->primer_lapso, Segundo lapso: $np->segundo_lapso, Tercer lapso: $np->tercer_lapso) del alumno con el numero de cedula: $cedula";
                     $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql);
+                    else
                     $resultado = $conn->query($sql);
                 }
     
@@ -194,6 +250,9 @@ if(isset($_POST["actions"])){
                     //Pasar alumnos al siguiente año 
                     $userId = $_POST["userId"];
                     $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql)->fetch_assoc();
+                    else
                     $resultado = $conn->query($sql)->fetch_assoc();
                     $user = $resultado;
                     $fecha = $_POST["dateTime"];
@@ -221,6 +280,9 @@ if(isset($_POST["actions"])){
 
 
                     $sql = "SELECT * FROM alumnos WHERE ano = '$año' AND seccion='$seccion'";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql)->fetch_all();
+                    else
                     $resultado = $conn->query($sql)->fetch_all();
 
                     
@@ -234,10 +296,16 @@ if(isset($_POST["actions"])){
                             if($AnteriorAño != ""){
 
                                 $sql = "SELECT * FROM notas WHERE id = '$notas' ";
+                                if($_POST["BDR"] != null)
+                                $resultado = $connR->query($sql)->fetch_object();
+                                else
                                 $resultado = $conn->query($sql)->fetch_object();
                                 $id = $resultado->$AnteriorAño;
     
                                 $sql = "SELECT * FROM $AnteriorAño WHERE id = '$id' ";
+                                if($_POST["BDR"] != null)
+                                $resultado = $connR->query($sql)->fetch_all();
+                                else
                                 $resultado = $conn->query($sql)->fetch_all();
     
                                 foreach ($resultado as $key => $value) {
@@ -252,10 +320,16 @@ if(isset($_POST["actions"])){
                             }
 
                             $sql = "SELECT * FROM notas WHERE id = '$notas' ";
+                            if($_POST["BDR"] != null)
+                            $resultado = $connR->query($sql)->fetch_object();
+                            else
                             $resultado = $conn->query($sql)->fetch_object();
                             $id = $resultado->$año;
 
                             $sql = "SELECT * FROM $año WHERE id = '$id' ";
+                            if($_POST["BDR"] != null)
+                            $resultado = $connR->query($sql)->fetch_all();
+                            else
                             $resultado = $conn->query($sql)->fetch_all();
 
                             foreach ($resultado as $key => $value) {
@@ -271,11 +345,17 @@ if(isset($_POST["actions"])){
 
                                 if($estado == "repitiente"){
                                     $sql = "UPDATE alumnos SET estado='cursando' WHERE cedula='$cedula'";
+                                    if($_POST["BDR"] != null)
+                                    $resultado = $connR->query($sql);
+                                    else
                                     $resultado = $conn->query($sql);
 
                                     $repitiente = "[false,false,false,false,false,false,false,false,false,false,false,false,false,false]";
 
                                     $sql = "UPDATE alumnos SET `repitiente`='$repitiente' WHERE cedula='$cedula'";
+                                    if($_POST["BDR"] != null)
+                                    $resultado = $connR->query($sql);
+                                    else
                                     $resultado = $conn->query($sql);
                                 }
 
@@ -283,17 +363,29 @@ if(isset($_POST["actions"])){
                                 if($SiguienteAño == "Graduado"){
                                     if($rp == 0 ){
                                         $sql = "UPDATE alumnos SET estado = '$SiguienteAño' WHERE cedula = '$cedula'";
+                                        if($_POST["BDR"] != null)
+                                        $resultado = $connR->query($sql);
+                                        else
                                         $resultado = $conn->query($sql);
                                     }
                                 }else{
                                     $sql = "INSERT INTO $SiguienteAño (`id`) VALUES (NULL)";
+                                    if($_POST["BDR"] != null)
+                                    $resultado = $connR->query($sql);
+                                    else
                                     $resultado = $conn->query($sql);
                                     $id = mysqli_insert_id($conn);
 
                                     $sql = "UPDATE notas SET $SiguienteAño = '$id' WHERE id = '$notas'";
+                                    if($_POST["BDR"] != null)
+                                    $resultado = $connR->query($sql);
+                                    else
                                     $resultado = $conn->query($sql);
                                     
                                     $sql = "UPDATE alumnos SET ano = '$SiguienteAño' WHERE cedula = '$cedula'";
+                                    if($_POST["BDR"] != null)
+                                    $resultado = $connR->query($sql);
+                                    else
                                     $resultado = $conn->query($sql);
                                     }
 
@@ -310,6 +402,9 @@ if(isset($_POST["actions"])){
                         $cedula = $_POST["cedula"];
                         $data = "El usuario $correoUser paso de año a: $año seccion $seccion";
                         $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                        if($_POST["BDR"] != null)
+                        $resultado = $connR->query($sql);
+                        else
                         $resultado = $conn->query($sql);
                     }
                 }
@@ -329,6 +424,9 @@ if(isset($_POST["actions"])){
                 $ano = $_POST["año"];
                 $cedula = $_POST["cedula"];
                 $sql = "SELECT * FROM alumnos WHERE cedula='$cedula'";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_object();
+                else
                 $resultado = $conn->query($sql)->fetch_object();
                 
                 $data->alumno=$resultado;
@@ -336,11 +434,71 @@ if(isset($_POST["actions"])){
                 $representante = $resultado->Representate;
 
                 $sql2 = "SELECT * FROM representante WHERE id='$representante'";
+                if($_POST["BDR"] != null)
+                $resultado2 = $connR->query($sql)->fetch_object();
+
+                else
                 $resultado2 = $conn->query($sql2)->fetch_object();
 
                 $data->representante=$resultado2;
 
                 echo json_encode($data);
+
+            } catch (Exception $e) {
+                echo $e->getMessage();
+            }
+            break; 
+            case 'TotalAlumnos':
+
+                // buscamos todos los alumnos correspondientes al año y seccion
+            try {
+
+                function obtener_estructura_directorios($ruta){
+                    // Se comprueba que realmente sea la ruta de un directorio
+                    if (is_dir($ruta)){
+                        // Abre un gestor de directorios para la ruta indicada
+                        $gestor = opendir($ruta);
+                
+                        // Recorre todos los elementos del directorio
+                        while (($archivo = readdir($gestor)) !== false)  {
+                                
+                            $ruta_completa = $ruta . "/" . $archivo;
+                
+                            // Se muestran todos los archivos y carpetas excepto "." y ".."
+                            if ($archivo != "." && $archivo != "..") {
+                                // Si es un directorio se recorre recursivamente
+                                if (is_dir($ruta_completa)) {
+                                    
+
+                                    obtener_estructura_directorios($ruta_completa);
+                                } else {
+                                    if(stristr($archivo, 'xlsx') == "xlsx"){
+                                        if(stristr($archivo, 'template') == false)
+                
+                                        unlink($archivo);
+                                    }
+
+                                }
+                            }
+                        }
+                        
+                        // Cierra el gestor de directorios
+                        closedir($gestor);
+
+                    } else {
+                    }
+                }
+                
+                obtener_estructura_directorios("./");
+
+                $sql = "SELECT * FROM alumnos";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql);
+                else
+                $resultado = $conn->query($sql);
+                $filas = $resultado->num_rows;
+
+                echo $filas;
 
             } catch (Exception $e) {
                 echo $e->getMessage();
@@ -352,6 +510,9 @@ if(isset($_POST["actions"])){
             $ano = $_POST["año"];
             $seccion = $_POST["seccion"];
             $sql = "SELECT * FROM alumnos  WHERE ano='$ano' AND seccion='$seccion' ORDER BY cedula ASC ";
+            if($_POST["BDR"] != null)
+            $resultado = $connR->query($sql)->fetch_all(MYSQLI_ASSOC);
+            else
             $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
             
             for ($i=0; $i < count($resultado); $i++) { 
@@ -359,6 +520,9 @@ if(isset($_POST["actions"])){
                 $rep = $resultado[$i]["Representate"];
 
                 $sql2 = "SELECT * FROM representante WHERE id='$rep'";
+                if($_POST["BDR"] != null)
+                $resultado2 = $connR->query($sql)->fetch_object();
+                else
                 $resultado2 = $conn->query($sql2)->fetch_object();
 
                 $resultado[$i]["Representate"]= $resultado2;
@@ -376,6 +540,9 @@ if(isset($_POST["actions"])){
             try {
                 $userId = $_POST["userId"];
                 $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_assoc();
+                else
                 $resultado = $conn->query($sql)->fetch_assoc();
                 $user = $resultado;
                 $fecha = $_POST["dateTime"];
@@ -394,6 +561,9 @@ if(isset($_POST["actions"])){
                     $CorreoR = $_POST["CorreoR"];
 
                     $sql = "UPDATE representante SET cedula=$cedulaR,nombre='$nombreR',apellido='$apellidoR',sexo='$sexoR',filiacion='$Filiacion',direccion='$DireccionR',telefono=$TelfonoR,correo='$CorreoR' WHERE id = $idR";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql);
+                    else
                     $resultado = $conn->query($sql);
 
                     //insertamos el alumno con los datos correspondiente  (datos ingresador por el usuario y
@@ -412,7 +582,11 @@ if(isset($_POST["actions"])){
                     $Correo = $_POST["Correo"];
 
                     $sql = "UPDATE alumnos SET cedula=$cedula,cedula_escolar='$cedulaE',nombre='$nombre',apellido='$apellido',sexo='$sexo',fecha_de_nacimiento='$Fnacimiento',edad=$edad,lugar_de_nacimiento='$LugarNacimiento',telefono=$Telfono,direccion='$Direccion',correo='$Correo' WHERE id = $id";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql);
+                    else
                     $resultado = $conn->query($sql);
+
 
                     if($resultado){
                         echo "True";
@@ -420,6 +594,9 @@ if(isset($_POST["actions"])){
                         $cedula = $_POST["cedula"];
                         $data = "El usuario $correoUser Modifico los datos del alumno: $cedula";
                         $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                        if($_POST["BDR"] != null)
+                        $resultado = $connR->query($sql);
+                        else
                         $resultado = $conn->query($sql);
                     };
                     if(!$resultado) echo "False";
@@ -435,6 +612,9 @@ if(isset($_POST["actions"])){
 
                     $userId = $_POST["userId"];
                     $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql)->fetch_assoc();
+                    else
                     $resultado = $conn->query($sql)->fetch_assoc();
                     $user = $resultado;
                     $fecha = $_POST["dateTime"];
@@ -446,21 +626,36 @@ if(isset($_POST["actions"])){
                         $cedula = $_POST["cedula"];
 
                         $sql = "SELECT notas FROM `alumnos` WHERE cedula='$cedula'";
+                        if($_POST["BDR"] != null)
+                        $resultado = $connR->query($sql)->fetch_object();
+                        else
                         $notas = $conn->query($sql)->fetch_object();
     
                         $sql = "SELECT $ano FROM notas WHERE id = '$notas->notas'";
+                        if($_POST["BDR"] != null)
+                        $resultado = $connR->query($sql)->fetch_object();
+                        else
                         $resultado = $conn->query($sql)->fetch_object();
 
                         if($resultado->$ano == null){
                             $sql = "INSERT INTO $ano (`id`) VALUES (NULL)";
+                            if($_POST["BDR"] != null)
+                            $resultado = $connR->query($sql);
+                            else
                             $resultado = $conn->query($sql);
                             $id = mysqli_insert_id($conn);
                             
                             $sql = "UPDATE notas SET $ano = '$id' WHERE id = '$notas->notas'";
+                            if($_POST["BDR"] != null)
+                            $resultado = $connR->query($sql);
+                            else
                             $resultado = $conn->query($sql);
                         }
 
                         $sql = "UPDATE alumnos SET seccion='$seccion',ano='$ano' WHERE cedula='$cedula'";
+                        if($_POST["BDR"] != null)
+                        $resultado = $connR->query($sql);
+                        else
                         $resultado = $conn->query($sql);
                         
 
@@ -470,6 +665,9 @@ if(isset($_POST["actions"])){
                             $cedula = $_POST["cedula"];
                             $data = "El usuario $correoUser Modifico de año y/o seccion del alumno: $cedula";
                             $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                            if($_POST["BDR"] != null)
+                            $resultado = $connR->query($sql);
+                            else
                             $resultado = $conn->query($sql);
                         } ;
                         if(!$resultado) echo json_encode("False");
@@ -484,6 +682,9 @@ if(isset($_POST["actions"])){
                 try {
                     $userId = $_POST["userId"];
                     $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql)->fetch_assoc();
+                    else
                     $resultado = $conn->query($sql)->fetch_assoc();
                     $user = $resultado;
                     $fecha = $_POST["dateTime"];
@@ -494,6 +695,9 @@ if(isset($_POST["actions"])){
                         $cedula = $_POST["cedula"];
 
                         $sql = "UPDATE alumnos SET estado='$estado' WHERE cedula='$cedula'";
+                        if($_POST["BDR"] != null)
+                        $resultado = $connR->query($sql);
+                        else
                         $resultado = $conn->query($sql);
                         
 
@@ -503,6 +707,9 @@ if(isset($_POST["actions"])){
                             $cedula = $_POST["cedula"];
                             $data = "El usuario $correoUser cambio la condicion del alumno: $cedula";
                             $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                            if($_POST["BDR"] != null)
+                            $resultado = $connR->query($sql);
+                            else
                             $resultado = $conn->query($sql);
                         } ;
                         if(!$resultado) echo json_encode("False");
@@ -516,7 +723,11 @@ if(isset($_POST["actions"])){
                 try {
                 
                     $sql = "SELECT * FROM alumnos";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql)->fetch_all(MYSQLI_ASSOC);
+                    else
                     $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
+
                     
 
                     if($resultado) echo json_encode($resultado) ;
@@ -573,20 +784,390 @@ if(isset($_POST["actions"])){
                 }
 
             break;
+            case "GenerarBoletin":
+                            
+                $data = new stdClass();
+                $ano = $_POST["año"];
+                $cedula= $_POST["cedula"];
+                $sql = "SELECT * FROM alumnos WHERE cedula='$cedula'";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_object();
+                else
+                $resultado = $conn->query($sql)->fetch_object();
+                
+                $data->alumno=$resultado;
+                
+                $representante = $resultado->Representate;
+                
+                $sql2 = "SELECT * FROM representante WHERE id='$representante'";
+                if($_POST["BDR"] != null)
+                $resultado2 = $connR->query($sql)->fetch_object();
+                else
+                $resultado2 = $conn->query($sql2)->fetch_object();
+                
+                $data->representante=$resultado2;
+                
+                $notasClient = $data->alumno->notas;
+                
+                $sql = "SELECT * FROM notas WHERE id = '$notasClient'";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql);
+                else
+                $resultado = $conn->query($sql);
+                $fields = $resultado->fetch_fields();
+                $idNotas = $resultado->fetch_assoc();
+                $notas = 0;
+                
+                if ($fields[1]->name == $ano) $notas = $idNotas["primer_año"];
+                if ($fields[2]->name == $ano) $notas = $idNotas["segundo_año"];
+                if ($fields[3]->name == $ano) $notas = $idNotas["tercer_año"];
+                if ($fields[4]->name == $ano) $notas = $idNotas["cuarto_año"];
+                if ($fields[5]->name == $ano) $notas = $idNotas["quinto_año"];
+                
+                $sql = "SELECT * FROM $ano WHERE id = '$notas' ";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql);
+                else
+                $resultado = $conn->query($sql);
+                $notas = $resultado->fetch_assoc();
+                $fields = $resultado->fetch_fields();
+                            
+                $añoexcel = "";
+                
+                if($ano == "primer_año") $añoexcel = "PRIMER AÑO";
+                if($ano == "segundo_año") $añoexcel = "SEGUNDO AÑO";
+                if($ano == "tercer_año") $añoexcel = "TERCER AÑO";
+                if($ano == "cuarto_año") $añoexcel = "CUARTO AÑO";
+                if($ano == "quinto_año") $añoexcel = "QUINTO AÑO";
+                
+                $añoSeccion =  $añoexcel." ". $data->alumno->seccion;
+                
+                $nombreApellido= strtoupper($data->alumno->apellido." ".$data->alumno->nombre);
+                $lugarNacimiento= strtoupper($data->alumno->lugar_de_nacimiento);
+                $fechaNacimiento=  new DateTime($data->alumno->fecha_de_nacimiento);
+                $periodo = $data->alumno->periodo;
+
+                $fechaNacimiento =$fechaNacimiento->format('d/m/Y');
+                
+                $indexNotas = 14;
+                $aux = 0;
+                $momento = 1;
+                $total = count($notas) ;
+                $date = new DateTime();
+                $date =$date->format('d/m/Y-H:i');
+
+                $dm1O = 0;
+                $dm2O = 0;
+                $dm3O = 0;
+                $dm1P = 0;
+                $dm2P = 0;
+                $dm3P = 0;
+                
+                if(json_decode($notas["CASTELLANO"])->segundo_lapso > 0){
+                    $momento = 2;
+                }
+                if(json_decode($notas["CASTELLANO"])->tercer_lapso > 0){
+                    $momento = 3;
+                }
+                 
+                unset($notas["id"]);
+                $spreadsheet =  \PhpOffice\PhpSpreadsheet\IOFactory::load('template.xlsx');
+                $sheet = $spreadsheet->getActiveSheet();
+                $sheet->setTitle("Notas");
+                $sheet->setCellValue('H1', $date);
+                $sheet->setCellValue('E9', "MOMENTO ESCOLAR: $momento");
+                $sheet->setCellValue('H9', "AÑO ESCOLAR: $periodo");
+                $sheet->setCellValue('A9', "AÑO Y SECCIÓN DE ESTUDIO: $añoSeccion");
+                $sheet->setCellValue('A10', "CEDULA O IDENTIFICACION: $cedula");
+                $sheet->setCellValue('E10', "APELLIDOS Y NOMBRES: $nombreApellido");
+                $sheet->setCellValue('A11', "LUGAR DE NACIMIENTO: $lugarNacimiento");
+                $sheet->setCellValue('I11', "FECHA DE NACIMIENTO: $fechaNacimiento");
+                foreach($notas as $key => $value){
+
+
+
+
+                    $sheet->setCellValue('A'.$indexNotas,strtoupper( str_replace("_", " ", $key)));
+                    $sheet->setCellValue('D'.$indexNotas, intval(json_decode($notas[$key])->primer_lapso));
+                    $sheet->setCellValue('E'.$indexNotas, intval(json_decode($notas[$key])->segundo_lapso));
+                    $sheet->setCellValue('F'.$indexNotas, intval(json_decode($notas[$key])->tercer_lapso));
+                    $sheet->setCellValue('G'.$indexNotas, "=ROUND((D$indexNotas+E$indexNotas+F$indexNotas)/3,0)");
+                    if(strtoupper( str_replace("_", " ", $key)) == "PARTICIPACIÓN EN GRUPOS"){
+                        if(intval(json_decode($notas[$key])->primer_lapso) >= 0 && intval(json_decode($notas[$key])->primer_lapso)  <= 9)
+                        $sheet->setCellValue('D'.$indexNotas, "I");
+                        if(intval(json_decode($notas[$key])->primer_lapso) <= 12 && intval(json_decode($notas[$key])->primer_lapso) >= 10)
+                        $sheet->setCellValue('D'.$indexNotas, "D");
+                        if(intval(json_decode($notas[$key])->primer_lapso) >= 13 && intval(json_decode($notas[$key])->primer_lapso) <= 15)
+                        $sheet->setCellValue('D'.$indexNotas, "C");
+                        if(intval(json_decode($notas[$key])->primer_lapso) >= 16 && intval(json_decode($notas[$key])->primer_lapso) <= 18)
+                        $sheet->setCellValue('D'.$indexNotas, "B");
+                        if(intval(json_decode($notas[$key])->primer_lapso) >= 18 && intval(json_decode($notas[$key])->primer_lapso) <= 20)
+                        $sheet->setCellValue('D'.$indexNotas, "A");
+                        $dm1P = intval(json_decode($notas[$key])->primer_lapso);
+                        $dm2P = intval(json_decode($notas[$key])->segundo_lapso);
+                        $dm3P = intval(json_decode($notas[$key])->tercer_lapso);
+
+                        
+                        if(intval(json_decode($notas[$key])->segundo_lapso) >= 0 && intval(json_decode($notas[$key])->segundo_lapso)  <= 9)
+                        $sheet->setCellValue('E'.$indexNotas, "I");
+                        if(intval(json_decode($notas[$key])->segundo_lapso) <= 12 && intval(json_decode($notas[$key])->segundo_lapso) >= 10)
+                        $sheet->setCellValue('E'.$indexNotas, "D");
+                        if(intval(json_decode($notas[$key])->segundo_lapso) >= 13 && intval(json_decode($notas[$key])->segundo_lapso) <= 15)
+                        $sheet->setCellValue('E'.$indexNotas, "C");
+                        if(intval(json_decode($notas[$key])->segundo_lapso) >= 16 && intval(json_decode($notas[$key])->segundo_lapso) <= 18)
+                        $sheet->setCellValue('E'.$indexNotas, "B");
+                        if(intval(json_decode($notas[$key])->segundo_lapso) >= 18 && intval(json_decode($notas[$key])->segundo_lapso) <= 20)
+                        $sheet->setCellValue('E'.$indexNotas, "A");
+
+
+                        if(intval(json_decode($notas[$key])->tercer_lapso) >= 0 && intval(json_decode($notas[$key])->tercer_lapso)  <= 9)
+                        $sheet->setCellValue('F'.$indexNotas, "I");
+                        if(intval(json_decode($notas[$key])->tercer_lapso) <=12 && intval(json_decode($notas[$key])->tercer_lapso) >= 10)
+                        $sheet->setCellValue('F'.$indexNotas, "D");
+                        if(intval(json_decode($notas[$key])->tercer_lapso) >= 13 && intval(json_decode($notas[$key])->tercer_lapso) <= 15)
+                        $sheet->setCellValue('F'.$indexNotas, "C");
+                        if(intval(json_decode($notas[$key])->tercer_lapso) >= 16 && intval(json_decode($notas[$key])->tercer_lapso) <= 18)
+                        $sheet->setCellValue('F'.$indexNotas, "B");
+                        if(intval(json_decode($notas[$key])->tercer_lapso) >= 18 && intval(json_decode($notas[$key])->tercer_lapso) <= 20)
+                        $sheet->setCellValue('F'.$indexNotas, "A");
+
+                        $DF = (intval(json_decode($notas[$key])->primer_lapso) + intval(json_decode($notas[$key])->segundo_lapso) + intval(json_decode($notas[$key])->tercer_lapso))/3;
+
+                        if($DF >= 0 && $DF  <= 9)
+                        $sheet->setCellValue('G'.$indexNotas, "I");
+                        if($DF <= 12 && $DF >= 10)
+                        $sheet->setCellValue('G'.$indexNotas, "D");
+                        if($DF >= 13 && $DF <= 15)
+                        $sheet->setCellValue('G'.$indexNotas, "C");
+                        if($DF >= 16 && $DF <= 18)
+                        $sheet->setCellValue('G'.$indexNotas, "B");
+                        if($DF >= 18 && $DF <= 20)
+                        $sheet->setCellValue('G'.$indexNotas, "A");
+
+                    }
+                    if(strtoupper( str_replace("_", " ", $key)) == "ORIENTACIÓN Y CONVIVENCIA"){
+                        if(intval(json_decode($notas[$key])->primer_lapso) >= 0 && intval(json_decode($notas[$key])->primer_lapso)  <= 9)
+                        $sheet->setCellValue('D'.$indexNotas, "I");
+                        if(intval(json_decode($notas[$key])->primer_lapso) <= 12 && intval(json_decode($notas[$key])->primer_lapso) >= 10)
+                        $sheet->setCellValue('D'.$indexNotas, "D");
+                        if(intval(json_decode($notas[$key])->primer_lapso) >= 13 && intval(json_decode($notas[$key])->primer_lapso) <= 15)
+                        $sheet->setCellValue('D'.$indexNotas, "C");
+                        if(intval(json_decode($notas[$key])->primer_lapso) >= 16 && intval(json_decode($notas[$key])->primer_lapso) <= 18)
+                        $sheet->setCellValue('D'.$indexNotas, "B");
+                        if(intval(json_decode($notas[$key])->primer_lapso) >= 18 && intval(json_decode($notas[$key])->primer_lapso) <= 20)
+                        $sheet->setCellValue('D'.$indexNotas, "A");
+
+
+                        if(intval(json_decode($notas[$key])->segundo_lapso) >= 0 && intval(json_decode($notas[$key])->segundo_lapso)  <= 9)
+                        $sheet->setCellValue('E'.$indexNotas, "I");
+                        if(intval(json_decode($notas[$key])->segundo_lapso) <= 12 && intval(json_decode($notas[$key])->segundo_lapso) >= 10)
+                        $sheet->setCellValue('E'.$indexNotas, "D");
+                        if(intval(json_decode($notas[$key])->segundo_lapso) >= 13 && intval(json_decode($notas[$key])->segundo_lapso) <= 15)
+                        $sheet->setCellValue('E'.$indexNotas, "C");
+                        if(intval(json_decode($notas[$key])->segundo_lapso) >= 16 && intval(json_decode($notas[$key])->segundo_lapso) <= 18)
+                        $sheet->setCellValue('E'.$indexNotas, "B");
+                        if(intval(json_decode($notas[$key])->segundo_lapso) >= 18 && intval(json_decode($notas[$key])->segundo_lapso) <= 20)
+                        $sheet->setCellValue('E'.$indexNotas, "A");
+
+
+
+                        if(intval(json_decode($notas[$key])->tercer_lapso) >= 0 && intval(json_decode($notas[$key])->tercer_lapso)  <= 9)
+                        $sheet->setCellValue('F'.$indexNotas, "I");
+                        if(intval(json_decode($notas[$key])->tercer_lapso) <= 12 && intval(json_decode($notas[$key])->tercer_lapso) >= 10)
+                        $sheet->setCellValue('F'.$indexNotas, "D");
+                        if(intval(json_decode($notas[$key])->tercer_lapso) >= 13 && intval(json_decode($notas[$key])->tercer_lapso) <= 15)
+                        $sheet->setCellValue('F'.$indexNotas, "C");
+                        if(intval(json_decode($notas[$key])->tercer_lapso) >= 16 && intval(json_decode($notas[$key])->tercer_lapso) <= 18)
+                        $sheet->setCellValue('F'.$indexNotas, "B");
+                        if(intval(json_decode($notas[$key])->tercer_lapso) >= 18 && intval(json_decode($notas[$key])->tercer_lapso) <= 20)
+                        $sheet->setCellValue('F'.$indexNotas, "A");
+
+                        $DF = (intval(json_decode($notas[$key])->primer_lapso) + intval(json_decode($notas[$key])->segundo_lapso) + intval(json_decode($notas[$key])->tercer_lapso))/3;
+
+                        if($DF >= 0 && $DF  <= 9)
+                        $sheet->setCellValue('G'.$indexNotas, "I");
+                        if($DF <= 12 && $DF >= 10)
+                        $sheet->setCellValue('G'.$indexNotas, "D");
+                        if($DF >= 13 && $DF <= 15)
+                        $sheet->setCellValue('G'.$indexNotas, "C");
+                        if($DF >= 16 && $DF <= 18)
+                        $sheet->setCellValue('G'.$indexNotas, "B");
+                        if($DF >= 18 && $DF <= 20)
+                        $sheet->setCellValue('G'.$indexNotas, "A");
+
+                        $dm1O = intval(json_decode($notas[$key])->primer_lapso);
+                        $dm2O = intval(json_decode($notas[$key])->segundo_lapso);
+                        $dm3O = intval(json_decode($notas[$key])->tercer_lapso);
+                    }
+
+                    $indexNotas++;
+                    $aux++;
+                }
+                $sheet->getStyle('A13:I13')->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('595959');
+                $sheet->getStyle('A13:I13')->getFont()->getColor()->setRGB('ffffff');;
+                
+                $sheet->getStyle('A8:I8')->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('595959');
+                $sheet->getStyle('A8:I8')->getFont()->getColor()->setRGB('ffffff');;
+                
+                
+                $indexNotas--;
+                
+                $sheet->setCellValue('I14', "=ROUND((SUM(D14:D20)+$dm1O+$dm1P)/$aux,2)");
+                if($momento >= 2)
+                    $sheet->setCellValue('I15', "=ROUND((SUM(E14:E20)+$dm2O+$dm2P)/$aux,2)");
+                if($momento == 3){
+                    $sheet->setCellValue('I16', "=ROUND((SUM(F14:F20)+$dm3O+$dm3P)/$aux,2)");
+                    $sheet->setCellValue('I17', "=ROUND(SUM(I14:I16)/3,2)");
+                }
+                
+
+                $currentAño = str_replace("_"," ",$ano);
+
+                $boletin = "Boletin $nombreApellido CI $cedula Año $currentAño.xlsx";
+
+                $writer = new Xlsx($spreadsheet);
+                $writer->save($boletin);
+
+                echo $boletin;
+  
+            
+                
+            break;
 
             case "Grupo Estable":
                 
                 $cedula = $_POST["cedula"];
                 
                 $sql = "SELECT * FROM alumnos WHERE cedula='$cedula'";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_object();
+                else
                 $resultado = $conn->query($sql)->fetch_object();
-                echo $resultado->grupo_estable;
+                echo json_encode($resultado);
+
+            break;
+            case "Limpiar":
+                
+
+                
+                $sql = "DELETE FROM alumnos WHERE estado='retirado' OR estado='graduado' ";
+                $resultado = $conn->query($sql)->fetch_object();
+
+                echo "True";
+ 
+
+            break;
+            case "restaurar":
+                $baseDeDatos = BD;
+
+
+                if(isset($_POST["baseDeDatos"])){
+                    $baseDeDatos = BDR;
+                    $restorePoint=SGBD::limpiarCadena($_POST['restorePoint2']);
+
+                }else{
+                    $restorePoint=SGBD::limpiarCadena($_POST['restorePoint']);
+
+                }
+              
+                $sql=explode(";",file_get_contents($restorePoint));
+                $totalErrors=0;
+                $con=mysqli_connect(SERVER, USER, PASS, $baseDeDatos);
+                $con->query("SET FOREIGN_KEY_CHECKS=0;");
+                $con->query('CREATE DATABASE IF NOT EXISTS '.$baseDeDatos.";\n\n");
+                $con->query('USE '.$baseDeDatos.";\n\n");
+                for($i = 0; $i < (count($sql)-1); $i++){
+                    if($con->query($sql[$i].";")){  }else{ $totalErrors++; }
+                }
+                $con->query("SET FOREIGN_KEY_CHECKS=1");
+                $con->close();
+                if($totalErrors<=0){
+                    echo "Restauración completada con éxito";
+                }else{
+                    echo "Ocurrio un error inesperado, no se pudo hacer la restauración completamente";
+                }
+                
+
+            break;
+
+            case "respaldo":
+                        
+                $year=date("Y");
+                $yearPlus=date("Y")+1;
+                $hora=date("H");
+                $minuto=date("i");
+                $seg=date("s");
+                $formaH=$hora."h-".$minuto."m-".$seg."s";
+                $fechaPeriodo = date("d-m-Y");
+                $DataBASE="Periodo $year-$yearPlus ($fechaPeriodo) & ".$formaH.".sql";
+                $tables=array();
+                $result=SGBD::sql('SHOW TABLES');
+                if($result){
+                    while($row=mysqli_fetch_row($result)){
+                       $tables[] = $row[0];
+                    }
+                    $sql='SET FOREIGN_KEY_CHECKS=0;'."\n\n";
+                    foreach($tables as $table){
+                        $result=SGBD::sql('SELECT * FROM '.$table);
+                        if($result){
+                            $numFields=mysqli_num_fields($result);
+                            $sql.='DROP TABLE IF EXISTS '.$table.';';
+                            $row2=mysqli_fetch_row(SGBD::sql('SHOW CREATE TABLE '.$table));
+                            $sql.="\n\n".$row2[1].";\n\n";
+                            for ($i=0; $i < $numFields; $i++){
+                                while($row=mysqli_fetch_row($result)){
+                                    $sql.='INSERT INTO '.$table.' VALUES(';
+                                    for($j=0; $j<$numFields; $j++){
+                                        $row[$j]=addslashes($row[$j]);
+                                        $row[$j]=str_replace("\n","\\n",$row[$j]);
+                                        if (isset($row[$j])){
+                                            $sql .= '"'.$row[$j].'"' ;
+                                        }
+                                        else{
+                                            $sql.= '""';
+                                        }
+                                        if ($j < ($numFields-1)){
+                                            $sql .= ',';
+                                        }
+                                    }
+                                    $sql.= ");\n";
+                                }
+                            }
+                            $sql.="\n\n\n";
+                        }else{
+                            $error=1;
+                        }
+                    }
+                    if($error==1){
+                        echo 'Ocurrio un error inesperado al crear la copia de seguridad';
+                    }else{
+                        chmod(BACKUP_PATH, 0777);
+                        $sql.='SET FOREIGN_KEY_CHECKS=1;';
+                        $handle=fopen(BACKUP_PATH.$DataBASE,'w+');
+                        if(fwrite($handle, $sql)){
+                            fclose($handle);
+                            echo 'Copia de seguridad realizada con éxito';
+                        }else{
+                            echo 'Ocurrio un error inesperado al crear la copia de seguridad';
+                        }
+                    }
+                }else{
+                    echo 'Ocurrio un error inesperado';
+                }
+                mysqli_free_result($result);
 
             break;
 
             case "EditarGp":
                 $userId = $_POST["userId"];
                 $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_assoc();
+                else
                 $resultado = $conn->query($sql)->fetch_assoc();
                 $user = $resultado;
                 $fecha = $_POST["dateTime"];
@@ -598,6 +1179,9 @@ if(isset($_POST["actions"])){
 
                         
                     $sql = "UPDATE alumnos SET grupo_estable='$GrupoEstable' WHERE cedula='$cedula'";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql);
+                    else
                     $resultado = $conn->query($sql);
                         
 
@@ -607,6 +1191,9 @@ if(isset($_POST["actions"])){
                         $cedula = $_POST["cedula"];
                         $data = "El usuario $correoUser Modifico el grupo estable del alumno: $cedula";
                         $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
+                        if($_POST["BDR"] != null)
+                        $resultado = $connR->query($sql);
+                        else
                         $resultado = $conn->query($sql);
                     } ;
                     if(!$resultado) echo json_encode("False");
@@ -617,6 +1204,9 @@ if(isset($_POST["actions"])){
             case "Bitacora":
                                 
                 $sql = "SELECT * FROM bitacora ORDER BY id DESC";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_all();
+                else
                 $resultado = $conn->query($sql)->fetch_all();
                 echo json_encode($resultado);
 
@@ -624,6 +1214,9 @@ if(isset($_POST["actions"])){
             case "admin":
                                 
                 $sql = "SELECT * FROM usuarios WHERE `role`='admin' OR `role`='user'";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_all();
+                else
                 $resultado = $conn->query($sql)->fetch_all();
                 echo json_encode($resultado);
 
@@ -631,6 +1224,9 @@ if(isset($_POST["actions"])){
             case "admin users":
                 $userId = $_POST["userId"];
                 $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_assoc();
+                else
                 $resultado = $conn->query($sql)->fetch_assoc();
                 $user = $resultado;
 
@@ -641,6 +1237,9 @@ if(isset($_POST["actions"])){
                 $role = $_POST["role"];
                                 
                 $sql = "UPDATE usuarios SET `role`='$role' WHERE id='$id'";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql);
+                else
                 $resultado = $conn->query($sql);
                 
                 if($resultado) echo "True";
@@ -653,6 +1252,9 @@ if(isset($_POST["actions"])){
                 $id = $_POST["cedula"];
 
                 $sql = "SELECT repitiente FROM alumnos WHERE `cedula`=$id";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_object();
+                else
                 $resultado = $conn->query($sql)->fetch_object();
                 echo json_encode($resultado);
 
@@ -660,6 +1262,9 @@ if(isset($_POST["actions"])){
             case "modifi repitiente":
                 $userId = $_POST["userId"];
                 $sql = "SELECT * FROM usuarios WHERE id='$userId'";
+                if($_POST["BDR"] != null)
+                $resultado = $connR->query($sql)->fetch_assoc();
+                else
                 $resultado = $conn->query($sql)->fetch_assoc();
                 $user = $resultado;
                 $fecha = $_POST["dateTime"];
@@ -672,6 +1277,9 @@ if(isset($_POST["actions"])){
                     $repitiente = $_POST["repitiente"];
                         
                     $sql = "UPDATE alumnos SET `repitiente`='$repitiente' WHERE cedula='$cedula'";
+                    if($_POST["BDR"] != null)
+                    $resultado = $connR->query($sql);
+                    else
                     $resultado = $conn->query($sql);
                         
 
@@ -693,4 +1301,5 @@ if(isset($_POST["actions"])){
     }
     
 }
+
 ?>

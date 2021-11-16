@@ -19,6 +19,10 @@
             <label for="tercer_lapso">Tercer Momento</label>
             <input type="number" max="20" value="0" min="0" class="form-control" id="tercer_lapso" placeholder="tercer_lapso">
           </div>
+          <div class="form-group">
+            <label for="tercer_lapso">Revicion</label>
+            <input type="number" max="20" value="0" min="0" class="form-control" id="revision" placeholder="Revision">
+          </div>
                 <div class="alert alert-danger" role="alert"></div>
                 <div class="alert alert-success" role="alert"></div>
         </form>

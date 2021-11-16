@@ -1,4 +1,4 @@
-const fetchF = async (body) => {
+/* const fetchF = async (body) => {
   const e = await fetch("BackEnd/actions.php", {
     method: "POST",
     body,
@@ -6,7 +6,7 @@ const fetchF = async (body) => {
   const data = await e.text();
 
   return data;
-};
+}; */
 
 let btn_r = document.querySelector("#btnR"),
   btn_L = document.querySelector("#btnL"),
@@ -19,7 +19,7 @@ let btn_r = document.querySelector("#btnR"),
 if (btn_r) {
   btn_r.addEventListener("click", (e) => {
     e.preventDefault();
-    window.location = "/sistema/register.php";
+    window.location = "/register.php";
   });
   btn_Login.addEventListener("click", (e) => {
     e.preventDefault();
@@ -36,7 +36,7 @@ if (btn_r) {
       fetchF(form).then((e) => {
         if (e != "False") {
           localStorage.setItem("user", e);
-          window.location = "/sistema/";
+          window.location = "/";
         }
         if (e == "False") {
           swal.fire(
@@ -55,7 +55,7 @@ if (btn_r) {
 if (btn_L) {
   btn_L.addEventListener("click", (e) => {
     e.preventDefault();
-    window.location = "/sistema/login.php";
+    window.location = "/login.php";
   });
 
   btn_Registro.addEventListener("click", (e) => {

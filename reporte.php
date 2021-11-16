@@ -43,6 +43,7 @@
       <th scope="col">Primer Momento</th>
       <th scope="col">Segundo Momento</th>
       <th scope="col">Tercer Momento</th>
+      <th scope="col-2">Revision</th>
       <th scope="col">Nota Final</th>
 
     </tr>
