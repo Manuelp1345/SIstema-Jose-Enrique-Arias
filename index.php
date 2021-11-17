@@ -18,9 +18,9 @@ require "partials/header.php";
   </div>
   <div class="card text-center shadow">
     <div class="card-body">
-      <h5 class="card-title">Hola <span id="NameWelcome"></span></h5>
+      <h5 class="card-title">HOLA <span id="NameWelcome"></span></h5>
       <p class="card-text">
-        Te damos la bienvenida al nuevo sistema de notas automatizado para la unidad educativa José Enrique Arias 
+        Te damos la bienvenida al nuevo Sistema de Notas Automatizado para la U.E. "José Enrique Arias" 
       </p>
   </div>
 </div><br>
@@ -45,7 +45,7 @@ require "partials/header.php";
             <div class="card-body">
               <h5 class="card-title ">Acerca del sistema</h5>
               <p class="card-text">
-              El sistema de notas esta hecho en una de las tecnologías más usadas a nivel mundial para el desarrollo de aplicaciones web
+              El sistema de notas está hecho con las tecnologías más usadas a nivel mundial para el desarrollo de aplicaciones web
                 </p>
               <a href="#" class="btn btn-primary">Leer más</a>
             </div>
@@ -58,10 +58,10 @@ require "partials/header.php";
             <div class="card-body">
               <h5>Estatus del sistema</h5>
               <ul>
-                <li>Version del sistema: V-2.0</li>
-                <li>Ultima actualizacion: 13/11/2021</li>
+                <li>Versión del sistema: V-2.0</li>
+                <li>Última actualización: 13/11/2021</li>
                 <li>Estudiantes en el sistema: <span id="TotalAlumnos"></span></li>
-                <li>Periodo escolar: <span id="periodoIndex"></span></li>
+                <li>Período escolar: <span id="periodoIndex"></span></li>
               </ul>
           </div>
           </div>

@@ -38,12 +38,12 @@
     <tr>
       <th scope="col">#</th>
       <th scope="col">C.I</th>
-      <th scope="col">Nombre</th>
-      <th scope="col">Área</th>
+      <th scope="col">Nombres y Apellidos</th>
+      <th scope="col">Áreas</th>
       <th scope="col">Primer Momento</th>
       <th scope="col">Segundo Momento</th>
       <th scope="col">Tercer Momento</th>
-      <th scope="col-2">Revision</th>
+      <th scope="col-2">Revisión</th>
       <th scope="col">Nota Final</th>
 
     </tr>
@@ -67,7 +67,7 @@
     <tr>
       <th scope="col">#</th>
       <th scope="col">Cédula</th>
-      <th scope="col">Nombre y Apellido</th>
+      <th scope="col">Nombres y Apellidos</th>
       <th scope="col">Sexo</th>
       <th scope="col">Fecha de Nacimiento</th>
       <th scope="col">Edad</th>
@@ -100,9 +100,9 @@
           <div class="row g-3 d-flex flex-row align-items-start justify-content-start">
             <div class="form-group col-6">
             <h5>Datos del Alumno</h5>
-            <label for="Apellido">Apellido</label>
+            <label for="Apellido">Apellidos</label>
                 <input type="text" class="form-control" id="Apellido" placeholder="Apellido">
-                <label for="Nombre">Nombre</label>
+                <label for="Nombre">Nombres</label>
                 <input type="text" class="form-control" id="Nombre" placeholder="Nombre">
                 <label for="Cedula">Cédula</label>
                 <input type="number" class="form-control" id="Cedula" placeholder="Cedula">

@@ -177,9 +177,9 @@ if(isset($_POST["actions"])){
 
                         if(!$resultado) echo "No se pudo agregar el alumno, verifique que todos los campos esten llenos";
                         if($resultado){
-                            echo "Alumno agregado con exito";
+                            echo "Alumno agregado con éxito";
                             $correoUser = $user['email'];
-                            $data = "El usuario $correoUser Ingreso al estudiante con la cedula $cedula en $año Seccion $seccion";
+                            $data = "El usuario $correoUser Ingresó al estudiante con la cédula $cedula en $año Sección $seccion";
                             $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
                             if($_POST["BDR"] != null)
                             $resultado = $connR->query($sql);
@@ -188,11 +188,11 @@ if(isset($_POST["actions"])){
                         };
                     }
                     else{
-                        echo "La seccion esta llena";
+                        echo "La sección esta llena";
                     }
                 }
                 else{
-                    echo "El Numero de cedula ya esta en el sistema";
+                    echo "El Número de cédula ya está en el sistema";
                 }
             }
 
@@ -232,7 +232,7 @@ if(isset($_POST["actions"])){
                     $correoUser = $user['email'];
                     $cedula = $_POST["cedula"];
                     $np = json_decode($datos);
-                    $data = "El usuario $correoUser Modifico y/o ingreso notas de $materia (Primer lapso: $np->primer_lapso, Segundo lapso: $np->segundo_lapso, Tercer lapso: $np->tercer_lapso) del alumno con el numero de cedula: $cedula";
+                    $data = "El usuario $correoUser Modificó y/o ingresó notas de $materia (Primer lapso: $np->primer_lapso, Segundo lapso: $np->segundo_lapso, Tercer lapso: $np->tercer_lapso) del alumno con el número de cédula: $cedula";
                     $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
                     if($_POST["BDR"] != null)
                     $resultado = $connR->query($sql);
@@ -400,7 +400,7 @@ if(isset($_POST["actions"])){
                         echo "Se ha pasado la sección de año";
                         $correoUser = $user['email'];
                         $cedula = $_POST["cedula"];
-                        $data = "El usuario $correoUser paso de año a: $año seccion $seccion";
+                        $data = "El usuario $correoUser pasó de año a: $año sección $seccion";
                         $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
                         if($_POST["BDR"] != null)
                         $resultado = $connR->query($sql);
@@ -592,7 +592,7 @@ if(isset($_POST["actions"])){
                         echo "True";
                         $correoUser = $user['email'];
                         $cedula = $_POST["cedula"];
-                        $data = "El usuario $correoUser Modifico los datos del alumno: $cedula";
+                        $data = "El usuario $correoUser Modificó los datos del alumno: $cedula";
                         $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
                         if($_POST["BDR"] != null)
                         $resultado = $connR->query($sql);
@@ -663,7 +663,7 @@ if(isset($_POST["actions"])){
                             echo json_encode("True");
                             $correoUser = $user['email'];
                             $cedula = $_POST["cedula"];
-                            $data = "El usuario $correoUser Modifico de año y/o seccion del alumno: $cedula";
+                            $data = "El usuario $correoUser Modificó de año y/o sección del alumno: $cedula";
                             $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
                             if($_POST["BDR"] != null)
                             $resultado = $connR->query($sql);
@@ -705,7 +705,7 @@ if(isset($_POST["actions"])){
                             echo json_encode("True");
                             $correoUser = $user['email'];
                             $cedula = $_POST["cedula"];
-                            $data = "El usuario $correoUser cambio la condicion del alumno: $cedula";
+                            $data = "El usuario $correoUser cambió la condición del alumno: $cedula";
                             $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
                             if($_POST["BDR"] != null)
                             $resultado = $connR->query($sql);
@@ -884,9 +884,6 @@ if(isset($_POST["actions"])){
                 $sheet->setCellValue('I11', "FECHA DE NACIMIENTO: $fechaNacimiento");
                 foreach($notas as $key => $value){
 
-
-
-
                     $sheet->setCellValue('A'.$indexNotas,strtoupper( str_replace("_", " ", $key)));
                     $sheet->setCellValue('D'.$indexNotas, intval(json_decode($notas[$key])->primer_lapso));
                     $sheet->setCellValue('E'.$indexNotas, intval(json_decode($notas[$key])->segundo_lapso));
@@ -1049,8 +1046,8 @@ if(isset($_POST["actions"])){
                 $resultado = $conn->query($sql)->fetch_object();
                 echo json_encode($resultado);
 
-            break;
-            case "Limpiar":
+/*             break;
+            case "Limpiar": */
                 
 
                 
@@ -1088,7 +1085,7 @@ if(isset($_POST["actions"])){
                 if($totalErrors<=0){
                     echo "Restauración completada con éxito";
                 }else{
-                    echo "Ocurrio un error inesperado, no se pudo hacer la restauración completamente";
+                    echo "Ocurrió un error inesperado, no se pudo hacer la restauración";
                 }
                 
 
@@ -1143,7 +1140,7 @@ if(isset($_POST["actions"])){
                         }
                     }
                     if($error==1){
-                        echo 'Ocurrio un error inesperado al crear la copia de seguridad';
+                        echo 'Ocurrió un error inesperado al crear la copia de seguridad';
                     }else{
                         chmod(BACKUP_PATH, 0777);
                         $sql.='SET FOREIGN_KEY_CHECKS=1;';
@@ -1152,11 +1149,11 @@ if(isset($_POST["actions"])){
                             fclose($handle);
                             echo 'Copia de seguridad realizada con éxito';
                         }else{
-                            echo 'Ocurrio un error inesperado al crear la copia de seguridad';
+                            echo 'Ocurrió un error inesperado al crear la copia de seguridad';
                         }
                     }
                 }else{
-                    echo 'Ocurrio un error inesperado';
+                    echo 'Ocurrió un error inesperado';
                 }
                 mysqli_free_result($result);
 
@@ -1189,7 +1186,7 @@ if(isset($_POST["actions"])){
                         echo json_encode("True");
                         $correoUser = $user['email'];
                         $cedula = $_POST["cedula"];
-                        $data = "El usuario $correoUser Modifico el grupo estable del alumno: $cedula";
+                        $data = "El usuario $correoUser Modificó el grupo estable del alumno: $cedula";
                         $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
                         if($_POST["BDR"] != null)
                         $resultado = $connR->query($sql);
@@ -1287,7 +1284,7 @@ if(isset($_POST["actions"])){
                         echo json_encode("True");
                         $correoUser = $user['email'];
                         $cedula = $_POST["cedula"];
-                        $data = "El usuario $correoUser Modifico las areas repitientes del alumno: $cedula";
+                        $data = "El usuario $correoUser Modificó las áreas repitientes del alumno: $cedula";
                         $sql = "INSERT INTO bitacora (`id`,`reportes`,`dataTime`) VALUES (NULL,'$data','$fecha')";
                         $resultado = $conn->query($sql);
                     } ;

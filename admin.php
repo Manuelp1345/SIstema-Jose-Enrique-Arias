@@ -15,7 +15,7 @@
   <body>
     <div id="admin" class=" container">
     <div id="" class=" container">
-    <h2 class="mb-3" >Administración de Respaldos, consultas de periodos y limpieza de datos</h2>
+    <h2 class="mb-3" >Administración de Respaldos, consultas de períodos y limpieza de datos</h2>
       <div class=" d-flex justify-content-center align-items-center flex-row col-12 gap-3">
         <form id="FormRespaldo" class="d-flex justify-content-center align-content-center flex-column col-6 p-5 card shadow border border-1 border-dark">
           <h4 class=" fw-light">Copia de seguridad</h4>
@@ -49,9 +49,9 @@
           <button id="btnL" class="btn btn-danger m-2" data-bs-toggle="modal" data-bs-target="#eliminarTodos">Limpiar base de datos</button>
         </form>
         <form id="FormBuscar" class="d-flex justify-content-center align-content-center flex-column col-6 p-5 card shadow border border-1 border-dark" action="./Restore.php" method="POST">
-              <h4>Busca alumnos por periodo escolar</h4>
+              <h4>Busca alumnos por período escolar</h4>
           <select class=" form-select" name="restorePoint2">
-            <option class=" selection" value="" disabled="" selected="">Selecciona un periodo escolar</option>
+            <option class=" selection" value="" disabled="" selected="">Selecciona un período escolar</option>
             <?php
               include_once './BackEnd/connect.php';
               $ruta="./respaldos";
@@ -83,8 +83,8 @@
         <table id="adminTable"  class="table center table-hover">
           <thead class="table-dark">
             <tr>
-              <th class=" px-5 mx-5" scope="col">Nombre</th>
-              <th class=" px-5 mx-5" scope="col">Apellido</th>
+              <th class=" px-5 mx-5" scope="col">Nombres</th>
+              <th class=" px-5 mx-5" scope="col">Apellidos</th>
               <th class=" px-5 mx-5" scope="col">Correo</th>
               <th class=" px-5 mx-5" scope="col">Rol</th>
             </tr>

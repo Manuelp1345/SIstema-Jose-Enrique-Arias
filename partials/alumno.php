@@ -38,13 +38,13 @@
         </div>
         <div class="col-12 d-flex flex-row">
           <h4 id="contenedorGp" class="col-6 my-4 me-2">Grupo Estable: <input disabled type="text" id="gpdb"></input></h4>
-        <h4 class="col-6 my-4 ms-5 ps-5">Periodo Escolar: <span id="periodo"></span></h4>
+        <h4 class="col-6 my-4 ms-5 ps-5">Período Escolar: <span id="periodo"></span></h4>
 
         </div>
 
         <div  id="contenedorRp" class="col-12 d-none flex-row flex-wrap">
           
-        <h4>Areas Repitiente:</h4>
+        <h4>Áreas Repitientes:</h4>
 
           <div class="col-12 my-4 mx-0 d-flex flex-row flex-wrap">
               <div class="col-4">
@@ -57,19 +57,21 @@
               <div class="mx-4 d-flex flex-row">
                 <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="2" >
                 <label class="form-check-label my-2 ms-2 col-12" for="2">
-                  Ingles y otras lenguas extranjeras
+                Inglés
+ y otras lenguas extranjeras
                 </label>
               </div>
               <div class="mx-4 d-flex flex-row">
                 <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="3" >
                 <label class="form-check-label my-2 ms-2 col-12" for="3">
-                  Matematicas
+                Matemáticas
                 </label>
               </div>
               <div class="mx-4 d-flex flex-row">
                 <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="4" >
                 <label class="form-check-label my-2 ms-2 col-12" for="4">
-                  Educacion Fisica
+                Educación Física
+
                 </label>
               </div>
               <div class="mx-4 d-flex flex-row">
@@ -83,19 +85,21 @@
               <div class="mx-4 d-flex flex-row">
                 <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="6" >
                 <label class="form-check-label my-2 ms-2 col-12" for="6">
-                  Fisica
+                Física
                 </label>
               </div>
               <div class="mx-4 d-flex flex-row">
                 <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="7" >
                 <label class="form-check-label my-2 ms-2 col-12" for="7">
-                  Quimica
+                Química
+
                 </label>
               </div>
               <div class="mx-4 d-flex flex-row">
                 <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="8" >
                 <label class="form-check-label my-2 ms-2 col-12" for="8">
-                  Biologia
+                Biología
+
                 </label>
               </div>
               <div class="mx-4 d-flex flex-row">
@@ -107,7 +111,9 @@
               <div class="mx-4 d-flex flex-row">
                 <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="10" >
                 <label class="form-check-label my-2 ms-2 col-12" for="10">
-                  Geografia, Historia y Ciudadania
+                Geografía
+, Historia y Ciudadanía
+
                 </label>
               </div>
               </div>
@@ -115,7 +121,8 @@
               <div class="mx-4 d-flex flex-row">
                 <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="11" >
                 <label class="form-check-label my-2 ms-2 col-12" for="11">
-                  Formacion para la Soberania Nacional
+                Formación para la Soberanía Nacional
+
                 </label>
               </div>
               <div class="mx-4 d-flex flex-row">
@@ -127,13 +134,15 @@
               <div class="mx-4 d-flex flex-row">
                 <input class="form-check-input px-2 rp my-2" type="checkbox" value="" id="13" >
                 <label class="form-check-label my-2 ms-2 col-12" for="13">
-                  Orientacion y convivencia
+                Orientación
+ y Convivencia
                 </label>
               </div>
               <div class="mx-4 d-flex flex-row">
                 <input class="form-check-input px-2 rp my-2"  type="checkbox" value="" id="14" >
                 <label class="form-check-label my-2 ms-2 col-12" for="14">
-                  Participaón en Grupos de creaón, Recreación y Producción
+                Participación
+ en Grupos.
                 </label>
               </div>
               </div>
@@ -149,7 +158,7 @@
             <th scope="col-2">Primer Momento</th>
             <th scope="col-2">Segundo Momento</th>
             <th scope="col-2">Tercer Momento</th>
-            <th scope="col-2">Revision</th>
+            <th scope="col-2">Revisión</th>
             <th scope="col-2">Nota Final</th>
             <th class='ms-3' scope="col">Editar </th>
           </tr>

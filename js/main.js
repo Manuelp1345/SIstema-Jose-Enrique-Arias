@@ -100,7 +100,7 @@ if (document.querySelector("#contenedorGp")) {
   document.querySelector("#gpdb").addEventListener("blur", function () {
     let form = new FormData();
     let dateTime = new Date();
-    if (window.location.pathname.split("/")[2] == "periodo") {
+    if (window.location.pathname.split("/")[1] == "periodos.php") {
       form.append("BDR", "BDR");
     }
     form.append("cedula", localStorage.getItem("cedula"));
@@ -133,7 +133,7 @@ if (document.querySelector("#contenedorGp")) {
           if (!e.target.checked) areas[e.target.id - 1] = e.target.checked;
           let form = new FormData();
           let dateTime = new Date();
-          if (window.location.pathname.split("/")[2] == "periodo") {
+          if (window.location.pathname.split("/")[1] == "periodos.php") {
             form.append("BDR", "BDR");
           }
 
@@ -165,7 +165,7 @@ if (document.querySelector("#State")) {
   estado.addEventListener("change", () => {
     let form = new FormData();
     let dateTime = new Date();
-    if (window.location.pathname.split("/")[2] == "periodo") {
+    if (window.location.pathname.split("/")[1] == "periodos.php") {
       form.append("BDR", "BDR");
     }
     form.append("cedula", localStorage.getItem("cedula"));
@@ -302,7 +302,7 @@ const seccionNav = (año, seccion) => {
   }
 
   let form = new FormData();
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     form.append("BDR", "BDR");
   }
 
@@ -325,7 +325,7 @@ const seccionNav = (año, seccion) => {
         alumnos.map((alumno, i) => {
           let form2 = new FormData();
           let dateTime = new Date();
-          if (window.location.pathname.split("/")[2] == "periodo") {
+          if (window.location.pathname.split("/")[1] == "periodos.php") {
             form.append("BDR", "BDR");
           }
 
@@ -405,7 +405,7 @@ const seccionNav = (año, seccion) => {
     .catch((e) => {
       Swal.fire({
         title: "Opss!",
-        text: "A ocurrido un error al intentar buscar los alumnos, Por favor Reinicia al sistema. Verifica la conexión a la base de datos",
+        text: "Ha ocurrido un error al buscar los alumnos, Por favor reinicia el sistema. Verifica la conexión a la base de datos",
         icon: "error",
       });
     });
@@ -418,7 +418,7 @@ function alumno() {
   $("#modal").removeAttr("data-bs-dismiss");
 
   let form = new FormData();
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     form.append("BDR", "BDR");
   }
 
@@ -488,12 +488,12 @@ function alumno() {
   if ($("#Cedula").val() === "") {
     succes.css("display", "none");
     error.css({ display: "block" });
-    return error.text("Por Favor Ingrese una cedula para el estudiante");
+    return error.text("Por Favor Ingrese una cédula para el estudiante");
   }
   if ($("#Cedula").val().length < 8) {
     succes.css("display", "none");
     error.css({ display: "block" });
-    return error.text("Por Favor Ingrese una cedula valida para el estudiante");
+    return error.text("Por Favor Ingrese una cédula válida para el estudiante");
   }
   if (
     !$("#dni").prop("checked") &&
@@ -519,13 +519,13 @@ function alumno() {
     succes.css("display", "none");
 
     error.css({ display: "block" });
-    return error.text("Por Favor Ingrese una Fecha de Nacimiento valida");
+    return error.text("Por Favor Ingrese una Fecha de Nacimiento válida");
   }
   if ($("#pais").val() == "") {
     succes.css("display", "none");
 
     error.css({ display: "block" });
-    return error.text("Por Favor Ingrese el pais");
+    return error.text("Por Favor Ingrese el país");
   }
   if ($("#estado").val() == "") {
     succes.css("display", "none");
@@ -543,13 +543,13 @@ function alumno() {
     succes.css("display", "none");
 
     error.css({ display: "block" });
-    return error.text("Por Favor Ingrese el Numero de telefono del estudiante");
+    return error.text("Por Favor Ingrese el Número de teléfono del estudiante");
   }
   if ($("#Direccion").val() == "") {
     succes.css("display", "none");
 
     error.css({ display: "block" });
-    return error.text("Por Favor Ingrese la direccion del estudiante");
+    return error.text("Por Favor Ingrese la dirección del estudiante");
   }
   if ($("#Correo").val() == "") {
     succes.css("display", "none");
@@ -567,7 +567,7 @@ function alumno() {
     succes.css("display", "none");
 
     error.css({ display: "block" });
-    return error.text("Por Favor Ingrese la condicion del estudiante");
+    return error.text("Por Favor Ingrese la condición del estudiante");
   }
   if ($("#NombreR").val() == "") {
     succes.css("display", "none");
@@ -585,7 +585,7 @@ function alumno() {
     succes.css("display", "none");
 
     error.css({ display: "block" });
-    return error.text("Por Favor Ingrese la cedula del representante");
+    return error.text("Por Favor Ingrese la cédula del representante");
   }
   if ($("#SexoR").val() == null) {
     succes.css("display", "none");
@@ -597,19 +597,19 @@ function alumno() {
     succes.css("display", "none");
 
     error.css({ display: "block" });
-    return error.text("Por Favor Ingrese la filiacion con el representante");
+    return error.text("Por Favor Ingrese la filiación con el representante");
   }
   if ($("#TelfonoR").val() == "") {
     succes.css("display", "none");
 
     error.css({ display: "block" });
-    return error.text("Por Favor Ingrese el telefono del representante");
+    return error.text("Por Favor Ingrese el teléfono del representante");
   }
   if ($("#DireccionR").val() == "") {
     succes.css("display", "none");
 
     error.css({ display: "block" });
-    return error.text("Por Favor Ingrese la direccion del representante");
+    return error.text("Por Favor Ingrese la dirección del representante");
   }
   if ($("#CorreoR").val() == "") {
     succes.css("display", "none");
@@ -662,8 +662,8 @@ function editar(cedula, nombre, notas, sec, año, state) {
   $("#notasexport").DataTable().clear().destroy();
 
   let form2 = new FormData();
-  if (window.location.pathname.split("/")[2] == "periodo") {
-    form.append("BDR", "BDR");
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
+    form2.append("BDR", "BDR");
   }
   form2.append("cedula", cedula);
   form2.append("actions", "Grupo Estable");
@@ -747,7 +747,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
 
     let form = new FormData();
     let dateTime = new Date();
-    if (window.location.pathname.split("/")[2] == "periodo") {
+    if (window.location.pathname.split("/")[1] == "periodos.php") {
       form.append("BDR", "BDR");
     }
 
@@ -867,10 +867,10 @@ function editar(cedula, nombre, notas, sec, año, state) {
             },
           },
           {
-            text: "Exportar a excel (Boletin)",
+            text: "Exportar a excel (Boletín)",
             action: function (e, dt, node, config) {
               const form = new FormData();
-              if (window.location.pathname.split("/")[2] == "periodo") {
+              if (window.location.pathname.split("/")[1] == "periodos.php") {
                 form.append("BDR", "BDR");
               }
 
@@ -923,7 +923,7 @@ function editar(cedula, nombre, notas, sec, año, state) {
   let form = new FormData();
   let dateTime = new Date();
 
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     form.append("BDR", "BDR");
   }
 
@@ -1039,10 +1039,10 @@ function editar(cedula, nombre, notas, sec, año, state) {
           },
         },
         {
-          text: "Exportar a excel (Boletin)",
+          text: "Exportar a excel (Boletín)",
           action: function (e, dt, node, config) {
             const form = new FormData();
-            if (window.location.pathname.split("/")[2] == "periodo") {
+            if (window.location.pathname.split("/")[1] == "periodos.php") {
               form.append("BDR", "BDR");
             }
 
@@ -1117,7 +1117,7 @@ function enviarNotas() {
 
   let form = new FormData();
   let dateTime = new Date();
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     form.append("BDR", "BDR");
   }
 
@@ -1137,7 +1137,9 @@ function enviarNotas() {
   ) {
     succes.css("display", "none");
     error.css("display", "block");
-    return error.html("Por favor ingrese una nota ( minimo: 0 / maximo: 20 )");
+    return error.html(
+      "Por favor ingrese una nota válida ( mínimo: 0 / máximo: 20 )"
+    );
   }
   if (
     lapsos.segundo_lapso == "" ||
@@ -1146,7 +1148,9 @@ function enviarNotas() {
   ) {
     succes.css("display", "none");
     error.css("display", "block");
-    return error.html("Por favor ingrese una nota ( minimo: 0 / maximo: 20 )");
+    return error.html(
+      "Por favor ingrese una nota válida ( mínimo: 0 / máximo: 20 )"
+    );
   }
   if (
     lapsos.tercer_lapso == "" ||
@@ -1155,12 +1159,16 @@ function enviarNotas() {
   ) {
     succes.css("display", "none");
     error.css("display", "block");
-    return error.html("Por favor ingrese una nota ( minimo: 0 / maximo: 20 )");
+    return error.html(
+      "Por favor ingrese una nota válida ( mínimo: 0 / máximo: 20 )"
+    );
   }
   if (lapsos.revision == "" || lapsos.revision > 20 || lapsos.revision < 0) {
     succes.css("display", "none");
     error.css("display", "block");
-    return error.html("Por favor ingrese una nota ( minimo: 0 / maximo: 20 )");
+    return error.html(
+      "Por favor ingrese una nota válida ( mínimo: 0 / máximo: 20 )"
+    );
   }
 
   $("#btnAgragar").attr("data-dismiss", "modal");
@@ -1184,7 +1192,7 @@ function PasarSeccion() {
 
   let data = new FormData();
   let dateTime = new Date();
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     data.append("BDR", "BDR");
   }
 
@@ -1255,7 +1263,7 @@ function test() {
   let form = new FormData();
 
   $("#AreasAlumnos").DataTable().destroy();
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     form.append("BDR", "BDR");
   }
 
@@ -1271,7 +1279,7 @@ function test() {
     for (let i = 0; i < alumnos.length; i++) {
       let form2 = new FormData();
 
-      if (window.location.pathname.split("/")[2] == "periodo") {
+      if (window.location.pathname.split("/")[1] == "periodos.php") {
         form2.append("BDR", "BDR");
       }
 
@@ -1389,7 +1397,7 @@ function datosAlumno() {
     cedula = localStorage.getItem("cedula");
 
   let form = new FormData();
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     form.append("BDR", "BDR");
   }
 
@@ -1471,7 +1479,7 @@ function datosAlumno() {
         <tr>
         <th class="table-dark" ></th>
         <th class="table-dark" scope="col">Cédula</th>
-        <th class="table-dark" scope="col">Nombre y Apellido</th>
+        <th class="table-dark" scope="col">Nombres y Apellidos</th>
         <th class="table-dark" scope="col">Dirección</th>
         <th class="table-dark" scope="col">Correo</th>
         <th class="table-dark" scope="col">Filiación</th>
@@ -1530,7 +1538,7 @@ function ReporteAlumnos() {
     tabla = document.querySelector("#DatosAlumnos");
 
   let form = new FormData();
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     form.append("BDR", "BDR");
   }
 
@@ -1592,7 +1600,7 @@ function ReporteAlumnos() {
 
         <tr>
         <th class="table-dark" scope="col">Cédula</th>
-        <th class="table-dark" scope="col">Nombre y Apellido</th>
+        <th class="table-dark" scope="col">Nombres y Apellidos</th>
         <th class="table-dark" scope="col">Dirección</th>
         <th class="table-dark" scope="col">Correo</th>
         <th class="table-dark" scope="col">Filiación</th>
@@ -1668,7 +1676,7 @@ function ModificarDatosalumno() {
   let form = new FormData();
   let dateTime = new Date();
 
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     form.append("BDR", "BDR");
   }
 
@@ -1721,7 +1729,7 @@ function ModificarSeccionAño() {
 
   let form = new FormData();
   let dateTime = new Date();
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     form.append("BDR", "BDR");
   }
 
@@ -1758,7 +1766,7 @@ function ModificarSeccionAño() {
     .catch((e) => {
       Swal.fire({
         title: "Opss!",
-        text: "A ocurrido un error al intentar cambiar el año y/o sección del alumno. Por favor verifica que seleccionaste un año y/o sección validos",
+        text: "Ha ocurrido un error al intentar cambiar el año y/o sección del alumno. Por favor verifica que seleccionaste un año y/o sección válidos",
         icon: "error",
       });
     });
@@ -1842,7 +1850,7 @@ function RenderGraduados(bdr = null) {
     .catch((e) => {
       Swal.fire({
         title: "Opss!",
-        text: "A ocurrido un error al intentar buscar los alumnos, Por favor Reinicia al sistema. Verifica la conexión a la base de datos",
+        text: "Ha ocurrido un error al intentar buscar los alumnos, Por favor Reinicia al sistema. Verifica la conexión a la base de datos",
         icon: "error",
       });
     });
@@ -1901,7 +1909,7 @@ if (document.querySelector("#bitacora")) {
   contenidoBitacora = document.querySelector("#containerBitacora");
 
   contenidoBitacora.innerHTML = "";
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     form.append("BDR", "BDR");
   }
 
@@ -1926,7 +1934,7 @@ const renderUsers = () => {
   let contenido = document.querySelector("#adminTable tbody");
   let form = new FormData();
   contenido.innerHTML = "";
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     form.append("BDR", "BDR");
   }
 
@@ -1961,7 +1969,7 @@ if (document.querySelector("#admin")) {
     if ("SELECT" == e.target.tagName) {
       e.target.addEventListener("change", () => {
         let form = new FormData();
-        if (window.location.pathname.split("/")[2] == "periodo") {
+        if (window.location.pathname.split("/")[1] == "periodos.php") {
           form.append("BDR", "BDR");
         }
 
@@ -2011,7 +2019,7 @@ if (document.querySelector("#userInfo")) {
 
 const findRepitiente = () => {
   let form = new FormData();
-  if (window.location.pathname.split("/")[2] == "periodo") {
+  if (window.location.pathname.split("/")[1] == "periodos.php") {
     form.append("BDR", "BDR");
   }
 
@@ -2053,7 +2061,7 @@ if (document.querySelector("#boletin")) {
     console.log("object");
     e.preventDefault();
     const form = new FormData();
-    if (window.location.pathname.split("/")[2] == "periodo") {
+    if (window.location.pathname.split("/")[1] == "periodos.php") {
       form.append("BDR", "BDR");
     }
 
@@ -2082,7 +2090,7 @@ const respaldo = async (e) => {
   }).then((res) => {
     Swal.fire({
       title: "Respaldo",
-      text: "Copia de seguridad realizada con exito",
+      text: "Copia de seguridad realizada con éxito",
       icon: "success",
       confirmButtonText: "ok",
     });
@@ -2111,7 +2119,7 @@ if (document.querySelector("#respaldo")) {
     fetchF(form).then((e) => {
       Swal.fire({
         title: "Sistema",
-        text: "Operacion Completada",
+        text: "Operación Completada",
         icon: "success",
         confirmButtonText: "ok",
       });
@@ -2136,7 +2144,7 @@ if (document.querySelector("#respaldo")) {
       btnR.innerHTML = "Restaurar";
       Swal.fire({
         title: "Sistema",
-        text: "Copia de seguridad Restauraza con exito",
+        text: "Copia de seguridad Restaurada con éxito",
         icon: "success",
         confirmButtonText: "ok",
       });
@@ -2162,7 +2170,7 @@ if (document.querySelector("#respaldo")) {
       btnFind.innerHTML = "Restaurar";
       Swal.fire({
         title: "Sistema",
-        text: "Periodo cargado con exito",
+        text: "Período cargado con éxito",
         icon: "success",
         confirmButtonText: "ok",
       });
