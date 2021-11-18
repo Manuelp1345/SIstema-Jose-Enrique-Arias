@@ -84,7 +84,6 @@ http://localhost/sistema/
 El sistema fue desarrollado por estudiantes de la Universidad Politécnica Territorial de Mérida (UPTM)
 
 Daniel Hernández `Tester`<br>
-Michelle Contreras ` Arquitecto`<br>
 Sergio Castro `Tester `<br>
 Santiago Faysal `Jefe de proyecto`<br>
 Manuel Puente `Programador`
@@ -99,7 +98,6 @@ Manuel Puente `Programador`
 ## ✍️ Autores
 
 Daniel Hernández `Tester`<br>
-Michelle Contreras ` Arquitecto`<br>
 Sergio Castro `Tester `<br>
 Santiago Faysal `Jefe de proyecto`<br>
 Manuel Puente `Programador`
