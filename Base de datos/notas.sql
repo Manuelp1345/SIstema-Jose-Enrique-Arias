@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-11-2021 a las 07:01:50
+-- Tiempo de generación: 18-11-2021 a las 09:31:46
 -- Versión del servidor: 10.4.21-MariaDB
 -- Versión de PHP: 8.0.12
 
@@ -97,6 +97,24 @@ CREATE TABLE `notas` (
   `cuarto_año` int(11) DEFAULT NULL,
   `quinto_año` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `periodo`
+--
+
+CREATE TABLE `periodo` (
+  `id` int(11) NOT NULL,
+  `periodo` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Volcado de datos para la tabla `periodo`
+--
+
+INSERT INTO `periodo` (`id`, `periodo`) VALUES
+(1, '2021-2022');
 
 -- --------------------------------------------------------
 
@@ -212,6 +230,15 @@ CREATE TABLE `usuarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `email`, `password`, `role`) VALUES
+(1, 'manuel\n', 'puente', 'manuelp1345@gmail.com', 'a334c357f06cc38c014f6fad7b9ea563f889a2015720de5b4d0b94bba0c7cd28106f297845453ce5abaea6ed69ec1c251eb6e2ea661fdda78546833b2c8c487b', 'admin'),
+(2, 'santiago', 'faysal', 'laultimadesantiago@gmail.com', 'a334c357f06cc38c014f6fad7b9ea563f889a2015720de5b4d0b94bba0c7cd28106f297845453ce5abaea6ed69ec1c251eb6e2ea661fdda78546833b2c8c487b', 'admin'),
+(3, 'administrador', 'admin', 'admin@correo.com', 'a334c357f06cc38c014f6fad7b9ea563f889a2015720de5b4d0b94bba0c7cd28106f297845453ce5abaea6ed69ec1c251eb6e2ea661fdda78546833b2c8c487b', 'superadmin');
+
+--
 -- Índices para tablas volcadas
 --
 
@@ -245,6 +272,12 @@ ALTER TABLE `notas`
   ADD KEY `tercer_año` (`tercer_año`),
   ADD KEY `cuarto_año` (`cuarto_año`),
   ADD KEY `quinto_año` (`quinto_año`);
+
+--
+-- Indices de la tabla `periodo`
+--
+ALTER TABLE `periodo`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `primer_año`
@@ -311,6 +344,12 @@ ALTER TABLE `notas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT de la tabla `periodo`
+--
+ALTER TABLE `periodo`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
 -- AUTO_INCREMENT de la tabla `primer_año`
 --
 ALTER TABLE `primer_año`
@@ -344,7 +383,7 @@ ALTER TABLE `tercer_año`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas

@@ -62,6 +62,7 @@ require "partials/header.php";
                 <li>Última actualización: 13/11/2021</li>
                 <li>Estudiantes en el sistema: <span id="TotalAlumnos"></span></li>
                 <li>Período escolar: <span id="periodoIndex"></span></li>
+                <li>Pasar Período: <button class="btn btn-warning p-1" onclick="pasarperiod()">Pasar</button></li>
               </ul>
           </div>
           </div>

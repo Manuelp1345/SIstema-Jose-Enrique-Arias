@@ -52,13 +52,15 @@ const fetchF = async (body) => {
 if (document.querySelector("#TotalAlumnos")) {
   const span = document.querySelector("#TotalAlumnos");
   const periodo = document.querySelector("#periodoIndex");
-  periodo.innerHTML = `${new Date().getFullYear()}-${
-    new Date().getFullYear() + 1
-  }`;
   const form = new FormData();
   form.append("actions", "TotalAlumnos");
   fetchF(form).then((e) => {
     span.innerHTML = e;
+  });
+  const form2 = new FormData();
+  form2.append("actions", "find periodo");
+  fetchF(form2).then((e) => {
+    periodo.innerHTML = e;
   });
 }
 
@@ -1263,9 +1265,6 @@ function test() {
   let form = new FormData();
 
   $("#AreasAlumnos").DataTable().destroy();
-  if (window.location.pathname.split("/")[1] == "periodos.php") {
-    form.append("BDR", "BDR");
-  }
 
   form.append("año", añoDB[año - 1]);
   form.append("seccion", seccion);
@@ -1279,10 +1278,6 @@ function test() {
     for (let i = 0; i < alumnos.length; i++) {
       let form2 = new FormData();
 
-      if (window.location.pathname.split("/")[1] == "periodos.php") {
-        form2.append("BDR", "BDR");
-      }
-
       form2.append("año", añoDB[año - 1]);
       form2.append("notas", alumnos[i][14]);
       form2.append("actions", "Editar");
@@ -1291,7 +1286,7 @@ function test() {
         data = JSON.parse(data);
 
         data[0].Total =
-          '{"primer_lapso":0,"segundo_lapso":0,"tercer_lapso":0,"revision":0,"ap":0}';
+          '{"primer_lapso":"0","segundo_lapso":"0","tercer_lapso":"0","revision":"0"}';
         let notas = data[0];
 
         materias = Object.entries(notas);
@@ -1300,22 +1295,37 @@ function test() {
         let P1 = 0,
           P2 = 0,
           P3 = 0;
-        (R = 0),
-          (agregar.innerHTML += `
+        R = 0;
+
+        agregar.innerHTML += `
                             <tr>
                             <th scope="row">${i + 1}</th>
                             <th>${alumnos[i][1]}</th>
                             <th>${alumnos[i][3].toUpperCase()} ${alumnos[
-            i
-          ][4].toUpperCase()} </th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            </tr>`);
+          i
+        ][4].toUpperCase()} </th>
+        <th>${materias[1][0].replaceAll("_", " ").toUpperCase()}</th>
+        <td class="text-center">${parseFloat(
+          JSON.parse(notas[1]).primer_lapso
+        )}</td>
+        <td class="text-center">${parseFloat(
+          JSON.parse(notas[1]).segundo_lapso
+        )}</td>
+        <td class="text-center">${parseFloat(
+          JSON.parse(notas[1]).tercer_lapso
+        )}</td>
+        <td class="text-center">${parseFloat(
+          JSON.parse(notas[1]).revision
+        )}</td>
+        <td class="text-center">${(
+          (parseFloat(JSON.parse(notas[1]).primer_lapso) +
+            parseFloat(JSON.parse(notas[1]).segundo_lapso) +
+            parseFloat(JSON.parse(notas[1]).tercer_lapso)) /
+          3
+        ).toFixed(1)}</td>
+        </tr>`;
 
-        for (let i = 1; i < notas.length; i++) {
+        for (let i = 2; i < notas.length; i++) {
           P1 += parseFloat(JSON.parse(notas[i]).primer_lapso);
           P2 += parseFloat(JSON.parse(notas[i]).segundo_lapso);
           P3 += parseFloat(JSON.parse(notas[i]).tercer_lapso);
@@ -1334,7 +1344,6 @@ function test() {
                             <tr>
                             <td></td>
                             <td></td>
-
                             <td></td>
                             <th>${materias[i][0]
                               .replaceAll("_", " ")
@@ -1354,10 +1363,7 @@ function test() {
                             <td class="text-center">${(
                               (parseFloat(JSON.parse(notas[i]).primer_lapso) +
                                 parseFloat(JSON.parse(notas[i]).segundo_lapso) +
-                                parseFloat(JSON.parse(notas[i]).revision) !=
-                              0
-                                ? parseFloat(JSON.parse(notas[i]).revision)
-                                : parseFloat(JSON.parse(notas[i]).tercer_año)) /
+                                parseFloat(JSON.parse(notas[i]).tercer_lapso)) /
                               3
                             ).toFixed(1)}</td>
                             </tr>`;
@@ -1370,18 +1376,26 @@ function test() {
             retrieve: true,
             dom: "Bfrtip",
             language: {
-              url: "/DataTables/Spanish.json",
+              url: "/sistema/DataTables/Spanish.json",
             },
             buttons: [
               {
-                extend: "excelHtml5",
-                className: "export",
-                ttileAttr: "Exportar a excel",
-                text: "Exportar a Excel",
-                title: `Reporte Grupal de Notas | Año: ${añoDB[año - 1].replace(
-                  "_",
-                  " "
-                )} Sección: ${seccion} `,
+                text: "Exportar a excel",
+                action: function (e, dt, node, config) {
+                  const form = new FormData();
+                  if (
+                    window.location.pathname.split("/")[1] == "periodos.php"
+                  ) {
+                    form.append("BDR", "BDR");
+                  }
+
+                  form.append("seccion", seccion);
+                  form.append("año", añoDB[año - 1]);
+                  form.append("actions", "ReporteNotas");
+                  fetchF(form).then((data) =>
+                    window.open(`backend/${data}`, "_blank")
+                  );
+                },
               },
             ],
           });
@@ -1390,7 +1404,6 @@ function test() {
     }
   });
 }
-
 function datosAlumno() {
   const año = localStorage.getItem("año"),
     seccion = localStorage.getItem("seccion"),
@@ -1641,14 +1654,20 @@ function ReporteAlumnos() {
       },
       buttons: [
         {
-          extend: "excelHtml5",
-          className: "export",
-          ttileAttr: "Exportar a excel",
-          text: "Exportar a Excel",
-          title: `Reporte grupal de datos | Año: ${añoDB[año - 1].replace(
-            "_",
-            " "
-          )} Sección: ${seccion} `,
+          text: "Exportar a excel",
+          action: function (e, dt, node, config) {
+            const form = new FormData();
+            if (window.location.pathname.split("/")[1] == "periodos.php") {
+              form.append("BDR", "BDR");
+            }
+
+            form.append("seccion", seccion);
+            form.append("año", añoDB[año - 1]);
+            form.append("actions", "ReporteDatos");
+            fetchF(form).then((data) =>
+              window.open(`backend/${data}`, "_blank")
+            );
+          },
         },
       ],
     });
@@ -2177,3 +2196,11 @@ if (document.querySelector("#respaldo")) {
     });
   });
 }
+const pasarperiod = () => {
+  const form = new FormData();
+  form.append("actions", "find save");
+  fetchF(form).then((data) => {
+    const periodo = document.querySelector("#periodoIndex");
+    periodo.innerHTML = data;
+  });
+};

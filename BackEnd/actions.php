@@ -7,7 +7,6 @@ require_once "connect.php";
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-
 if(isset($_POST["actions"])){
 
     $action = $_POST["actions"];
@@ -165,7 +164,12 @@ if(isset($_POST["actions"])){
                         $estado = $_POST["estado"];
                         $GrupoEstable = $_POST["gp"];
                         $repitiente = $_POST["repitiente"];
-                        $periodo = date("Y")."-".date("Y")+1;
+                        
+                        $sql = "SELECT * FROM periodo ORDER BY ID DESC LIMIT 1";
+                        $resultado = $conn->query($sql)->fetch_assoc();
+                        echo $resultado['periodo'];
+                        $periodo =$resultado["periodo"];
+                        
 
 
                         $sql = "INSERT INTO alumnos (cedula,cedula_escolar,nombre,apellido,sexo,fecha_de_nacimiento,edad,lugar_de_nacimiento,telefono,direccion,correo,ano,seccion,notas,estado,Representate,grupo_estable,repitiente,periodo) VALUES
@@ -473,7 +477,7 @@ if(isset($_POST["actions"])){
                                     obtener_estructura_directorios($ruta_completa);
                                 } else {
                                     if(stristr($archivo, 'xlsx') == "xlsx"){
-                                        if(stristr($archivo, 'template') == false)
+                                        if(stristr($archivo, 'template') == false && stristr($archivo, 'notes') == false && stristr($archivo, 'data') == false)
                 
                                         unlink($archivo);
                                     }
@@ -1003,7 +1007,7 @@ if(isset($_POST["actions"])){
                 $sheet->getStyle('A13:I13')->getFill()
                     ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
                     ->getStartColor()->setRGB('595959');
-                $sheet->getStyle('A13:I13')->getFont()->getColor()->setRGB('ffffff');;
+
                 
                 $sheet->getStyle('A8:I8')->getFill()
                     ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
@@ -1034,7 +1038,91 @@ if(isset($_POST["actions"])){
             
                 
             break;
-
+            case "ReporteDatos":
+                $spreadsheet =  \PhpOffice\PhpSpreadsheet\IOFactory::load('data.xlsx');
+                $sheet = $spreadsheet->getActiveSheet();
+                $data = new stdClass();
+                $ano = $_POST["año"];
+                $seccion = $_POST["seccion"];
+                $añoexcel = "";
+                
+                if($ano == "primer_año") $añoexcel = "PRIMER AÑO";
+                if($ano == "segundo_año") $añoexcel = "SEGUNDO AÑO";
+                if($ano == "tercer_año") $añoexcel = "TERCER AÑO";
+                if($ano == "cuarto_año") $añoexcel = "CUARTO AÑO";
+                if($ano == "quinto_año") $añoexcel = "QUINTO AÑO";
+                
+                $sheet->setCellValue("H2", "AÑO: ". $añoexcel);
+                
+                
+                $sql = "SELECT * FROM alumnos  WHERE ano='$ano' AND seccion='$seccion' AND estado='cursando' OR ano='$ano' AND seccion='$seccion' AND estado='Repitiente' ORDER BY cedula ASC LIMIT 35";
+                $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
+                
+                $sheet->setCellValue("H3", "SECCIÓN: ".$resultado[0]["seccion"]);
+                $sheet->setCellValue("J3", "AÑO ESCOLAR: ".$resultado[0]["periodo"]);
+                
+                $alumnosTotales = count($resultado);
+                
+                $aux3 = 7;
+                $aux2 = 5;
+                $aux1 = 4;
+                $aux4 = 9;
+                $aux = 0;
+                $sheet->setTitle("Datos grupal");
+                
+                $columna= "E";
+                foreach ($resultado as $key => $value) {
+                
+                    $idN = $value['Representate'];
+                    $sql = "SELECT * FROM representante WHERE id = '$idN'";
+                    $resultado = $conn->query($sql);
+                    $representante = $resultado->fetch_assoc();
+                    $notas = 0;
+                    $sheet->setCellValue("C$aux2", $value["cedula"] );
+                    $sheet->setCellValue("D$aux2", $value["nombre"] . " " . $value["apellido"]);
+                    $sheet->setCellValue("E$aux2", $value["sexo"] );
+                    $sheet->setCellValue("F$aux2", $value["fecha_de_nacimiento"] );
+                    $sheet->setCellValue("G$aux2", $value["direccion"] );
+                    $sheet->setCellValue("H$aux2", $value["telefono"] );
+                    $sheet->setCellValue("I$aux2", $value["correo"] );
+                    $sheet->setCellValue("J$aux2", $value["lugar_de_nacimiento"] );
+                    $sheet->setCellValue("K$aux2", $value["edad"] );
+                    // representante
+                    $sheet->setCellValue("C".$aux3, $representante["cedula"]);
+                    $sheet->setCellValue("D".$aux3, $representante["nombre"] . " " . $representante["apellido"] );
+                    $sheet->setCellValue("E".$aux3, $representante["sexo"]);
+                    $sheet->setCellValue("F".$aux3, $representante["filiacion"]);
+                    $sheet->setCellValue("G".$aux3, $representante["direccion"]);
+                    $sheet->setCellValue("H".$aux3, $representante["telefono"]);
+                    $sheet->setCellValue("I".$aux3, $representante["correo"]);
+                
+                    $sheet->getStyle("B$aux1:B".$aux1+2)->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('8ea9db');
+                    $sheet->getStyle("B$aux4:B".$aux4+2)->getFill()
+                    ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
+                    ->getStartColor()->setRGB('d9d9d9');
+                
+                $sheet->setCellValue("A".$aux2, $aux+1);
+                
+                $aux3 = $aux3 + 5;
+                $aux2 = $aux2 + 5;
+                $aux1 = $aux1 + 10;
+                $aux4 = $aux4 + 10;
+                
+                $aux++;
+                
+                if($alumnosTotales == $aux){
+                
+                    $writer = new Xlsx($spreadsheet);
+                    $archivo = "REPORTE DE DATOS $añoexcel - $seccion.xlsx";
+                    $writer->save($archivo);
+                    echo $archivo;
+                }
+                
+                }
+                
+            break;
             case "Grupo Estable":
                 
                 $cedula = $_POST["cedula"];
@@ -1086,6 +1174,102 @@ if(isset($_POST["actions"])){
                     echo "Restauración completada con éxito";
                 }else{
                     echo "Ocurrió un error inesperado, no se pudo hacer la restauración";
+                }
+                
+
+            break;
+            case "ReporteNotas":
+                $spreadsheet =  \PhpOffice\PhpSpreadsheet\IOFactory::load('notes.xlsx');
+                $sheet = $spreadsheet->getActiveSheet();
+                $data = new stdClass();
+                $ano = $_POST["año"];
+                $seccion = $_POST["seccion"];
+ 
+                $añoexcel = "";
+                
+                if($ano == "primer_año") $añoexcel = "PRIMER AÑO";
+                if($ano == "segundo_año") $añoexcel = "SEGUNDO AÑO";
+                if($ano == "tercer_año") $añoexcel = "TERCER AÑO";
+                if($ano == "cuarto_año") $añoexcel = "CUARTO AÑO";
+                if($ano == "quinto_año") $añoexcel = "QUINTO AÑO";
+                
+                $sheet->setCellValue("K2", "AÑO: ". $añoexcel);
+                
+                
+                $sql = "SELECT * FROM alumnos  WHERE ano='$ano' AND seccion='$seccion' AND estado='cursando' OR ano='$ano' AND seccion='$seccion' AND estado='Repitiente' ORDER BY cedula ASC LIMIT 35";
+                $resultado = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
+           
+                
+                $sheet->setCellValue("K3", "SECCIÓN: ".$resultado[0]["seccion"]);
+                $sheet->setCellValue("N2", "AÑO ESCOLAR: ".$resultado[0]["periodo"]);
+                
+                
+                $alumnosTotales = count($resultado);
+                $aux2 = 5;
+                $aux3 = 0;
+                $aux = 0;
+                
+                $columna= "E";
+                foreach ($resultado as $key => $value) {
+                    # code...
+                    $idN = $value['notas'];
+                    $sql = "SELECT * FROM notas WHERE id = '$idN'";
+                    $resultado = $conn->query($sql);
+                    $fields = $resultado->fetch_fields();
+                    $idNotas = $resultado->fetch_assoc();
+                    $notas = 0;
+                
+                    
+                if ($fields[1]->name == $ano) $notas = $idNotas["primer_año"];
+                if ($fields[2]->name == $ano) $notas = $idNotas["segundo_año"];
+                if ($fields[3]->name == $ano) $notas = $idNotas["tercer_año"];
+                if ($fields[4]->name == $ano) $notas = $idNotas["cuarto_año"];
+                if ($fields[5]->name == $ano) $notas = $idNotas["quinto_año"];
+                
+                $sql = "SELECT * FROM $ano WHERE id = '$notas' ";
+                $resultado = $conn->query($sql);
+                $notas = $resultado->fetch_assoc();
+                $fields = $resultado->fetch_fields();
+                
+                $sheet->setCellValue("C$aux2", $value["nombre"] . " " . $value["apellido"]);
+                $sheet->setCellValue("B$aux2", $value["cedula"] );
+                $sheet->setCellValue("A".$aux2, $aux+1);
+                
+                
+                foreach ($notas as $key2 => $value2) {
+                    if($aux3 == 1 ) $columna= "E";
+                    if($aux3 == 2 ) $columna= "F";
+                    if($aux3 == 3 ) $columna= "G";
+                    if($aux3 == 4 ) $columna= "H";
+                    if($aux3 == 5 ) $columna= "I";
+                    if($aux3 == 6 ) $columna= "J";
+                    if($aux3 == 7 ) $columna= "K";
+                    if($aux3 == 8 ) $columna= "L";
+                    if($aux3 == 9 ) $columna= "M";
+                    if($aux3 == 10 ) $columna= "N";
+                
+                
+                    if(count($notas) >= 10){
+                    if($aux3 == 8 ) $columna= "O";
+                    if($aux3 == 9 ) $columna= "P";
+                    }
+                    $sheet->setTitle("Notas grupal");
+                    $sheet->setCellValue($columna.$aux2, intval(json_decode($value2)->primer_lapso));
+                    $sheet->setCellValue($columna.$aux2+1, intval(json_decode($value2)->segundo_lapso));
+                    $sheet->setCellValue($columna.$aux2+2, intval(json_decode($value2)->tercer_lapso));
+                    $sheet->setCellValue($columna.$aux2+3, intval(json_decode($value2)->revision));
+                    $sheet->setCellValue($columna.$aux2+4, "=ROUND(".(intval(json_decode($value2)->primer_lapso)+intval(json_decode($value2)->segundo_lapso)+intval(json_decode($value2)->tercer_lapso))/3 .",2)");
+                    $aux3++;
+                    if(count($notas) == $aux3){$aux2 = $aux2 + 5; $aux3 = 0;} 
+                }
+                $aux++;
+                
+                if($aux == $alumnosTotales){
+                    $writer = new Xlsx($spreadsheet);
+                    $archivo = "REPORTE DE NOTAS $añoexcel - $seccion.xlsx";
+                    $writer->save($archivo);
+                    echo $archivo;
+                }
                 }
                 
 
@@ -1255,6 +1439,23 @@ if(isset($_POST["actions"])){
                 $resultado = $conn->query($sql)->fetch_object();
                 echo json_encode($resultado);
 
+            break;
+            case "find periodo":
+                $sql = "SELECT * FROM periodo ORDER BY ID DESC LIMIT 1";
+                $resultado = $conn->query($sql)->fetch_assoc();
+                echo $resultado['periodo'];
+            break;
+            case "find save":
+                $periodo = date("Y")+1 ."-".date("Y")+2;
+                $sql = "INSERT INTO periodo (`id`,`periodo`) VALUES (NULL,'$periodo')";
+                $resultado = $conn->query($sql);
+                $sql = "SELECT * FROM periodo ORDER BY ID DESC LIMIT 1";
+                $resultado = $conn->query($sql)->fetch_assoc();
+                $periodo = $resultado["periodo"];
+   
+                $sql= "UPDATE alumnos SET periodo='$periodo' WHERE  estado='cursando' OR estado='Repitiente'";
+                $resultado = $conn->query($sql);
+                echo $periodo;
             break;
             case "modifi repitiente":
                 $userId = $_POST["userId"];
